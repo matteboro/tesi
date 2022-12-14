@@ -1,0 +1,26 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{galois}
+\usepackage{tikz}
+\usepackage{stmaryrd}
+\usepackage{tkz-euclide}
+\usepackage{pgfplots}
+\pgfplotsset{compat=newest} 
+\newcommand{\envplus}{\textrm{Env}^+}
+\newcommand{\envcirc}{\textrm{Env}^{\circ}}
+\newcommand{\envsharp}{\textrm{Env}^{\#}}
+\newcommand{\stateplus}{\textrm{State}^+}
+\newcommand{\statecirc}{\textrm{State}^{\circ}}
+\newcommand{\statesharp}{\textrm{State}^{\#}}
+\newcommand{\cvplus}{\textrm{ContextVec}^+}
+\newcommand{\cvcirc}{\textrm{ContextVec}^{\circ}}
+\newcommand{\cvsharp}{\textrm{ContextVec}^{\#}}
+\newcommand{\posetOf}[2]{\langle #1,\subseteq^{#2},\sqcup^{#2},\sqcap^{#2},\perp^{#2},\top^{#2}\rangle}
+\begin{document}
+
+Lo scopo dell'\textit{analisi statica} è quello di verificare certe invarianti in alcuni punti di un programma. \'E quindi un modo per verificare formalmente alcune proprietà di un programma. Per essere definita statica una analisi deve avere la caratteristica di non eseguire il codice (in caso opposto l'analisi si dice \textit{dinamica}, un esempio è il tradizionale metodo di debug con test), o meglio di non eseguirlo nella sua forma concreta. L'\textit{interpretazione astratta} è un modello matematico che può essere utilizzato per compiere analisi statica. L'idea basilare è quella di astrarre la computazione su un dominio astratto e interpretare il codice muovendoci in uno spazio di oggetti astratti che approssimano il dominio concreto. Per fare ciò dobbiamo creare una semantica astratta, che ragiona nel mondo del dominio astratto, che sia \textit{sound} (il concetto di soundness lo raffineremo nel corso dell'elaborato) rispetto alla semantica concreta, la quale invece ragiona su un dominio concreto. Il motivo per cui ci accontentiamo di una approssimazione è che spesso lavorare sul dominio concreto risulta impossibile per i limiti della computazione o è estremamente costoso in termini di tempo. Ci basta perciò una soluzione approssimata, ma corretta, da cui si spera sia possibile verificare certe proprietà del programma analizzato.
+
+
+
+\end{document}
