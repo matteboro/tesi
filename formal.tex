@@ -7,6 +7,17 @@
 \usepackage{tkz-euclide}
 \usepackage{pgfplots}
 \pgfplotsset{compat=newest} 
+\usepackage{blindtext}
+
+\usepackage[english]{babel}
+\usepackage{amsthm}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definizione}[section]
+\theoremstyle{definition}
+\newtheorem{example}{Esempio}[section]
+
+
 \newcommand{\envplus}{\textrm{Env}^+}
 \newcommand{\envcirc}{\textrm{Env}^{\circ}}
 \newcommand{\envsharp}{\textrm{Env}^{\#}}
@@ -17,10 +28,73 @@
 \newcommand{\cvcirc}{\textrm{ContextVec}^{\circ}}
 \newcommand{\cvsharp}{\textrm{ContextVec}^{\#}}
 \newcommand{\posetOf}[2]{\langle #1,\subseteq^{#2},\sqcup^{#2},\sqcap^{#2},\perp^{#2},\top^{#2}\rangle}
+\newcommand{\simplePoset}[1]{\langle #1, \preceq_{#1}\rangle}
 \begin{document}
+\begin{center}
+\section*{Background}
+\end{center}
 
-Lo scopo dell'\textit{analisi statica} è quello di provare formalmente certe proprietà di un programma, spesso espresse come invarianti in un punto di un programma. Per essere definita statica una analisi deve avere la caratteristica di non eseguire il codice (in caso opposto l'analisi si dice \textit{dinamica}, un esempio è il tradizionale metodo di debug con test), o meglio di non eseguirlo nella sua forma concreta. L'\textit{interpretazione astratta} è un modello matematico che può essere utilizzato per compiere analisi statica. L'idea basilare è quella di astrarre la computazione su un dominio astratto e interpretare il codice muovendoci in uno spazio di oggetti astratti che approssimano il dominio concreto. Per fare ciò dobbiamo creare una semantica astratta, che ragiona nel mondo del dominio astratto, che sia \textit{sound} (il concetto di soundness lo raffineremo nel corso dell'elaborato) rispetto alla semantica concreta, la quale invece ragiona su un dominio concreto. Il motivo per cui ci accontentiamo di una approssimazione è che spesso lavorare sul dominio concreto risulta impossibile a causa dei limiti della computazione o è estremamente costoso in termini di tempo. Ci basta perciò una soluzione approssimata, ma corretta, da cui si spera sia possibile verificare certe proprietà del programma analizzato.
+\subsection{Teoria degli ordini}
+\begin{definition}[Relazione di ordine parziale]
+Una relazione binaria \(\preceq\) su \(S\) è una \textit{relazione di ordine parziale} se possiede queste tre proprietà:
+\begin{itemize}
+\item Riflessività: \(\forall s\in S. s\preceq s\);
+\item Antisimmetrica: \(\forall s_1, s_2\in S. s_1\preceq s_2 \wedge s_2\preceq s_1 \Rightarrow s_1=s_2\);
+\item Transitività: \(\forall s_1, s_2, s_3 \in S. s_1\preceq s_2 \wedge s_2\preceq s_3 \Rightarrow s_1\preceq s_3\);
+\end{itemize}
+\end{definition}
 
-Proviamo a darne una definizione più formale. Solitamente un linguaggio di programmazione imperativo L ci mette a disposizione una semantica operazionale che ci permette di eseguire un flusso computazionale di un programma \(p\) scritto in L. Da questa semantica e dal programma \(p\) si può ottenere una funzione \(f:\mathbb{C}\rightarrow\mathbb{C}\) che lavora su un dominio semantico concreto \(\langle\mathbb{C}, \preceq_{\mathbb{C}}\rangle\), dotato di un ordinamento parziale, i cui oggetti rappresentano certe proprietà di \(p\). Il limite o least-fixed-point o risultato di \(f\) sarà un insieme di proprietà vere per \(p\). Come abbiamo già detto lavorare in questo universo di oggetti è di solito impossibile, infatti gli elementi di \(\mathbb{C}\) spesso rappresentano insiemi infiniti che non possono essere rappresentati su una macchina o sono il risultato di una computazione non terminante. Per questo ci spostiamo su un dominio astratto \(\langle\mathbb{A}, \preceq_{\mathbb{A}}\rangle\). Dalla stessa semantica operazionale e dallo stesso programma \(p\) si può ottenere un'altra funzione \(f^{\star}:\mathbb{A}\rightarrow\mathbb{A}\) che lavora sul dominio astratto e il cui limite o least-fixed-point o risultato è una approssimazione corretta di \(f\), \(i.e.\), c'è una relazione di soundness tra \(f\) e \(f^{\star}\). Ovviamente il dominio astratto \(\mathbb{A}\) e la funzione \(f^{\star}\) vanno costruiti in modo tale da essere rappresentabili e calcolabili da un computer. Il limite di questo approccio è che ciò che è in grado di dirci \(f^{\star}\) su \(p\) potrebbe essere non è abbastanza preciso e raffinato per verificarne certe proprietà.
+\begin{definition}[Insieme parzialmente ordinato]
+Un \textit{insieme parzialmente ordinato} (o poset) è una coppia \(\langle S, \preceq\rangle\) dove \(S\) è un insieme di elementi e \(\preceq\) è una relazione di ordine parziale su \(S\).
+\end{definition}
+
+\begin{definition}[Catena]
+Una catena di un poset \(\simplePoset{S}\) è un sottoinsieme \(C\subseteq S\) tale che: \(\forall c_1, c_2 \in C. c_1\preceq_{S} c_2 \vee c_2\preceq_{S} c_1\)
+\end{definition}
+
+\begin{definition}[Copertura]
+Dato un poset \(\simplePoset{S}\) e due elementi \(s_1, s_2 \in S\) diciamo che \(s_1\) \textit{copre} \(s_2\) se non esiste un altro elemento \(s_3\in S\) tale che \(s_1 \preceq_{S} s_3 \preceq_{S} s_2\).
+\end{definition}
+
+\begin{definition}[Diagramma di Hasse]
+\'E possibile visualizzare un insieme parzialmente ordinato \(\simplePoset{S}\) attraverso un \textit{diagramma di Hasse}. Un diagramma di Hasse è un grafo i cui nodi sono gli elementi dell'isnsieme \(S\) del poset e un arco viene disegnato tra due elementi \(s_1, s_2 \in S\) solo se \(s_1\) copre \(s_2\).
+\end{definition}
+
+\noindent\textit{Esempio}. Se prendiamo l'insieme \(\textrm{Sign}=\{\perp, +, -, 0, \top\}\) e l'ordinamento parziale \(\preceq_{\textrm{Sign}}\) tale che: \(\forall s \in \textrm{Sign}. s \preceq_{\textrm{Sign}} s \wedge \perp \preceq_{\textrm{Sign}} s \wedge s \preceq_{\textrm{Sign}} \top\) allora \(\simplePoset{\textrm{Sign}}\) è un insieme parzialmente ordinato e lo si può visualizzare attraverso il diagramma di Hasse:
+
+\begin{center}
+
+\begin{tikzpicture}
+\node (top) {\(\top\)};
+\node (zero) [below of=top]{\(0\)};
+\node (plus) [right of=zero]{\(+\)};
+\node (minus) [left of=zero]{\(-\)};
+\node (bottom) [below of=zero]{\(\perp\)};
+
+\draw (top) -- (plus);
+\draw (top) -- (minus);
+\draw (bottom) -- (plus);
+\draw (top) -- (zero);
+\draw (bottom) -- (zero);
+\draw (bottom) -- (minus);
+\end{tikzpicture}
+
+\end{center}
+
+\begin{definition}[]
+\end{definition}
+
+\begin{definition}[]
+\end{definition}
+
+\begin{definition}[]
+\end{definition}
+
+\subsection{Analisi statica ed Interpretazione astratta}
+
+Lo scopo dell'\textit{analisi statica} è quello di provare formalmente certe proprietà di un programma, spesso espresse come invarianti in un punto di un programma. Per essere definita statica una analisi deve avere la caratteristica di non eseguire il codice (in caso opposto l'analisi si dice \textit{dinamica}, un esempio è il tradizionale metodo di debug con test), o meglio di non eseguirlo nella sua forma concreta. L'\textit{interpretazione astratta} è un modello matematico che può essere utilizzato per compiere analisi statica. L'idea basilare è quella di astrarre la computazione su un dominio astratto e interpretare il codice muovendoci in uno spazio di oggetti astratti che approssimano il dominio concreto. Per fare ciò dobbiamo creare una semantica astratta, che ragiona nel mondo del dominio astratto, che sia \textit{sound} rispetto alla semantica concreta, la quale invece ragiona su un dominio concreto. Il motivo per cui ci accontentiamo di una approssimazione è che spesso lavorare sul dominio concreto risulta impossibile a causa dei limiti della computazione o è estremamente costoso in termini di tempo. Ci basta perciò una soluzione approssimata, ma corretta, da cui si spera sia possibile verificare certe proprietà del programma analizzato.
+
+\subsubsection{Introduzione formale all'Interpretazione astratta}
+Proviamo a darne una definizione più formale. Solitamente un linguaggio di programmazione imperativo L ci mette a disposizione una semantica operazionale che ci permette di eseguire un flusso computazionale di un programma \(p\) scritto in L. Da questa semantica e dal programma \(p\) si può ottenere una funzione \(f:\mathbb{C}\rightarrow\mathbb{C}\) che lavora su un dominio semantico concreto \(\langle\mathbb{C}, \preceq_{\mathbb{C}}\rangle\), dotato di un ordinamento parziale, i cui oggetti rappresentano certe proprietà di \(p\). Il limite o least fixed-point o risultato di \(f\) sarà un insieme di proprietà vere per \(p\). Come abbiamo già detto lavorare in questo universo di oggetti è di solito impossibile, infatti gli elementi di \(\mathbb{C}\) spesso rappresentano insiemi infiniti che non possono essere rappresentati su una macchina o sono il risultato di una computazione non terminante. Per questo ci spostiamo su un dominio astratto \(\langle\mathbb{A}, \preceq_{\mathbb{A}}\rangle\). Dalla stessa semantica operazionale e dallo stesso programma \(p\) si può ottenere un'altra funzione \(f^{\star}:\mathbb{A}\rightarrow\mathbb{A}\) che lavora sul dominio astratto e il cui limite o least fixed-point o risultato è una approssimazione corretta di \(f\), \(i.e.\), c'è una relazione di soundness tra \(f\) e \(f^{\star}\). Ovviamente il dominio astratto \(\mathbb{A}\) e la funzione \(f^{\star}\) vanno costruiti in modo tale da essere rappresentabili e calcolabili da un computer. Il limite di questo approccio è che ciò che è in grado di dirci \(f^{\star}\) su \(p\) potrebbe essere non è abbastanza preciso e raffinato per verificarne certe proprietà.
 
 \end{document}
