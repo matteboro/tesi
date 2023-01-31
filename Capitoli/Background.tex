@@ -715,8 +715,8 @@ Solo nel caso in cui il dominio astratto è finito o rispetta la condizione di c
 \begin{definition}[Widening]
 Dato un poset \(\simplePoset{S}\), la funzione \(\nabla:S\times S\rightarrow S\) è detta \textit{widening} se rispetta le seguenti condizioni:
 \begin{itemize}
-	\item per ogni coppia di elementi \(x, y\in S\) si ha che \(x\preceq x\nabla y\) e \(y\preceq x\nabla y\);
-	\item per ogni catena crescente \(s_0\preceq s_1\preceq\cdots\preceq s_k\preceq\cdots\) la catena crescente: 
+	\item per ogni coppia di elementi \(x, y\in S\) si ha che \(x\preceq_S x\nabla y\) e \(y\preceq_S x\nabla y\);
+	\item per ogni catena crescente \(s_0\preceq_S s_1\preceq_S\cdots\preceq_S s_k\preceq_S\cdots\) la catena crescente: 
 	\begin{align*}
 	y_0 &= s_0\\
 	y_{n+1} &= y_n\nabla x_{n+1}
@@ -731,7 +731,7 @@ Dati un poset \(\simplePoset{S}\), una funzione \(f:S\rightarrow S\) ed un widen
 \begin{align*}
 x_0 &= \perp \\
 x_{n+1} &=  \begin{cases}
-            x_n &\textrm{se} f(x_n)\preceq x_n \\
+            x_n &\textrm{se} f(x_n)\preceq_S x_n \\
             x_n \nabla f(x_n) &\textrm{altrimenti}
             \end{cases}
 \end{align*}
@@ -744,3 +744,17 @@ Più generalmente se abbiamo un reticolo completo \(\completeLattice{S}\), parte
 
 Una idea è quella di usare come post-fix-point da cui iniziare la computazione discendente il risultato della fase ascendente, calcolata con il widening, di cui abbiamo dimostrato che il limite è post-fix-point della funzione.
 
+Come nella fase ascendente, anche discendendo il dominio si può incappare in catene infinite se il reticolo non rispetta la condizione di catena discendente. Per questo motivo abbiamo bisogno di un operatore di interpolazione che accelleri o forzi la convergenza della iterazione di sequenze decrescenti. Questo operatore lo chiamiamo narrowing e lo definiamo così:
+
+\begin{definition}[Narrowing]
+Dato un poset \(\simplePoset{S}\), la funzione \(\Delta:S\times S\rightarrow S\) è detta \textit{narrowing} se rispetta le seguenti condizioni:
+\begin{itemize}
+	\item per ogni coppia di elementi \(x, y\in S\) se \(x\preceq_S y\) si ha che \(x\preceq_S (x\Delta y) \preceq_S y\);
+	\item per ogni catena decrescente \(s_0\succeq_S s_1\succeq_S\cdots\succeq_S s_k\succeq_S\cdots\) la catena decrescente: 
+	\begin{align*}
+	y_0 &= s_0\\
+	y_{n+1} &= y_n\nabla x_{n+1}
+	\end{align*}
+	è stazionaria, ovvero \(\exists l\ge 0:\forall t\geq l: y_t = y_l\)
+\end{itemize}
+\end{definition}
