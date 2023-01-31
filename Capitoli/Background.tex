@@ -333,6 +333,8 @@ Dato un insieme parzialmente ordinato completo \(\simplePoset{S}\) ed una funzio
 ovvero \(\textrm{lfp}(f)=\bigsqcup\{f^n(\perp)\ |\ n\geq 0\}\).
 \end{theorem}
 
+Più generalmente si può partire da qualsiasi pre-fix-point \(s\in S\) di \(f\) ottenendo \(\textrm{lfp}_s(f)=\bigsqcup\{f^n(s)\ |\ n\geq 0\}\) che è il più piccolo fix-point maggiore o uguale di \(s\).
+
 \section{Connessione di Galois}
 
 \begin{definition}[Connessione di Galois]
@@ -719,7 +721,7 @@ Dato un poset \(\simplePoset{S}\), la funzione \(\nabla:S\times S\rightarrow S\)
 	y_0 &= s_0\\
 	y_{n+1} &= y_n\nabla x_{n+1}
 	\end{align*}
-	è stazionaria, ovvero \(\exists l\ge 0:\forall t\geq l: y_t = y_l\);
+	è stazionaria, ovvero \(\exists l\ge 0:\forall t\geq l: y_t = y_l\)
 \end{itemize}
 \end{definition}
 Il widening è quindi una over-approsimazione del lub. 
@@ -737,4 +739,8 @@ Ogni sequenza di iterazioni di \textit{f}, avente un widening \(\nabla\), è sta
 \end{definition}
 
 Questo ultimo risultato ci dice che applicando il widening otterremo in un tempo finito una approssimazione sound del least fix-point di \(f\). Quello che in pratica si fa non è applicare il widening ad ogni step (anche se possibile) ma applicarlo solo in certi selezionati passaggi per mitigare gli effetti di over-approssimazione che comporta mantenendo la sua capacità di far convergere la computazione. Un altro modo che abbiamo di attenuare l'effetto di approssimazione del widening è quello di far seguire la fase ascendente della computazione con una fase discendente, in cui al posto del lub verrà utilizzato il glb e al posto del widening si userà un altro operatore, il narrowing.
+
+Più generalmente se abbiamo un reticolo completo \(\completeLattice{S}\), partendo da un post-fix-point \(s\in S\) di una funzione continua \(f:S\rightarrow S\) si può scendere verso il più grande fix-point minore od uguale ad \(s\) facendo il glb di tutti gli elementi della catena discendente formata dalla iterazione di Kleene di \(f\) partendo da \(s\), ovvero \(\textrm{gfp}_s(f)=\bigsqcap\{f^n(s)\ |\ n\geq 0\}\). 
+
+Una idea è quella di usare come post-fix-point da cui iniziare la computazione discendente il risultato della fase ascendente, calcolata con il widening, di cui abbiamo dimostrato che il limite è post-fix-point della funzione.
 
