@@ -452,7 +452,8 @@ Dato un programma in CFG \(\cfg\) certe semantiche concrete possono essere espre
 \[F = \{x_i = f_i(x_1, x_2, \cdots, x_{|N|})\ |\ i=1, 2,\cdots, |N|\}\]
 in cui i vari \(f_i:\mathbb{C}^{|N|}\rightarrow\mathbb{C}\) sono funzioni trasformatrici concrete che simulano il comportamento del blocco di codice rappresentato dal nodo sulle informazioni provenienti dagli altri blocchi. La soluzione più piccola del sistema \(F\) sarà il least fix-point di \(F\), ovvero il least upper bound tra tutti gli step della iterazione di Kleene sul dominio concreto \(\mathbb{C}^{|N|}\) di \(F\) partendo dall'elemento bottom (in questo caso \(\perp_{\mathbb{C}}^{|N|}\)).
 
-\begin{example} Nella figura \ref{fig:codiceEsempio1} si vede la traduzione di un semplice pezzo di codice scritto in Python in un CFG. 
+\begin{example}\label{ex:easyCode}
+Nella figura \ref{fig:codiceEsempio1} si vede la traduzione di un semplice pezzo di codice scritto in Python in un CFG. 
 
 \begin{figure}
 \begin{minipage}{2cm}
@@ -608,7 +609,7 @@ A questo punto una interpretazione astratta sarà a sua volta un sistema di equa
 \[F^{\natural} = \{x_i = f_i^{\natural}(x_1, x_2, \cdots, x_{|N|})\ |\ i=1, 2,\cdots, |N|\}\]
 in cui sostituiamo le funzioni trasformatrici concrete con delle \textit{funzioni trasformatrici astratte} \(f_i^{\natural}:\mathbb{A}^{|N|}\rightarrow\mathbb{A}\) che approssimano correttamente quelle concrete e che ragionano su un dominio semantico astratto \(\mathbb{A}\) collegato tramite una connessione di Galois a quello concreto \(\mathbb{C}\). Per dimostrare la soundness dell'interpetazione astratta bisogna dimostrare la soundness di ogni funzione trasformatrice astratta in rispetto a quella concreta. 
 
-Riprendendo l'esempio di prima e sostituendo il dominio concreto con il dominio astrtatto degli intervalli di interi \(\langle\textrm{Int}, \preceq_{\textrm{Int}}, \sqcup, \sqcap, [-\infty, +\infty], \perp_{\textrm{Int}} \rangle\) il sistema di equazioni diventa: 
+Riprendendo l'esempio \ref{ex:easyCode} e sostituendo il dominio concreto con il dominio astrtatto degli intervalli di interi \(\langle\textrm{Int}, \preceq_{\textrm{Int}}, \sqcup, \sqcap, [-\infty, +\infty], \perp_{\textrm{Int}} \rangle\) il sistema di equazioni diventa: 
 
 \[
 F^{\natural} = 
@@ -721,12 +722,12 @@ Dato un poset \(\simplePoset{S}\), la funzione \(\nabla:S\times S\rightarrow S\)
 	y_0 &= s_0\\
 	y_{n+1} &= y_n\nabla x_{n+1}
 	\end{align*}
-	è stazionaria, ovvero \(\exists l\ge 0:\forall t\geq l: y_t = y_l\)
+	è stazionaria, ovvero \(\exists k\ge 0:\forall t\geq k: y_t = y_k\)
 \end{itemize}
 \end{definition}
 Il widening è quindi una over-approsimazione del lub. 
 
-\begin{definition}[Iterazione all'insù con widening]
+\begin{definition}[Iterazione ascendente con widening]
 Dati un poset \(\simplePoset{S}\), una funzione \(f:S\rightarrow S\) ed un widening \(\nabla : S\times S\rightarrow S\), la sequenza di iterazione con \(\nabla\) su \textit{S}, partendo dall'elemento \(\perp\in S\) è definito ricorsivamente nel seguente modo, \(\forall \ n \in \mathbb{N}\):
 \begin{align*}
 x_0 &= \perp \\
@@ -755,6 +756,50 @@ Dato un poset \(\simplePoset{S}\), la funzione \(\Delta:S\times S\rightarrow S\)
 	y_0 &= s_0\\
 	y_{n+1} &= y_n\nabla x_{n+1}
 	\end{align*}
-	è stazionaria, ovvero \(\exists l\ge 0:\forall t\geq l: y_t = y_l\)
+	è stazionaria, ovvero \(\exists k\ge 0:\forall t\geq k: y_t = y_k\)
 \end{itemize}
 \end{definition}
+
+\begin{definition}[Iterazione discendente con narrowing]
+Dati un poset \(\simplePoset{S}\), una funzione Scott-continua \(f:S\rightarrow S\), un narrowing \(\Delta : S\times S\rightarrow S\), la sequenza di iterazione con \(\Delta\) su \textit{S}, partendo da un post-fix-point \(x^{\nabla}\in S\) di \(f\) è definito ricorsivamente nel seguente modo, \(\forall \ n \in \mathbb{N}\):
+\begin{align*}
+y_0 &= x^{\nabla} \\
+y_{n+1} &=  \begin{cases}
+            y_n &\textrm{se} f(y_n) = y_n \\
+            y_n \Delta f(y_n) &\textrm{altrimenti}
+            \end{cases}
+\end{align*}
+Questa sequenza decrescente è stazionaria dopo un numero finito di passaggi ed in più il suo limite \(y^{\Delta}\) è un post-fix-point di \(f\) ed è una approssimazione del least-fix-point di \(f\) e vale che:
+\[\textrm{lfp}(f)\preceq_S y^{\Delta}\preceq_S x^{\nabla}\]
+\end{definition}
+
+Riassumendo il concetto e riagganciandoci all'esempio \ref{ex:easyCode} nella prima fase ascendente utilizzeremo, per raggiungere un post-fix-point di \(F^{\natural}\), una versione del sistema di equazione che fa il join tra gli step della iterazione utilizzando il lub od il widening (con una logica in grado di decidere quando usare l'uno o l'altro), questo passaggio lo chiamiamo \(F^{\nabla}\). Nella fase discendente invece, partendo dal risultato calcolato da quella prima, modificheremo il sistema di equazioni in modo da fare il meet tra gli step utlizzando o il glb o il narrowing (anche dietro questa scelta ci deve essere una logica), questo passaggio lo chiamiamo \(F^{\Delta}\). 
+
+\begin{figure}
+\begin{tikzpicture}
+    \draw [line width=0.5mm] (0, 0) ellipse (2cm and 3cm);
+    \node (top) at (0, 3.5) {$\top$};
+    \node (bottom) at (0, -3.4) {$\perp$};
+    \draw [densely dotted] (0, -1.2) ellipse (1.2cm and 1.8cm);
+    \draw [densely dotted] (0, 1.2) ellipse (1.2cm and 1.8cm);
+    \node (bottomStart) at (0, -3) {};
+
+    \node (pre) at (0.8, -1.5)  {\tiny pre($F$)};
+    \node (post) at (0.4, 2.5)  {\tiny post($F$)};
+    \node (fix) at (0.5, 0)  {\tiny fix($F$)};
+    \node [label=above:{$x^{\nabla}$}] (widPost) at (-0.3, 2) {};
+    \draw [fill=black] (0, -3) circle (0.1cm);
+
+    \node [label=right:{$x^{\Delta}$}] (narrPost) at (0.4, 1) {};
+    \draw [fill=white, line width=0.6mm] (0.4, 1) circle (0.15cm);
+    
+    \draw [fill=white, line width=0.6mm] (-0.3, 2) circle (0.15cm);
+
+    \draw[->, blue, line width=0.5mm] (bottomStart.center) to [out=120, in=240] (widPost);
+
+    \draw[->, red, line width=0.5mm] (widPost.center) to [out=320, in=110] (narrPost);
+\end{tikzpicture}
+    \centering
+    \caption{Caption}
+    \label{fig:my_label}
+\end{figure}
