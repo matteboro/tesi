@@ -773,7 +773,8 @@ Questa sequenza decrescente è stazionaria dopo un numero finito di passaggi ed 
 \[\textrm{lfp}(f)\preceq_S y^{\Delta}\preceq_S x^{\nabla}\]
 \end{definition}
 
-Riassumendo il concetto e riagganciandoci all'esempio \ref{ex:easyCode} nella prima fase ascendente utilizzeremo, per raggiungere un post-fix-point di \(F^{\natural}\), una versione del sistema di equazione che fa il join tra gli step della iterazione utilizzando il lub od il widening (con una logica in grado di decidere quando usare l'uno o l'altro), questo passaggio lo chiamiamo \(F^{\nabla}\). Nella fase discendente invece, partendo dal risultato calcolato da quella prima, modificheremo il sistema di equazioni in modo da fare il meet tra gli step utlizzando o il glb o il narrowing (anche dietro questa scelta ci deve essere una logica), questo passaggio lo chiamiamo \(F^{\Delta}\). 
+Riassumendo il concetto nella prima fase ascendente utilizzeremo, per raggiungere un post-fix-point di \(F^{\natural}\), una versione del sistema di equazione che fa il join tra gli step della iterazione utilizzando il lub od il widening (con una logica in grado di decidere quando usare l'uno o l'altro), questo passaggio lo chiamiamo \(F^{\nabla}\). Nella fase discendente invece, partendo dal risultato calcolato da quella prima, modificheremo il sistema di equazioni in modo da fare il meet tra gli step utlizzando o il glb o il narrowing, questo passaggio lo chiamiamo \(F^{\Delta}\). 
+In figura \ref{fig:phasesFig} è mostrata una rappresentazione grafica del della fase ascendente e discendente su un dominio \(S\).
 
 \begin{figure}
 \begin{tikzpicture}
@@ -783,7 +784,7 @@ Riassumendo il concetto e riagganciandoci all'esempio \ref{ex:easyCode} nella pr
     \draw [densely dotted] (0, -1.2) ellipse (1.2cm and 1.8cm);
     \draw [densely dotted] (0, 1.2) ellipse (1.2cm and 1.8cm);
     \node (bottomStart) at (0, -3) {};
-
+    \node (domain) at (-2, 2.5) {\(S\)};
     \node (pre) at (0.8, -1.5)  {\tiny pre($F$)};
     \node (post) at (0.4, 2.5)  {\tiny post($F$)};
     \node (fix) at (0.5, 0)  {\tiny fix($F$)};
@@ -791,15 +792,16 @@ Riassumendo il concetto e riagganciandoci all'esempio \ref{ex:easyCode} nella pr
     \draw [fill=black] (0, -3) circle (0.1cm);
 
     \node [label=right:{$x^{\Delta}$}] (narrPost) at (0.4, 1) {};
-    \draw [fill=white, line width=0.6mm] (0.4, 1) circle (0.15cm);
+    \draw [fill=black, line width=0.1mm] (0.4, 1) circle (0.13cm);
     
-    \draw [fill=white, line width=0.6mm] (-0.3, 2) circle (0.15cm);
+    \draw [fill=black, line width=0.1mm] (-0.3, 2) circle (0.13cm);
 
-    \draw[->, blue, line width=0.5mm] (bottomStart.center) to [out=120, in=240] (widPost);
+    \draw[->, line width=0.5mm] (bottomStart.center) to [out=120, in=240] (widPost);
 
-    \draw[->, red, line width=0.5mm] (widPost.center) to [out=320, in=110] (narrPost);
+    \draw[->, line width=0.5mm] (widPost.center) to [out=320, in=110] (narrPost);
 \end{tikzpicture}
     \centering
-    \caption{Caption}
-    \label{fig:my_label}
+    \caption{Fase ascendente e discendente su un dominio \(S\)}
+    \label{fig:phasesFig}
 \end{figure}
+
