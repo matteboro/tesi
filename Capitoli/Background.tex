@@ -773,10 +773,36 @@ Questa sequenza decrescente è stazionaria dopo un numero finito di passaggi ed 
 \[\textrm{lfp}(f)\preceq_S y^{\Delta}\preceq_S x^{\nabla}\]
 \end{definition}
 
+\begin{example}
+Per il dominio degli intervalli interi possiamo definire un widening \(\nabla:\textrm{Int}\times\textrm{Int}\rightarrow\textrm{Int}\) in questo modo: 
+\[\forall x\in \textrm{Int}: \perp\nabla x = x\nabla\perp = x \textrm{ e } \]
+\[
+[l_0, u_0]\nabla[l_1, u_1] = 
+\begin{cases}
+    [l_0, u_0] & \textrm{se } l_0\leq l_1 \wedge u_0 \geq u_1 \\
+    [-\infty, u_0] & \textrm{se } l_1 < l_0 \wedge u_0 \geq u_1 \\
+    [l_0, +\infty] & \textrm{se } l_0\leq l_1 \wedge u_1 > u_0 \\
+    [-\infty, +\infty] & \textrm{se } l_1 < l_0 \wedge u_1 > u_0 \\
+\end{cases}
+\]
+
+ed un narrowing \(\Delta:\textrm{Int}\times\textrm{Int}\rightarrow\textrm{Int}\) in questo modo: 
+\[\forall x\in \textrm{Int}: \perp\nabla x = x\nabla\perp = \perp \textrm{ e } \]
+\[
+[l_0, u_0]\nabla[l_1, u_1] = 
+\begin{cases}
+    [l_1, u_1] & \textrm{se } l_0 = -\infty \wedge u_0 = +\infty \\
+    [l_0, u_1] & \textrm{se } l_0 \neq -\infty \wedge u_0 = +\infty \\
+    [l_1, u_0] & \textrm{se } l_0 = -\infty \wedge u_0 \neq +\infty \\
+    [l_0, u_0] & \textrm{se } l_0 \neq -\infty \wedge u_0 \neq +\infty \\
+\end{cases}
+\]
+\end{example}
+
 Riassumendo il concetto nella prima fase ascendente utilizzeremo, per raggiungere un post-fix-point di \(F^{\natural}\), una versione del sistema di equazione che fa il join tra gli step della iterazione utilizzando il lub od il widening (con una logica in grado di decidere quando usare l'uno o l'altro), questo passaggio lo chiamiamo \(F^{\nabla}\). Nella fase discendente invece, partendo dal risultato calcolato da quella prima, modificheremo il sistema di equazioni in modo da fare il meet tra gli step utlizzando o il glb o il narrowing, questo passaggio lo chiamiamo \(F^{\Delta}\). 
 In figura \ref{fig:phasesFig} è mostrata una rappresentazione grafica del della fase ascendente e discendente su un dominio \(S\).
 
-\begin{figure}
+\begin{figure}[H]
 \begin{tikzpicture}
     \draw [line width=0.5mm] (0, 0) ellipse (2cm and 3cm);
     \node (top) at (0, 3.5) {$\top$};
@@ -805,3 +831,89 @@ In figura \ref{fig:phasesFig} è mostrata una rappresentazione grafica del della
     \label{fig:phasesFig}
 \end{figure}
 
+\begin{figure}
+\begin{minipage}{1cm}
+\hspace{1cm}
+\end{minipage}
+\begin{minipage}[c][5cm][c]{0.5\textwidth-2cm}
+\vspace{\fill}
+\begin{lstlisting}[language=Python, numbers=none]
+x = 0
+if x < 100:
+    if x < 50:
+        x = x + 2;
+    else
+        x = x +10;
+return x;
+\end{lstlisting}
+\vspace{\fill}
+\end{minipage}
+\begin{minipage}{0.5\textwidth}
+\begin{center}
+\begin{tikzpicture}
+  [node distance=2cm, 
+  noline/.style={draw, -latex, draw=red!50, anchor=south, sloped}, 
+  yesline/.style={draw, -latex, draw=blue!50, anchor=south, sloped}, 
+  line/.style={draw, -latex, draw=black!25},
+  block/.style={rectangle, draw=black!25}]
+  % nodes
+  \node [block] (init) {\(x = 0\)};
+  \node [above] at (init.north west) {\(x_1\)};
+  \node [rectangle, draw=black!25, below of=init] (decide1) {\(x < 100\)};
+  \node [above] at (decide1.north west) {\(x_2\)};
+  \node [rectangle, draw=black!25, below of=decide1] (decide2) {\(x < 50\)};
+  \node [above] at (decide2.north west) {\(x_3\)};
+  \node [rectangle, draw=black!25, below left of=decide2] (then1) {\(x = x + 2\)};
+  \node [above] at (then1.north west) {\(x_4\)};
+  \node [rectangle, draw=black!25, below right of=decide2] (then2) {\(x = x + 10\)};
+  \node [above] at (then2.north east) {\(x_5\)};
+  \node [rectangle, draw=black!25,  right=1cm of decide1] (return) {return \(x\);};
+  \node [above] at (return.north east) {\(x_6\)};
+  % edges
+  \path [line] (init) -- (decide1);
+  \path [yesline] (decide1) -- node [above, font=\tiny] {True} (decide2);
+  \path [noline] (decide1) --  node [below, font=\tiny] {False}  (return);
+  \path [yesline] (decide2) -- node [above, font=\tiny] {True} (then1);
+  \path [noline] (decide2) --  node [below, font=\tiny] {False}  (then2);
+  \path [line] (then1)  [out=90, in=240] to (decide1.south west);
+  \path [line] (then2.north)  [out=90, in=300] to (decide1.south east);
+\end{tikzpicture}
+\end{center}
+\end{minipage}
+\begin{minipage}{\textwidth}
+\vspace{1cm}
+\[
+F^{\natural}=
+\begin{cases}
+    x_1 = \perp \\
+    x_2 = (x_4 +_{\textrm{Int}} [2, 2])\sqcup(x_5 +_{\textrm{Int}} [10, 10]) \\
+    x_3 = \textrm{if}_{[x<100]}(x_2) \\
+    x_4 = \textrm{if}_{[x<50]}(x_3) \\
+    x_5 = \textrm{else}_{[x<50]}(x_3) \\
+    x_6 = \textrm{else}_{[x<100]}(x_2) \\
+\end{cases}
+\]  
+\end{minipage}
+\caption{}
+\label{fig:codiceEsempio2}
+\end{figure}
+
+\begin{example}
+Nell'esempio che mostreremo ora analizzeremo il codice in \ref{fig:codiceEsempio2} cerrcando una approssimazione della collecting semantics tramite interpretazione astratta usando il dominio degli intervalli interi. Nella figura è mostrata anche il sistema di equazioni astratte di cui cerchiamo la soluzione minima. A differenza dell'esempio \ref{ex:easyCode} risoleveremo il sistema di equazioni in modo diverso, infatti adesso calcoleremo entrambe le fasi (ascendente e discendente) ed utilizzeremo gli operatori di widening e narrowing per velocizzare la convergenza del calcolo, in questo modo: 
+\[
+F^{\nabla} = 
+\begin{cases}
+    x_i = x_i \nabla f_i(x_1, x_2, \cdots, x_n) & \textrm{se il nodo \textit{i} è un WP} \\
+    x_i = x_i \sqcup f_i(x_1, x_2, \cdots, x_n) & \textrm{altrimenti} \\
+\end{cases}
+\]
+per la fase ascendente, e:
+\[
+F^{\Delta} = 
+\begin{cases}
+    x_i = x_i \Delta f_i(x_1, x_2, \cdots, x_n) & \textrm{se il nodo \textit{i} è un WP} \\
+    x_i = x_i \sqcap f_i(x_1, x_2, \cdots, x_n) & \textrm{altrimenti} \\
+\end{cases}
+\]
+per la fase discendente.
+\end{example}
