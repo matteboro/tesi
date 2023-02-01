@@ -1,2 +1,5 @@
-\chapter{Obbiettivi}\label{chapter:obbiettivi}
-\Blindtext %Dummy Text - remove
+\chapter{Decoupling della fase ascendente e fase discendente}\label{chapter:decoupling}
+
+Nel capitolo precedente abbiamo visto come si può usare l'interpretazione astratta per l'analisi statica di un programma. Il metodo proposto si compone di una astrazione del dominio concreto, quindi una connessione di Galois \(\mathbb{C}\galois{\alpha}{\gamma}\mathbb{A}\),  ed un sistema di equazioni  astratte \(F_{\mathbb{A}}\) che correttamente approssimano il comportamento del programma. Il calcolo avviene poi in due fasi, una prima fase, detta ascendente, che calcola un post-fix-point di \(F_{\mathbb{A}}\) in cui si utilizza un estrapolatore (come il widening) per assicurare la convergenza seguita da una fase discendente che ne migliora i risultati. Va notato che entrambi le fasi vengono eseguite sullo stesso dominio \(\mathbb{A}\).
+
+L'idea proposta in [??] è quella di disaccoppiare (decouple) le due fasi, ovvero di calcolare la fase discendente su un dominio diverso, e più preciso, rispetto a quello della fase ascendente. L'obbiettivo è quello di ottenere una analisi più precisa senza pagare il costo di fare una fase ascendente con un dominio molto preciso che si farebbe risentire in termini di efficienza dell'analisi.
