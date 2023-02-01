@@ -831,6 +831,88 @@ In figura \ref{fig:phasesFig} è mostrata una rappresentazione grafica del della
     \label{fig:phasesFig}
 \end{figure}
 
+\begin{example}
+\begin{figure}
+    \centering
+\begin{minipage}{\textwidth}
+\vspace{1cm}
+\[
+F^{\natural}=
+\begin{cases}
+    x_1 = \top \\
+    x_2 = [0, 0]\sqcup(x_4 +_{\textrm{Int}} [2, 2])\sqcup(x_5 +_{\textrm{Int}} [10, 10]) \\
+    x_3 = \textrm{if}_{[x<100]}(x_2) \\
+    x_4 = \textrm{if}_{[x<50]}(x_3) \\
+    x_5 = \textrm{else}_{[x<50]}(x_3) \\
+    x_6 = \textrm{else}_{[x<100]}(x_2) \\
+\end{cases}
+\]  
+\end{minipage}
+    \caption{}
+    \label{fig:ex2equations}
+\end{figure}
+Nell'esempio che mostreremo ora analizzeremo il codice in \ref{fig:codiceEsempio2} cerrcando una approssimazione della collecting semantics tramite interpretazione astratta usando il dominio degli intervalli interi. Nella figura è mostrata anche il sistema di equazioni astratte di cui cerchiamo la soluzione minima. A differenza dell'esempio \ref{ex:easyCode} risoleveremo il sistema di equazioni in modo diverso, infatti adesso calcoleremo entrambe le fasi (ascendente e discendente) ed utilizzeremo gli operatori di widening e narrowing per velocizzare la convergenza del calcolo, in questo modo: 
+\[
+F^{\nabla} = 
+\begin{cases}
+    x_i = x_i \nabla f_i(x_1, x_2, \cdots, x_n) & \textrm{se il nodo \textit{i} è un WP} \\
+    x_i = x_i \sqcup f_i(x_1, x_2, \cdots, x_n) & \textrm{altrimenti} \\
+\end{cases}
+\]
+per la fase ascendente, e:
+\[
+F^{\Delta} = 
+\begin{cases}
+    x_i = x_i \Delta f_i(x_1, x_2, \cdots, x_n) & \textrm{se il nodo \textit{i} è un WP} \\
+    x_i = x_i \sqcap f_i(x_1, x_2, \cdots, x_n) & \textrm{altrimenti} \\
+\end{cases}
+\]
+per la fase discendente.
+
+Per WP intendiamo i \textit{widening points}, ovvero i punti del CFG in cui viene applicato il widening. Si può mostrare che per ogni ciclo del grafo si può etichettare un nodo al suo interno come WP e il calcolo del fix-point convergerà comunque (questo ci permette di essere più selettivi nell'uso del widening e quindi migliorare la precisione dell'approssimazione). Per questo esempio abbiamo \(x_3\) come unico WP.
+\begin{figure}[H]
+    \centering
+        \[
+        \begin{tabular}{|c|c|c|c|c||c|c|c|c||}
+        
+        \multicolumn{2}{c|}{} & 
+        \multicolumn{3}{c||}{\textbf{ascendente}} & 
+        \multicolumn{3}{c|}{\textbf{discendente}}\\
+        
+        \hline 
+        N & WP & 1st & 2nd & 3rd=\(x^{\nabla}\) & 1st & 2nd & 3rd  \\
+        \hline\hline
+        x_1 &  &  
+            \top & \top & \top & 
+            1st & 2nd & 3rd  \\
+        \hline
+        x_2 &  & 
+            [0, 0] & [0, 2] & [0, +\infty] & 
+            1st & 2nd & 3rd  \\
+        \hline
+        x_3 & \checkmark & 
+            [0, 0] & [0, +\infty] & [0, +\infty] & 
+            1st & 2nd & 3rd  \\
+        \hline
+        x_4 &  & 
+            [0, 0] & [0, 49] & [0, 49] & 
+            1st & 2nd & 3rd  \\
+        \hline
+        x_5 &  & 
+            \perp & [50, +\infty] & [50, +\infty] & 
+            1st & 2nd & 3rd  \\
+        \hline
+        x_6 &  & 
+            \perp & [100, +\infty] & [100, +\infty] & 
+            1st & 2nd & 3rd  \\
+        \hline
+        \end{tabular}
+        \]
+    \caption{Caption}
+    \label{fig:my_label}
+\end{figure}
+\end{example}
+
 \begin{figure}
 \begin{minipage}{1cm}
 \hspace{1cm}
@@ -880,40 +962,6 @@ return x;
 \end{tikzpicture}
 \end{center}
 \end{minipage}
-\begin{minipage}{\textwidth}
-\vspace{1cm}
-\[
-F^{\natural}=
-\begin{cases}
-    x_1 = \perp \\
-    x_2 = (x_4 +_{\textrm{Int}} [2, 2])\sqcup(x_5 +_{\textrm{Int}} [10, 10]) \\
-    x_3 = \textrm{if}_{[x<100]}(x_2) \\
-    x_4 = \textrm{if}_{[x<50]}(x_3) \\
-    x_5 = \textrm{else}_{[x<50]}(x_3) \\
-    x_6 = \textrm{else}_{[x<100]}(x_2) \\
-\end{cases}
-\]  
-\end{minipage}
 \caption{}
 \label{fig:codiceEsempio2}
 \end{figure}
-
-\begin{example}
-Nell'esempio che mostreremo ora analizzeremo il codice in \ref{fig:codiceEsempio2} cerrcando una approssimazione della collecting semantics tramite interpretazione astratta usando il dominio degli intervalli interi. Nella figura è mostrata anche il sistema di equazioni astratte di cui cerchiamo la soluzione minima. A differenza dell'esempio \ref{ex:easyCode} risoleveremo il sistema di equazioni in modo diverso, infatti adesso calcoleremo entrambe le fasi (ascendente e discendente) ed utilizzeremo gli operatori di widening e narrowing per velocizzare la convergenza del calcolo, in questo modo: 
-\[
-F^{\nabla} = 
-\begin{cases}
-    x_i = x_i \nabla f_i(x_1, x_2, \cdots, x_n) & \textrm{se il nodo \textit{i} è un WP} \\
-    x_i = x_i \sqcup f_i(x_1, x_2, \cdots, x_n) & \textrm{altrimenti} \\
-\end{cases}
-\]
-per la fase ascendente, e:
-\[
-F^{\Delta} = 
-\begin{cases}
-    x_i = x_i \Delta f_i(x_1, x_2, \cdots, x_n) & \textrm{se il nodo \textit{i} è un WP} \\
-    x_i = x_i \sqcap f_i(x_1, x_2, \cdots, x_n) & \textrm{altrimenti} \\
-\end{cases}
-\]
-per la fase discendente.
-\end{example}
