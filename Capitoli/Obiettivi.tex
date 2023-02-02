@@ -4,34 +4,64 @@ Nel capitolo precedente abbiamo visto come si può usare l'interpretazione astra
 
 L'idea proposta in [??] è quella di disaccoppiare (decouple) le due fasi, ovvero di calcolare la fase discendente su un dominio diverso, e più preciso, rispetto a quello della fase ascendente. L'obbiettivo è quello di ottenere una analisi più precisa senza pagare il costo in termini di efficienza del calcolare la fase ascendente con un dominio molto preciso. In più la fase discendente può essere stoppata dopo un qualsiasi numero di iterazioni e comunque fornire un risultato corretto. Per questo può essere più facile ottenere un buon tradeoff tra precisione ed efficienza.
 
-La notazione che verrà usata per indicare questo approccio decoupled all'interpretazione astratta è \(\mathbb{A}\uparrow\downarrow\mathbb{D}\), dove \(\mathbb{A}\) è il dominio astratta usato nella fase ascendente e \(\mathbb{D}\) è quello utilizzato nella fase discendente. Con questo metodo avremo bisogno di una doppia connessione di Galois in questo modo \(\mathbb{C}\galois{\alpha_{\mathbb{A}}}{\gamma_{\mathbb{D}}}\mathbb{D}\galois{\alpha_{\mathbb{A}\updownarrows\mathbb{D}}}{\gamma_{\mathbb{A}\uparrow\downarrow\mathbb{D}}}\mathbb{A}\) ed è richiesto che la funzione di concretizzazione \(\gamma_{\mathbb{A}\uparrow\downarrow\mathbb{D}}\) sia calcolabile. L'approccio decoupled è graficamente rappresentato nella figura \ref{fig:decFig}. Avendo un sistema di equazioni concrete \(F_{\mathbb{C}}\) correttamente approssimato dal sistema di equazioni \(F_{\mathbb{D}}\) sul dominio \(\mathbb{D}\), e queste ultime ulteriormente approssimate da \(F_{\mathbb{A}}\) sul dominio \(\mathbb{A}\), possiamo riassumere i passaggi del metodo decoupled in questo modo: (1) nella fase ascendente calcoliamo il post-fixpoint \(x^{\nabla}_{\mathbb{A}}\in\mathbb{A}\) di \(F^{\nabla}_{\mathbb{A}}\) con il widening, (2) poi trasferiamo \(x^{\nabla}_{\mathbb{A}}\) nel dominio più preciso \(\mathbb{D}\) tramite la funzione concretizzante \(\gamma_{\mathbb{A}\uparrow\downarrow\mathbb{D}}\), (3) ed infine nella fase discendnte si calcola un post-fix-point migliorato \(x^{\Delta}_{\mathbb{D}}\in\mathbb{D}\) usando il sistema di equazioni \(F^{\Delta}_{\mathbb{D}}\) con narrowing partendo da  \(\gamma_{\mathbb{A}\uparrow\downarrow\mathbb{D}}(x^{\nabla}_{\mathbb{A}})\).
+La notazione che verrà usata per indicare questo approccio decoupled all'interpretazione astratta è \(\mathbb{A}\uparrow\downarrow\mathbb{D}\), dove \(\mathbb{A}\) è il dominio astratta usato nella fase ascendente e \(\mathbb{D}\) è quello utilizzato nella fase discendente. Con questo metodo avremo bisogno di una doppia connessione di Galois in questo modo \(\mathbb{C}\galois{\alpha_{\mathbb{A}}}{\gamma_{\mathbb{D}}}\mathbb{D}\galois{\alpha_{\mathbb{A}\uparrow\downarrow\mathbb{D}}}{\gamma_{\mathbb{A}\uparrow\downarrow\mathbb{D}}}\mathbb{A}\) ed è richiesto che la funzione di concretizzazione \(\gamma_{\mathbb{A}\uparrow\downarrow\mathbb{D}}\) sia calcolabile. L'approccio decoupled è graficamente rappresentato nella figura \ref{fig:decFig}. Avendo un sistema di equazioni concrete \(F_{\mathbb{C}}\) correttamente approssimato dal sistema di equazioni \(F_{\mathbb{D}}\) sul dominio \(\mathbb{D}\), e queste ultime ulteriormente approssimate da \(F_{\mathbb{A}}\) sul dominio \(\mathbb{A}\), possiamo riassumere i passaggi del metodo decoupled in questo modo: (1) nella fase ascendente calcoliamo il post-fixpoint \(x^{\nabla}_{\mathbb{A}}\in\mathbb{A}\) di \(F^{\nabla}_{\mathbb{A}}\) con il widening, (2) poi trasferiamo \(x^{\nabla}_{\mathbb{A}}\) nel dominio più preciso \(\mathbb{D}\) tramite la funzione concretizzante \(\gamma_{\mathbb{A}\uparrow\downarrow\mathbb{D}}\), (3) ed infine nella fase discendnte si calcola un post-fix-point migliorato \(x^{\Delta}_{\mathbb{D}}\in\mathbb{D}\) usando il sistema di equazioni \(F^{\Delta}_{\mathbb{D}}\) con narrowing partendo da  \(\gamma_{\mathbb{A}\uparrow\downarrow\mathbb{D}}(x^{\nabla}_{\mathbb{A}})\).
 
 \begin{figure}[H]
 \centering
 \begin{tikzpicture}
-    \draw [line width=0.5mm] (0, 0) ellipse (2cm and 3cm);
-    \node (top) at (0, 3.5) {$\top$};
-    \node (bottom) at (0, -3.4) {$\perp$};
-    \draw [densely dotted] (0, -1.2) ellipse (1.2cm and 1.8cm);
-    \draw [densely dotted] (0, 1.2) ellipse (1.2cm and 1.8cm);
-    \node (bottomStart) at (0, -3) {};
-    \node (domain) at (-2, 2.5) {\(S\)};
-    \node (pre) at (0.8, -1.5)  {\tiny pre($F$)};
-    \node (post) at (0.4, 2.5)  {\tiny post($F$)};
-    \node (fix) at (0.5, 0)  {\tiny fix($F$)};
-    \node [label=above:{$x^{\nabla}$}] (widPost) at (-0.3, 2) {};
-    \draw [fill=black] (0, -3) circle (0.1cm);
-
-    \node [label=right:{$x^{\Delta}$}] (narrPost) at (0.4, 1) {};
-    \draw [fill=black, line width=0.1mm] (0.4, 1) circle (0.13cm);
+    \draw [line width=0.5mm] (-3, 0) ellipse (2cm and 3cm);
+    \draw [line width=0.5mm] (3, 0) ellipse (2cm and 3cm);
     
-    \draw [fill=black, line width=0.1mm] (-0.3, 2) circle (0.13cm);
+    \node (top) at (-3, 3.5) {$\top_{\mathbb{A}}$};
+    \node (bottom) at (-3, -3.4) {$\perp_{\mathbb{A}}$};
+    \node (top) at (3, 3.5) {$\top_{\mathbb{D}}$};
+    \node (bottom) at (3, -3.4) {$\perp_{\mathbb{D}}$};
+    
+    \draw [densely dotted] (-3, -1.2) ellipse (1.2cm and 1.8cm);
+    \draw [densely dotted] (-3, 1.2) ellipse (1.2cm and 1.8cm);
+    \draw [densely dotted] (3, -1.2) ellipse (1.2cm and 1.8cm);
+    \draw [densely dotted] (3, 1.2) ellipse (1.2cm and 1.8cm);
+    
+    \node (domain) at (-5, 2.5) {\(\mathbb{A}\)};
+    \node (domain) at (5, 2.5) {\(\mathbb{D}\)};
+    
+    \node (bottomStartA) at (-3, -3) {};
+    \draw [fill=black] (-3, -3) circle (0.1cm);
+    \node (bottomStartD) at (3, -3) {};
+    \draw [fill=black] (3, -3) circle (0.1cm);
 
-    \draw[->, line width=0.5mm] (bottomStart.center) to [out=120, in=240] (widPost);
+    \node (pre) at (-2.2, -1.5)  {\tiny pre($F_{\mathbb{A}}$)};
+    \node (post) at (-2.6, 2.5)  {\tiny post($F_{\mathbb{A}}$)};
+    \node (fix) at (-2.5, 0)  {\tiny fix($F_{\mathbb{A}}$)};
+    \node (pre) at (3.8, -1.5)  {\tiny pre($F_{\mathbb{D}}$)};
+    \node (post) at (3, 2.7)  {\tiny post($F_{\mathbb{D}}$)};
+    \node (fix) at (3.5, 0)  {\tiny fix($F_{\mathbb{D}}$)};
+    
+    \node [label=above:{$x^{\nabla}_{\mathbb{A}}$}] (widPostA) at (-3.3, 2) {};
+    \draw [fill=black, line width=0.1mm] (-3.3, 2) circle (0.13cm);
+    \node (widPostD) at (2.7, 2) {};
+    \node (widPostDlabel) at (3.1, 2.2) {$x^{\nabla}_{\mathbb{D}}$};
+    \draw [fill=black, line width=0.1mm] (2.7, 2) circle (0.13cm);
 
-    \draw[->, line width=0.5mm] (widPost.center) to [out=320, in=110] (narrPost);
+    \node (fnablaA) at (-4.5, 1) {\(F^{\nabla}_{\mathbb{A}}\)};
+    \node (fDeltaA) at (-3.1, 1.4) {\color{black!30}\(F^{\Delta}_{\mathbb{A}}\)};
+    \node (fDeltaD) at (2.9, 1.4) {\(F^{\Delta}_{\mathbb{D}}\)};
+
+    \node (concret) at (0, 3) {\(\gamma_{\mathbb{A}\uparrow\downarrow\mathbb{D}}(x^{\nabla}_{\mathbb{A}})\)};
+    
+    \node [label=right:{\color{black!30}$x^{\Delta}_{\mathbb{A}}$}] (narrPostA) at (-2.6, 1) {};
+    \draw [black!30, fill=black!30] (-2.6, 1) circle (0.13cm);
+    \node [label=right:{$x^{\Delta}_{\mathbb{D}}$}] (narrPostD) at (3.4, 1) {};
+    \draw [fill=black, line width=0.1mm] (3.4, 1) circle (0.13cm);
+
+    \draw[->, line width=0.5mm] (bottomStartA.center) to [out=150, in=220] (widPostA);
+
+    \draw[->, line width=0.3mm, dotted, black!30] (widPostA) to [out=330, in=100] (narrPostA);
+    
+    \draw[->, line width=0.5mm] (widPostD.center) to [out=330, in=100] (narrPostD);
+    \draw[->, line width=0.5mm] (widPostA.center) to [out=20, in=160] (widPostD);
 \end{tikzpicture}
     \centering
-    \caption{Fase ascendente e discendente su un dominio \(S\)}
+    \caption{Fase ascendente e discendente disaccoppiate sui domini \(\mathbb{A}\) e \(\mathbb{D}\))}
     \label{fig:decFig}
 \end{figure}
