@@ -2,4 +2,36 @@
 
 Nel capitolo precedente abbiamo visto come si può usare l'interpretazione astratta per l'analisi statica di un programma. Il metodo proposto si compone di una astrazione del dominio concreto, quindi una connessione di Galois \(\mathbb{C}\galois{\alpha}{\gamma}\mathbb{A}\),  ed un sistema di equazioni  astratte \(F_{\mathbb{A}}\) che correttamente approssimano il comportamento del programma. Il calcolo avviene poi in due fasi, una prima fase, detta ascendente, che calcola un post-fix-point di \(F_{\mathbb{A}}\) in cui si utilizza un estrapolatore (come il widening) per assicurare la convergenza seguita da una fase discendente che ne migliora i risultati. Va notato che entrambi le fasi vengono eseguite sullo stesso dominio \(\mathbb{A}\).
 
-L'idea proposta in [??] è quella di disaccoppiare (decouple) le due fasi, ovvero di calcolare la fase discendente su un dominio diverso, e più preciso, rispetto a quello della fase ascendente. L'obbiettivo è quello di ottenere una analisi più precisa senza pagare il costo di fare una fase ascendente con un dominio molto preciso che si farebbe risentire in termini di efficienza dell'analisi.
+L'idea proposta in [??] è quella di disaccoppiare (decouple) le due fasi, ovvero di calcolare la fase discendente su un dominio diverso, e più preciso, rispetto a quello della fase ascendente. L'obbiettivo è quello di ottenere una analisi più precisa senza pagare il costo in termini di efficienza del calcolare la fase ascendente con un dominio molto preciso. In più la fase discendente può essere stoppata dopo un qualsiasi numero di iterazioni e comunque fornire un risultato corretto. Per questo può essere più facile ottenere un buon tradeoff tra precisione ed efficienza.
+
+La notazione che verrà usata per indicare questo approccio decoupled all'interpretazione astratta è \(\mathbb{A}\uparrow\downarrow\mathbb{D}\), dove \(\mathbb{A}\) è il dominio astratta usato nella fase ascendente e \(\mathbb{D}\) è quello utilizzato nella fase discendente. Con questo metodo avremo bisogno di una doppia connessione di Galois in questo modo \(\mathbb{C}\galois{\alpha_{\mathbb{A}}}{\gamma_{\mathbb{D}}}\mathbb{D}\galois{\alpha_{\mathbb{A}\updownarrows\mathbb{D}}}{\gamma_{\mathbb{A}\uparrow\downarrow\mathbb{D}}}\mathbb{A}\) ed è richiesto che la funzione di concretizzazione \(\gamma_{\mathbb{A}\uparrow\downarrow\mathbb{D}}\) sia calcolabile. L'approccio decoupled è graficamente rappresentato nella figura \ref{fig:decFig}. Avendo un sistema di equazioni concrete \(F_{\mathbb{C}}\) correttamente approssimato dal sistema di equazioni \(F_{\mathbb{D}}\) sul dominio \(\mathbb{D}\), e queste ultime ulteriormente approssimate da \(F_{\mathbb{A}}\) sul dominio \(\mathbb{A}\), possiamo riassumere i passaggi del metodo decoupled in questo modo: (1) nella fase ascendente calcoliamo il post-fixpoint \(x^{\nabla}_{\mathbb{A}}\in\mathbb{A}\) di \(F^{\nabla}_{\mathbb{A}}\) con il widening, (2) poi trasferiamo \(x^{\nabla}_{\mathbb{A}}\) nel dominio più preciso \(\mathbb{D}\) tramite la funzione concretizzante \(\gamma_{\mathbb{A}\uparrow\downarrow\mathbb{D}}\), (3) ed infine nella fase discendnte si calcola un post-fix-point migliorato \(x^{\Delta}_{\mathbb{D}}\in\mathbb{D}\) usando il sistema di equazioni \(F^{\Delta}_{\mathbb{D}}\) con narrowing partendo da  \(\gamma_{\mathbb{A}\uparrow\downarrow\mathbb{D}}(x^{\nabla}_{\mathbb{A}})\).
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+    \draw [line width=0.5mm] (0, 0) ellipse (2cm and 3cm);
+    \node (top) at (0, 3.5) {$\top$};
+    \node (bottom) at (0, -3.4) {$\perp$};
+    \draw [densely dotted] (0, -1.2) ellipse (1.2cm and 1.8cm);
+    \draw [densely dotted] (0, 1.2) ellipse (1.2cm and 1.8cm);
+    \node (bottomStart) at (0, -3) {};
+    \node (domain) at (-2, 2.5) {\(S\)};
+    \node (pre) at (0.8, -1.5)  {\tiny pre($F$)};
+    \node (post) at (0.4, 2.5)  {\tiny post($F$)};
+    \node (fix) at (0.5, 0)  {\tiny fix($F$)};
+    \node [label=above:{$x^{\nabla}$}] (widPost) at (-0.3, 2) {};
+    \draw [fill=black] (0, -3) circle (0.1cm);
+
+    \node [label=right:{$x^{\Delta}$}] (narrPost) at (0.4, 1) {};
+    \draw [fill=black, line width=0.1mm] (0.4, 1) circle (0.13cm);
+    
+    \draw [fill=black, line width=0.1mm] (-0.3, 2) circle (0.13cm);
+
+    \draw[->, line width=0.5mm] (bottomStart.center) to [out=120, in=240] (widPost);
+
+    \draw[->, line width=0.5mm] (widPost.center) to [out=320, in=110] (narrPost);
+\end{tikzpicture}
+    \centering
+    \caption{Fase ascendente e discendente su un dominio \(S\)}
+    \label{fig:decFig}
+\end{figure}

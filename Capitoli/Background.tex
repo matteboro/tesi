@@ -801,8 +801,8 @@ ed un narrowing \(\Delta:\textrm{Int}\times\textrm{Int}\rightarrow\textrm{Int}\)
 \]
 \end{example}
 
-Riassumendo il concetto nella prima fase ascendente utilizzeremo, per raggiungere un post-fix-point di \(F^{\natural}\), una versione del sistema di equazione che fa il join tra gli step della iterazione utilizzando il lub od il widening (con una logica in grado di decidere quando usare l'uno o l'altro), questo passaggio lo chiamiamo \(F^{\nabla}\). Nella fase discendente invece, partendo dal risultato calcolato da quella prima, modificheremo il sistema di equazioni in modo da fare il meet tra gli step utlizzando o il glb o il narrowing, questo passaggio lo chiamiamo \(F^{\Delta}\). 
-In figura \ref{fig:phasesFig} è mostrata una rappresentazione grafica del della fase ascendente e discendente su un dominio \(S\).
+Riassumendo il concetto nella prima fase (ascendente) utilizzeremo, per raggiungere un post-fix-point di \(F^{\natural}\), una versione del sistema di equazione che fa il join tra gli step della iterazione utilizzando il lub od il widening (con una logica in grado di decidere quando usare l'uno o l'altro), questo passaggio lo chiamiamo \(F^{\nabla}\). Nella fase discendente invece, partendo dal risultato calcolato da quella prima, modificheremo il sistema di equazioni in modo da fare il meet tra gli step utlizzando o il glb o il narrowing, questo passaggio lo chiamiamo \(F^{\Delta}\). 
+In figura \ref{fig:phasesFig} è mostrata una rappresentazione grafica del della fase ascendente e discendente su un dominio \(\mathbb{S}\).
 
 \begin{figure}[H]
 \begin{tikzpicture}
@@ -819,6 +819,8 @@ In figura \ref{fig:phasesFig} è mostrata una rappresentazione grafica del della
     \node [label=above:{$x^{\nabla}$}] (widPost) at (-0.3, 2) {};
     \draw [fill=black] (0, -3) circle (0.1cm);
 
+    \node (fnabla) at (-1, 0) {\(F^{\nabla}\)};
+
     \node [label=right:{$x^{\Delta}$}] (narrPost) at (0.4, 1) {};
     \draw [fill=black, line width=0.1mm] (0.4, 1) circle (0.13cm);
     
@@ -829,7 +831,7 @@ In figura \ref{fig:phasesFig} è mostrata una rappresentazione grafica del della
     \draw[->, line width=0.5mm] (widPost.center) to [out=320, in=110] (narrPost);
 \end{tikzpicture}
     \centering
-    \caption{Fase ascendente e discendente su un dominio \(S\)}
+    \caption{Fase ascendente e discendente su un dominio \(\mathbb{S}\)}
     \label{fig:phasesFig}
 \end{figure}
 
@@ -943,11 +945,11 @@ F^{\natural}=
             \top & \top \\
         \hline
         x_2 &  & 
-            [0, 0] & [0, 2] & [0, +\infty] & 
-            [0, +\infty] & [0, 109] \\
+            [0, 0] & [0, 2] & [0, +\infty ] & 
+            [0, +\infty ] & [0, 109] \\
         \hline
         x_3 & \checkmark & 
-            [0, 0] & [0, +\infty] & [0, +\infty] & 
+            [0, 0] & [0, +\infty ] & [0, +\infty ] & 
             [0, 99] & [0, 99] \\
         \hline
         x_4 &  & 
@@ -955,12 +957,12 @@ F^{\natural}=
             [0, 49] & [0, 49] \\
         \hline
         x_5 &  & 
-            \perp & [50, +\infty] & [50, +\infty] & 
+            \perp & [50, +\infty ] & [50, +\infty ] & 
             [50, 99] & [50, 99] \\
         \hline
         x_6 &  & 
-            \perp & [100, +\infty] & [100, +\infty] & 
-            [100, +\infty] & [100, 109] \\
+            \perp & [100, +\infty ] & [100, +\infty ] & 
+            [100, +\infty ] & [100, 109] \\
         \hline
         \end{tabular}
         \]
