@@ -349,7 +349,7 @@ Data una connessione di Galois \(\simplePoset{C}\galois{\alpha}{\gamma}\simplePo
 
 Un'altra importante proprietà delle connessioni di Galois è che date due connessioni di Galois \(\simplePoset{C}\galois{\alpha_1}{\gamma_1}\simplePoset{A}\) e \(\simplePoset{A}\galois{\alpha_2}{\gamma_2}\simplePoset{B}\), la loro composizione \(\simplePoset{C}\galois{\alpha_1\circ\alpha_2}{\gamma_1\circ\gamma_2}\simplePoset{B}\) è anche una connessione di Galois.
 
-\begin{example}
+\begin{example}\label{ex:galoisSignInt}
 Prendiamo i due poset mostrati negli esempi di prima, \(\simplePoset{\textrm{Int}}\) e \(\simplePoset{\textrm{Sign}}\), diamo una definizione delle funzioni \(\alpha:\textrm{Int}\rightarrow\textrm{Sign}\) e \(\gamma:\textrm{Sign}\rightarrow\textrm{Int}\) tali da creare la connessione di Galois \(\GaloisConnection{\textrm{Int}}{\textrm{Sign}}\):
 \begin{itemize}
 \item dato \(i\in\textrm{Int}\) abbiamo che \(\alpha(i)\) = 
@@ -889,7 +889,7 @@ return x;
 \label{fig:codiceEsempio2}
 \end{figure}
 
-\begin{example}
+\begin{example}\label{ex:esempio2}
 Nell'esempio che mostreremo ora analizzeremo il codice in \ref{fig:codiceEsempio2} cerrcando una approssimazione della collecting semantics tramite interpretazione astratta usando il dominio degli intervalli interi. Nella figura \ref{fig:ris} è mostrata anche il sistema di equazioni astratte di cui cerchiamo la soluzione minima. A differenza dell'esempio \ref{ex:easyCode} risoleveremo il sistema di equazioni in modo diverso, infatti adesso calcoleremo entrambe le fasi (ascendente e discendente) ed utilizzeremo gli operatori di widening e narrowing per velocizzare la convergenza del calcolo, in questo modo: 
 \[
 F^{\nabla} = 
