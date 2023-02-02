@@ -4,7 +4,7 @@ Nel capitolo precedente abbiamo visto come si può usare l'interpretazione astra
 
 L'idea proposta in [??] è quella di disaccoppiare (decouple) le due fasi, ovvero di calcolare la fase discendente su un dominio diverso, e più preciso, rispetto a quello della fase ascendente. L'obbiettivo è quello di ottenere una analisi più precisa senza pagare il costo in termini di efficienza del calcolare la fase ascendente con un dominio molto preciso. In più la fase discendente può essere stoppata dopo un qualsiasi numero di iterazioni e comunque fornire un risultato corretto. Per questo può essere più facile ottenere un buon tradeoff tra precisione ed efficienza.
 
-La notazione che verrà usata per indicare questo approccio decoupled all'interpretazione astratta è \(\mathbb{A}\uparrow\downarrow\mathbb{D}\), dove \(\mathbb{A}\) è il dominio astratta usato nella fase ascendente e \(\mathbb{D}\) è quello utilizzato nella fase discendente. Con questo metodo avremo bisogno di una doppia connessione di Galois in questo modo \(\mathbb{C}\galois{\alpha_{\mathbb{A}}}{\gamma_{\mathbb{D}}}\mathbb{D}\galois{\alpha_{\mathbb{A}\uparrow\downarrow\mathbb{D}}}{\gamma_{\mathbb{A}\uparrow\downarrow\mathbb{D}}}\mathbb{A}\) ed è richiesto che la funzione di concretizzazione \(\gamma_{\mathbb{A}\uparrow\downarrow\mathbb{D}}\) sia calcolabile. L'approccio decoupled è graficamente rappresentato nella figura \ref{fig:decFig}. Avendo un sistema di equazioni concrete \(F_{\mathbb{C}}\) correttamente approssimato dal sistema di equazioni \(F_{\mathbb{D}}\) sul dominio \(\mathbb{D}\), e queste ultime ulteriormente approssimate da \(F_{\mathbb{A}}\) sul dominio \(\mathbb{A}\), possiamo riassumere i passaggi del metodo decoupled in questo modo: (1) nella fase ascendente calcoliamo il post-fixpoint \(x^{\nabla}_{\mathbb{A}}\in\mathbb{A}\) di \(F^{\nabla}_{\mathbb{A}}\) con il widening, (2) poi trasferiamo \(x^{\nabla}_{\mathbb{A}}\) nel dominio più preciso \(\mathbb{D}\) tramite la funzione concretizzante \(\gamma_{\mathbb{A}\uparrow\downarrow\mathbb{D}}\), (3) ed infine nella fase discendente si calcola un post-fix-point migliorato \(x^{\Delta}_{\mathbb{D}}\in\mathbb{D}\) usando il sistema di equazioni \(F^{\Delta}_{\mathbb{D}}\) con narrowing partendo da  \(\gamma_{\mathbb{A}\uparrow\downarrow\mathbb{D}}(x^{\nabla}_{\mathbb{A}})\).
+La notazione che verrà usata per indicare questo approccio decoupled all'interpretazione astratta è \(\mathbb{A}\uparrow\downarrow\mathbb{D}\), dove \(\mathbb{A}\) è il dominio astratta usato nella fase ascendente e \(\mathbb{D}\) è quello utilizzato nella fase discendente. Con questo metodo avremo bisogno di una doppia connessione di Galois in questo modo \(\mathbb{C}\galois{\alpha_{\mathbb{A}}}{\gamma_{\mathbb{D}}}\mathbb{D}\galois{\alpha_{\mathbb{D}\uparrow\downarrow\mathbb{D}}}{\gamma_{\mathbb{A}\uparrow\downarrow\mathbb{D}}}\mathbb{A}\) ed è richiesto che la funzione di concretizzazione \(\gamma_{\mathbb{A}\uparrow\downarrow\mathbb{D}}\) sia calcolabile. L'approccio decoupled è graficamente rappresentato nella figura \ref{fig:decFig}. Avendo un sistema di equazioni concrete \(F_{\mathbb{C}}\) correttamente approssimato dal sistema di equazioni \(F_{\mathbb{D}}\) sul dominio \(\mathbb{D}\), e queste ultime ulteriormente approssimate da \(F_{\mathbb{A}}\) sul dominio \(\mathbb{A}\), possiamo riassumere i passaggi del metodo decoupled in questo modo: (1) nella fase ascendente calcoliamo il post-fixpoint \(x^{\nabla}_{\mathbb{A}}\in\mathbb{A}\) di \(F^{\nabla}_{\mathbb{A}}\) con il widening, (2) poi trasferiamo \(x^{\nabla}_{\mathbb{A}}\) nel dominio più preciso \(\mathbb{D}\) tramite la funzione concretizzante \(\gamma_{\mathbb{A}\uparrow\downarrow\mathbb{D}}\), (3) ed infine nella fase discendente si calcola un post-fix-point migliorato \(x^{\Delta}_{\mathbb{D}}\in\mathbb{D}\) usando il sistema di equazioni \(F^{\Delta}_{\mathbb{D}}\) con narrowing partendo da  \(\gamma_{\mathbb{A}\uparrow\downarrow\mathbb{D}}(x^{\nabla}_{\mathbb{A}})\).
 
 \begin{figure}[H]
 \centering
@@ -67,7 +67,8 @@ La notazione che verrà usata per indicare questo approccio decoupled all'interp
 \end{figure}
 
 \begin{example}
-Riprendiamo l'esempio \ref{ex:esempio2} e utilizziamo il dominio decoupled \(\textrm{Sign}\uparrow\downarrow\textrm{Int}\) per cercare una approssimazione della collecting semantics del programma. La funzione concretizzante \(\gamma_{\textrm{Sign}\uparrow\downarrow\textrm{Int}}\) la abbiamo definita nell'esempio \ref{ex:galoisSignInt}. 
+Riprendiamo l'esempio \ref{ex:esempio2} e utilizziamo il dominio decoupled \(\textrm{Sign}\uparrow\downarrow\textrm{Int}\) per cercare una approssimazione della collecting semantics del programma. La funzione concretizzante \(\gamma_{\textrm{Sign}\uparrow\downarrow\textrm{Int}}\) la abbiamo definita nell'esempio \ref{ex:galoisSignInt}. I risultati dell'analisi sono mostrati nella tabella in figura \ref{fig:risDecSingInt}. 
+
 \begin{figure}[H]
 \begin{minipage}{\textwidth}
     \centering
@@ -75,7 +76,7 @@ Riprendiamo l'esempio \ref{ex:esempio2} e utilizziamo il dominio decoupled \(\te
         \[
         \begin{tabular}{|c|c|c|c||c||c|c|c||}
         \hline
-        \multicolumn{2}{|c|}{} & 
+        \multicolumn{2}{|c|}{fase} & 
         \multicolumn{2}{c||}{\textbf{ascendente}} & 
         \multicolumn{1}{c||}{\textbf{decoupling}} & 
         \multicolumn{2}{c|}{\textbf{discendente}}\\
@@ -85,41 +86,40 @@ Riprendiamo l'esempio \ref{ex:esempio2} e utilizziamo il dominio decoupled \(\te
         \(\gamma_{\textrm{Sign}\uparrow\downarrow\textrm{Int}}(x^{\nabla}_{\textrm{Sign}})\)& 
         1st & 2nd=\(x^{\Delta}_{\textrm{Int}}\)  \\
         \hline
-        x_1 &  &  
-            \top_{\textrm{Sign}} & \top_{\textrm{Sign}} & 
-            \top_{\textrm{Int}} & 
-            \top_{\textrm{Int}} & \top_{\textrm{Int}} \\
+        $x_1$ &  &  
+            $\top_{\textrm{Sign}}$ & $\top_{\textrm{Sign}}$ & 
+            $\top_{\textrm{Int}}$ & 
+            $\top_{\textrm{Int}}$ & $\top_{\textrm{Int}}$ \\
         \hline
-        x_2 &  & 
+        $x_2$ &  & 
             0 & 0+ & 
-            [0, +\infty ] & 
-            [0, +\infty ] & [0, 109] \\
+            $\left[0, +\infty \right]$ & 
+            $\left[0, +\infty \right]$ & $\left[0, 109\right]$ \\
         \hline
-        x_3 & \checkmark & 
+        $x_3$ & \checkmark & 
             0 & 0+ & 
-            [0, +\infty ] & 
-            [0, 99] & [0, 99] \\
+            $\left[0, +\infty \right]$ & 
+            $\left[0, 99\right]$ & $\left[0, 99\right]$ \\
         \hline
-        x_4 &  & 
+        $x_4$ &  & 
             0 & 0+ & 
-            [0, +\infty] & 
-            [0, 49] & [0, 49] \\
+            $\left[0, +\infty\right]$ & 
+            $\left[0, 49\right]$ & $\left[0, 49\right]$ \\
         \hline
-        x_5 &  & 
-            \perp_{\textrm{Sign}} & + & 
-            [1, +\infty ] & 
-            [50, 99] & [50, 99] \\
+        $x_5$ &  & 
+            $\perp_{\textrm{Sign}}$ & + & 
+            $\left[1, +\infty \right]$ & 
+            $\left[50, 99\right]$ & $\left[50, 99\right]$ \\
         \hline
-        x_6 &  & 
-            \perp_{\textrm{Sign}} & + & 
-            [1, +\infty ] & 
-            [100, +\infty ] & [100, 109] \\
+        $x_6$ &  & 
+            $\perp_{\textrm{Sign}}$ & + & 
+            $\left[1, +\infty \right]$ & 
+            $\left[100, +\infty \right]$ & $\left[100, 109\right]$ \\
         \hline
         \end{tabular}
         \]
-        (b)
     \end{minipage}
     \caption{tabella dei risultati del dominio \(\textrm{Sign}\uparrow\downarrow\textrm{Int}\) divisi per step e fase.}
-    \label{fig:ris}
+    \label{fig:risDecSingInt}
 \end{figure}
 \end{example}

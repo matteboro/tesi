@@ -872,7 +872,7 @@ return x;
   \node [above] at (then1.north west) {\(x_4\)};
   \node [rectangle, draw=black!25, below right of=decide2] (then2) {\(x = x + 10\)};
   \node [above] at (then2.north east) {\(x_5\)};
-  \node [rectangle, draw=black!25,  right=1cm of decide1] (return) {return \(x\);};
+  \node [rectangle, draw=black!25, right of=decide1] (return) {return \(x\);};
   \node [above] at (return.north east) {\(x_6\)};
   % edges
   \path [line] (init) -- (decide1);
@@ -933,37 +933,37 @@ F^{\natural}=
     \vspace{1cm}
         \[
         \begin{tabular}{|c|c|c|c|c||c|c|c||}
-        
-        \multicolumn{2}{c|}{} & 
+        \hline
+        \multicolumn{2}{|c|}{fase} & 
         \multicolumn{3}{c||}{\textbf{ascendente}} & 
         \multicolumn{2}{c|}{\textbf{discendente}}\\
         
         \hline 
-        N & WP & 1st & 2nd & 3rd=x^{\nabla} & 1st & 2nd=x^{\Delta}  \\
-        \hline\hline
-        x_1 &  &  
-            \top & \top & \top & 
-            \top & \top \\
+        N & WP & 1st & 2nd & 3rd=$x^{\nabla}$ & 1st & 2nd=$x^{\Delta}$  \\
         \hline
-        x_2 &  & 
-            [0, 0] & [0, 2] & [0, +\infty ] & 
-            [0, +\infty ] & [0, 109] \\
+        $x_1$ &  &  
+            $\top$ & $\top$ & $\top$ & 
+            $\top$ & $\top$ \\
         \hline
-        x_3 & \checkmark & 
-            [0, 0] & [0, +\infty ] & [0, +\infty ] & 
-            [0, 99] & [0, 99] \\
+        $x_2$ &  & 
+            $\left[0, 0\right]$ & $\left[0, 2\right]$ & $\left[0, +\infty \right]$ & 
+            $\left[0, +\infty \right]$ & $\left[0, 109\right]$ \\
         \hline
-        x_4 &  & 
-            [0, 0] & [0, 49] & [0, 49] & 
-            [0, 49] & [0, 49] \\
+        $x_3$ & \checkmark & 
+            $\left[0, 0\right]$ & $\left[0, +\infty \right]$ & $\left[0, +\infty \right]$ & 
+            $\left[0, 99\right]$ & $\left[0, 99\right]$ \\
         \hline
-        x_5 &  & 
-            \perp & [50, +\infty ] & [50, +\infty ] & 
-            [50, 99] & [50, 99] \\
+        $x_4$ &  & 
+            $\left[0, 0\right]$ & $\left[0, 49\right]$ & $\left[0, 49\right]$ & 
+            $\left[0, 49\right]$ & $\left[0, 49\right]$ \\
         \hline
-        x_6 &  & 
-            \perp & [100, +\infty ] & [100, +\infty ] & 
-            [100, +\infty ] & [100, 109] \\
+        $x_5$ &  & 
+            $\perp$ & $\left[50, +\infty \right]$ & $\left[50, +\infty \right]$ & 
+            $\left[50, 99\right]$ & $\left[50, 99\right]$ \\
+        \hline
+        $x_6$ &  & 
+            $\perp$ & $\left[100, +\infty \right]$ & $\left[100, +\infty \right]$ & 
+            $\left[100, +\infty \right]$ & $\left[100, 109\right]$ \\
         \hline
         \end{tabular}
         \]
