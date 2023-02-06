@@ -8,24 +8,6 @@ LiSA mette a disposizione: (i) un linguaggio interno basato su control-flow grap
 
 Durante la mia tesi ho lavorato soprattutto sulle componenti (iii) e (iv). Per prima cosa ho esteso l'algoritmo per il calcolo del fix-point affinchè fosse in grado di eseguire anche la fase discendente partendo da un post-fix-point precedentemente calcolato, ho aggiunto classi generiche come base per l'implementazione del dominio astratto degli insiemi non ridondanti di un altro dominio astratto (nonchè una implementazione concreta di ciò per gli intervalli) ed infine, per scopo sperimentale, una rudimentale versione del decoupling capace di usare domini diversi per salire e scendere nell'analisi.
 
-\section{LiSA}
-In questa sezione faremo una overview della archutettura di LiSA facalizzandoci sulla struttura della rappresentazione interna dei programmi, sulle interfacce attraverso cui è possibile definire nuovi domini astratti e sull'organizzazione della vera e propria analisi statica (andando a guardarne le componenti e gli algoritmi).
-
-\subsection{I CFG di LiSA}
-La struttura dei CFG in LiSA è progettata per essere il più flessibile possibile così da essere in grado di rappresentare il maggior numero di costrutti semantici provenienti da più linguaggi di programmazione. Un LiSA CFG ha gli \texttt{Statement} come nodi (ognuno con il proprio significato semantico) e gli \texttt{Edge} come archi (i quali modellano il flusso di dati durante l'esecuzione del programma). 
-
-\subsubsection{\texttt{Statement}}
-Uno \texttt{Statement} rappresenta un costrutto semantico base di un linguaggio di programmazione che non modifica il flusso di esecuzione. Uno \texttt{Statement} che lascia un valore sullo stack è detto \texttt{Expression}, che è una sotto classe di \texttt{Statement}. La maggior parte delle \texttt{Expression} rappresentano operazioni base comuni a molti linguaggio (come addizione, sottrazione, e tutte le altre operazioni aritmetiche, operazioni sulle stringhe come concatenazione o lunghezza, operazioni logiche su booleani come and e or e così via). Una sotto-classe particolare di \texttt{Expression} è \texttt{Call}. Esistono molti tipi di \texttt{Call} in LiSA, ma riassuntivamente queste rappresentano chiamate ad altre funzioni, quindi altri CFG. Le \texttt{Call} vengono gestite tramite una classe che implementa l'interfaccia \texttt{InterproceduralAnalysis}, il compito di una di queste classi è proprio di gestire l'interproceduralità di un programma, ovvero la possibilità di avere, in una funzione, chiamate ad altre funzioni (o a se stesse, quindi chiamate ricorsive). 
-
-\subsubsection{\texttt{Edge}}
-La classe \texttt{Edge} collega tra di loro due nodi. Esistono tre tipi di \texttt{Edge}: \texttt{SequentialEdge}, modella un flusso senza condizione e sequenziale dal nodo di origine al nodo target, \texttt{TrueEdge}, modella un flusso condizionale se la condizione nel nodo di origine è vera, \texttt{FalseEdge}, modella un flusso condizionale se la condizione nel nodo di origine è falsa.
-\\
-
-\texttt{Edge} e \texttt{Statement} modificano le istanze del dominio astratto attraverso, rispettivamente, i metodi \texttt{traverse}, che agisce sul post-state del nodo di origine e consegna il valore trasformato al pre-state del nodo target, e \texttt{semantics}, che trasforma il pre-state di un nodo nel suo post-state. Più precisamente però non è la classe \texttt{Statement} che modifica il dominio astratto, infatti ogni \texttt{Statement} viene trascritto in una composizione di \texttt{SymbolicExpression} a run-time durante l'analisi. Ogni \texttt{SymbolicExpression} ha un significato semantico ben preciso e le istanze del dominio astratto definiscono gli effetti semantici su quest'ultime e non sugli \texttt{Statement}. Possiamo vedere gli \texttt{Statement} come la sintassi e le \texttt{SymbolicExpression} come la semantica dei CFG in LiSA. Le \texttt{SymbolicExpression} si dividono in due principali tipi di espressione, abbiamo le \texttt{HeapExpression}, ovvero le espressioni che modellano le operazioni sul'heap (come \texttt{HeapAllocation}, \texttt{AccessChild}), e le \texttt{ValueExpression}, che modellano modifiche e operazione sul valore di variabili e costanti (qui per esempio abbiamo \texttt{Addition}, \texttt{LessOrEqual}, \texttt{And}, \texttt{Modulo}, etc..).
-
-
-Per fare un esempio prendiamo in considerazione lo statement \texttt{x = a + b} in un linguaggio non tipato (come Python), in cui non sappiamo i tipi dei valori di \texttt{a} e \texttt{b}. Questo statement in LiSA può essere tradotto in due espressioni simboliche, una per le parte sinistra, ovvero un riferimento alla variabile \texttt{x}, che può essere ulteriormente processata dal dominio astratto che modula l'heap, e una per la parte destra e modella la semantica dell'addizione \texttt{a + b}. Questa può anche controllare i tipi delle due variabili di \texttt{a} e \texttt{b} a run-time e in alcuni casi generare una \texttt{SymbolicExpression} che rappresenta l'addizione tra interi (se le due variabili possono avere valori numerici interi) e in altri casi una che rappresenta la concatenazione di stringhe (se entrambe possono contenere stringhe), o qualsiasi altro tipo di operazione modellata tramite il \texttt{+} che dipende dalle caratteristiche dei suoi operandi.
-
 \begin{figure}
     \centering
 
@@ -120,4 +102,38 @@ errors
     \caption{Caption}
     \label{fig:lisaAnalysisFlow}
 \end{figure}
+
+\section{LiSA}
+In questa sezione faremo una overview della archutettura di LiSA facalizzandoci sulla struttura della rappresentazione interna dei programmi, sulle interfacce attraverso cui è possibile definire nuovi domini astratti e sull'organizzazione della vera e propria analisi statica (andando a guardarne le componenti e gli algoritmi).
+
+\subsection{I CFG di LiSA}
+La struttura dei CFG in LiSA è progettata per essere il più flessibile possibile così da essere in grado di rappresentare il maggior numero di costrutti semantici provenienti da più linguaggi di programmazione. Un LiSA CFG ha gli \texttt{Statement} come nodi (ognuno con il proprio significato semantico) e gli \texttt{Edge} come archi (i quali modellano il flusso di dati durante l'esecuzione del programma). 
+
+\subsubsection{\texttt{Statement}}
+Uno \texttt{Statement} rappresenta un costrutto semantico base di un linguaggio di programmazione che non modifica il flusso di esecuzione. Uno \texttt{Statement} che lascia un valore sullo stack è detto \texttt{Expression}, che è una sotto classe di \texttt{Statement}. La maggior parte delle \texttt{Expression} rappresentano operazioni base comuni a molti linguaggio (come addizione, sottrazione, e tutte le altre operazioni aritmetiche, operazioni sulle stringhe come concatenazione o lunghezza, operazioni logiche su booleani come and e or e così via). Una sotto-classe particolare di \texttt{Expression} è \texttt{Call}. Esistono molti tipi di \texttt{Call} in LiSA, ma riassuntivamente queste rappresentano chiamate ad altre funzioni, quindi altri CFG. Le \texttt{Call} vengono gestite tramite una classe che implementa l'interfaccia \texttt{InterproceduralAnalysis}, il compito di una di queste classi è proprio di gestire l'interproceduralità di un programma, ovvero la possibilità di avere, in una funzione, chiamate ad altre funzioni (o a se stesse, quindi chiamate ricorsive). In figura \ref{fig:gerarchiaStatement} si può vedere una sommaria e non completa gerarchia della classe \texttt{Statement}.
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.9\textwidth]{Immagini/gerarchiaStatement.png}
+	\caption{Gerarchia della classe \texttt{statement}}
+	\label{fig:gerarchiaStatement}
+\end{figure}
+
+\subsubsection{\texttt{Edge}}
+La classe \texttt{Edge} collega tra di loro due nodi. Esistono tre tipi di \texttt{Edge}: \texttt{SequentialEdge}, modella un flusso senza condizione e sequenziale dal nodo di origine al nodo target, \texttt{TrueEdge}, modella un flusso condizionale se la condizione nel nodo di origine è vera, \texttt{FalseEdge}, modella un flusso condizionale se la condizione nel nodo di origine è falsa.
+\\
+
+\texttt{Edge} e \texttt{Statement} modificano le istanze del dominio astratto attraverso, rispettivamente, i metodi \texttt{traverse}, che agisce sul post-state del nodo di origine e consegna il valore trasformato al pre-state del nodo target, e \texttt{semantics}, che trasforma il pre-state di un nodo nel suo post-state. Più precisamente però non è la classe \texttt{Statement} che modifica il dominio astratto, infatti ogni \texttt{Statement} viene trascritto in una composizione di \texttt{SymbolicExpression} a run-time durante l'analisi. Ogni \texttt{SymbolicExpression} ha un significato semantico ben preciso e le istanze del dominio astratto definiscono gli effetti semantici su quest'ultime e non sugli \texttt{Statement}. Possiamo vedere gli \texttt{Statement} come la sintassi e le \texttt{SymbolicExpression} come la semantica dei CFG in LiSA. Le \texttt{SymbolicExpression} si dividono in due principali tipi di espressione, abbiamo le \texttt{HeapExpression}, ovvero le espressioni che modellano le operazioni sul'heap (come \texttt{HeapAllocation}, \texttt{AccessChild}), e le \texttt{ValueExpression}, che modellano modifiche e operazione sul valore di variabili e costanti (qui per esempio abbiamo \texttt{Addition}, \texttt{LessOrEqual}, \texttt{And}, \texttt{Modulo}, etc..). In figura \ref{fig:gerarchiaSymbolic} qua sotto si vede la non completa gerarchia delle \texttt{SymbolicExpression}.
+
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.9\textwidth]{Immagini/gerarchiaSymbolicExpression.png}
+	\caption{Gerarchia della classe \texttt{statement}}
+	\label{fig:gerarchiaSymbolic}
+\end{figure}
+
+
+Per fare un esempio prendiamo in considerazione lo statement \texttt{x = a + b} in un linguaggio non tipato (come Python), in cui non sappiamo i tipi dei valori di \texttt{a} e \texttt{b}. Questo statement in LiSA può essere tradotto in due espressioni simboliche, una per le parte sinistra, ovvero un riferimento alla variabile \texttt{x}, che può essere ulteriormente processata dal dominio astratto che modula l'heap, e una per la parte destra e modella la semantica dell'addizione \texttt{a + b}. Questa può anche controllare i tipi delle due variabili di \texttt{a} e \texttt{b} a run-time e in alcuni casi generare una \texttt{SymbolicExpression} che rappresenta l'addizione tra interi (se le due variabili possono avere valori numerici interi) e in altri casi una che rappresenta la concatenazione di stringhe (se entrambe possono contenere stringhe), o qualsiasi altro tipo di operazione modellata tramite il \texttt{+} che dipende dalle caratteristiche dei suoi operandi.
+Questa traduzione run-time degli \texttt{Statement} in più \texttt{SymbolicExpression} rende i CFG di LiSA dinamici e plastici, quindi capaci di rappresentare un grande numero di costrutti semantici e la possibilità di modellare le funzioni della maggior parte dei linguaggi. Il compito del front-end in LiSA sarà quello di trasformare un programma in un qualsiasi linguaggio di programmazione in un insieme di CFG comprendibili a LiSA, fatti di \texttt{Statement} (anche language-specific) ed \texttt{edge}, e capaci di simulare \textit{completamente} la semantica del programma originale.
+
 
