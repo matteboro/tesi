@@ -145,8 +145,20 @@ Un \textit{reticolo} \(\simpleLattice{S}\) è sia un join semi reticolo che un m
 Un reticolo \(\simpleLattice{S}\) è un \textit{reticolo completo} se: \(\forall D\subseteq S.\bigsqcup D,\bigsqcap D\in S\). Una conseguenza di ciò è che esistono gli elementi top e bottom. Per questo possiamo scrivere un reticolo completo come \(\completeLattice{S}\).
 \end{definition}
 
-\begin{example}
-Dato un insieme \(A\) non vuoto qualsiasi \(\langle\wp(A), \subseteq, \cup, \cap, A, \emptyset\rangle\) è un reticolo completo.
+\begin{example}\label{ex:setLattice}
+Dato un insieme \(A\) non vuoto qualsiasi \(\langle\wp(A), \subseteq, \cup, \cap, A, \emptyset\rangle\) è un reticolo completo. Questo nella terminologia di LiSA che vedremo nei prossimi capitoli si chiama \texttt{SetLattice}. Anche il suo inverso \(\langle\wp(A), \supseteq, \cap, \cup, \emptyset, A\rangle\) è un reticolo e verrà chiamato \texttt{InverseSetLattice}.
+\end{example}
+
+\begin{example}\label{ex:functionalLattice}
+Dato un insieme \(A\) non vuoto, un reticolo \(\completeLattice{L}\) l'insieme delle funzioni total \(A\rightarrow L\) (dove se \(f:A\rightarrow L\) non è definita per certi valori di \(A\) questi li mappa all'elemento \(\perp\))  allora anche \(\langle A\rightarrow L, \dot{\preceq}, \dot{\sqcup}, \dot{\sqcap}, \dot{\top}, \dot{\perp}\rangle\) è un reticolo, dove:
+\begin{itemize}
+    \item \(\dot{\top}\) è la funzione che mappa ogni elemento di \(A\) all'elemento \(\top\); 
+    \item \(\dot{\perp}\) è la funzione che mappa ogni elemento di \(A\) all'elemento \(\perp\); 
+    \item \(\dot{\subseteq}\) è la relazione di ordine parziale e dati \(f_1, f_2\in A\rightarrow L\) si ha che \(f_1\dot{\preceq} f_2\) se e solo se \(\forall a\in A: f_1(a) \preceq f_2(a)\);
+    \item\(\dot{\sqcup}\) è l'operatore di lub e dati \(f_1, f_2\in A\rightarrow L\) si ha che \(f_1\dot{\sqcup}f_2=f_3\) dove \(\forall a\in A: f_3(a)=f_1(a)\sqcup f_2(a)\); 
+    \item\(\dot{\sqcap}\) è l'operatore di glb e dati \(f_1, f_2\in A\rightarrow L\) si ha che \(f_1\dot{\sqcap}f_2=f_3\) dove \(\forall a\in A: f_3(a)=f_1(a)\sqcap f_2(a)\); 
+\end{itemize}
+Nella terminologia di LiSA questo verrà chiamato \texttt{FunctionalLattice}.
 \end{example}
 
 \begin{example}

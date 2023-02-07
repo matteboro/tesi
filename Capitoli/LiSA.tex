@@ -134,6 +134,75 @@ La classe \texttt{Edge} collega tra di loro due nodi. Esistono tre tipi di \text
 
 
 Per fare un esempio prendiamo in considerazione lo statement \texttt{x = a + b} in un linguaggio non tipato (come Python), in cui non sappiamo i tipi dei valori di \texttt{a} e \texttt{b}. Questo statement in LiSA può essere tradotto in due espressioni simboliche, una per le parte sinistra, ovvero un riferimento alla variabile \texttt{x}, che può essere ulteriormente processata dal dominio astratto che modula l'heap, e una per la parte destra e modella la semantica dell'addizione \texttt{a + b}. Questa può anche controllare i tipi delle due variabili di \texttt{a} e \texttt{b} a run-time e in alcuni casi generare una \texttt{SymbolicExpression} che rappresenta l'addizione tra interi (se le due variabili possono avere valori numerici interi) e in altri casi una che rappresenta la concatenazione di stringhe (se entrambe possono contenere stringhe), o qualsiasi altro tipo di operazione modellata tramite il \texttt{+} che dipende dalle caratteristiche dei suoi operandi.
-Questa traduzione run-time degli \texttt{Statement} in più \texttt{SymbolicExpression} rende i CFG di LiSA dinamici e plastici, quindi capaci di rappresentare un grande numero di costrutti semantici e la possibilità di modellare le funzioni della maggior parte dei linguaggi. Il compito del front-end in LiSA sarà quello di trasformare un programma in un qualsiasi linguaggio di programmazione in un insieme di CFG comprendibili a LiSA, fatti di \texttt{Statement} (anche language-specific) ed \texttt{edge}, e capaci di simulare \textit{completamente} la semantica del programma originale.
+Questa traduzione run-time degli \texttt{Statement} in più \texttt{SymbolicExpression} rende i CFG di LiSA dinamici e plastici, quindi capaci di rappresentare un grande numero di costrutti semantici e la possibilità di modellare le funzioni della maggior parte dei linguaggi. Il compito del front-end in LiSA sarà quello di trasformare un programma scritto in un qualsiasi linguaggio di programmazione in un insieme di CFG comprendibili a LiSA, fatti di \texttt{Statement} (anche language-specific) e\texttt{edge}, e capaci di simulare \textit{completamente} la semantica del programma originale.
 
+\subsection{Domini astratti in LiSA}
+Ora parleremo invece di come sono definiti in LiSA i domini astratti. Ogni dominio in LiSA implementa due interfacce: \texttt{SemanticDomain}, che rende il dominio capace di valutare l'esecuzione di \texttt{SymbolicExpression} su istanze di esso, e \texttt{Lattice}, che fornisce al dominio le caratteristiche di un reticolo. Ora vediamo queste due interfacce più nel dettaglio.
 
+\subsubsection{\texttt{SemanticDomain}}\label{subsec:semanticDomain}
+L'interfaccia \texttt{SemanticDomain} è parametrica all'istanza concreta D, agli \texttt{Identifier} I e alle \texttt{SymbolicExpression} E. Rappresenta un dominio che è capace di ragionare sulla semantica delle \texttt{SymbolicExpression} di tipo E su \texttt{Identifier} di tipo I. Un dominio semantico D deve implementare i seguenti metodi:
+\begin{itemize}
+    \item \texttt{D assign(I id, E exp)}: restituisce un istanza del dominio in cui viene assegnato il valore di \texttt{exp} ad \texttt{id};
+    \item \texttt{D assume(E exp)}: restituisce una istanza del dominio in cui si assume che \texttt{exp} sia vera;
+    \item \texttt{D forgetIdentifier(I id)}: restituisce una istanza del dominio in cui viene scordata qualsiasi informazione riguardante l'identificatore \texttt{id};
+    \item \texttt{D forgetIdentifiers(Collection<I> ids)}: restituisce una istanza del dominio in cui viene scordata qualsiasi informazione riguardante gli identificatori \texttt{ids};
+    \item \texttt{Satisfiability satisfies(E exp)}: resituisce un valore (tra \texttt{SATISFIED}, \texttt{UNKNOWN}, \texttt{NOT\_SATISFIED} e \texttt{BOTTOM}) che indica se la espressione \texttt{exp} è soddisfatta nel dominio corrente;
+    \item \texttt{D smallStepSemantics(E exp)}: resitutisce una istanza del dominio modificata dagli effetti della espressione \texttt{exp};
+\end{itemize}
+
+\subsubsection{\texttt{Lattice}}\label{subsec:lattice}
+L'interfaccia \texttt{Lattice} è parametrica all'istanza concreta L. Un reticolo in LiSA deve implementare questi metodi:
+\begin{itemize}
+    \item \texttt{boolean lessOrEqual(L other)}: questo metodo definisce l'ordine parziale del reticolo e restituisce \texttt{true} se l'oggetto su cui viene chiamato è in relazione con \texttt{other};
+    \item \texttt{L lub(L other)}: definisce l'operazione di least upper bound e restituisce il lub tra questo oggetto e \texttt{other};
+    \item \texttt{L glb(L other)}: definisce l'operazione di greatest lower bound e restituisce il glb tra questo oggetto e \texttt{other};
+    \item \texttt{L top(L other)}: restituisce l'elemento \(\top\) del reticolo;
+    \item \texttt{L bottom(L other)}: restituisce l'elemento \(\perp\) del reticolo;
+    \item \texttt{L widening(L other)}: definisce l'operazione di widening del reticolo e restituisce il widening tra questo oggetto e \texttt{other};
+    \item \texttt{L narrowing(L other)}: definisce l'operazione di narrowing del reticolo e restituisce il narrowing tra questo oggetto e \texttt{other} (di defualt il narrowing esegue il glb);
+    \item \texttt{boolean isTop()}: restiuisce \texttt{true} se l'istanza su cui viene chiamata è l'elemento \(\top\);
+    \item \texttt{boolean isBottom()}: restiuisce \texttt{true} se l'istanza su cui viene chiamata è l'elemento \(\perp\);
+\end{itemize}
+In LiSA sono definite alcune implementazioni base di reticoli con comportamenti simili. Innanzitutto è definita l'interfaccia \texttt{BaseLattice} che estende \texttt{Lattice}, la quale definisce i casi base comuni a tutti i reticoli (ovvero le relazioni tra gli oggetti e gli elementi \(\top\) e \(\perp\)). A partire da questa sono poi implementate le classi astratte che definiscono il \texttt{SetLattice} e \texttt{InverseSetLattice} visti nell'esempio \ref{ex:setLattice} e il \texttt{FunctionalLattice} dell'esempio \ref{ex:functionalLattice}. 
+
+\subsubsection{Lo stato dell'analisi in LiSA: \texttt{AnalysisState}}
+
+Vediamo ora come LiSA organizza lo stato dell'analisi. Lo stato dell'analisi è l'oggetto che viene mappato ad ogni nodo del CFG e indica l'astrazione della semantica  concreta che si vuole approssimare in quel punto di programma (solitamente in LiSA è una astrazione della collecting semantics, ovvero la semantica che ci dice tutti i possibili valori della memoria in un dato punto di programma o equivalentemente l'insieme di tutti gli stati attraversabili durante l'esecuzione del programma). Lo stato dell'analisi è costruito modularmente bottom-up come mostrato in figura \ref{fig:analysisState}.
+
+\begin{wrapfigure}{l}{0.35\textwidth}
+\centering
+\tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt  
+\begin{tikzpicture}[x=0.75pt,y=0.75pt,yscale=-1,xscale=1]
+%uncomment if require: \path (0,300); %set diagram left start at 0, and has height of 300
+\usetikzlibrary{shadows}
+%Rounded Rect [id:dp5259274252543102] 
+\draw  [fill={rgb, 255:red, 255; green, 255; blue, 255 }  ,fill opacity=1 ][general shadow={fill={rgb, 255:red, 0; green, 0; blue, 0 }  ,shadow xshift=3.75pt,shadow yshift=-3.75pt, opacity=0.15 }] (20.67,194.89) .. controls (20.67,205.94) and (29.62,214.89) .. (40.67,214.89) -- (100.67,214.89) .. controls (111.71,214.89) and (120.67,205.94) .. (120.67,194.89) -- (120.67,72.59) .. controls (120.67,61.55) and (111.71,52.59) .. (100.67,52.59) -- (40.67,52.59) .. controls (29.62,52.59) and (20.67,61.55) .. (20.67,72.59) -- cycle ;
+%Rounded Rect [id:dp40217338693406735] 
+\draw  [fill={rgb, 255:red, 255; green, 255; blue, 255 }  ,fill opacity=1 ][general shadow={fill={rgb, 255:red, 0; green, 0; blue, 0 }  ,shadow xshift=1.5pt,shadow yshift=-1.5pt, opacity=0.15 }] (28.17,166.69) .. controls (28.17,176.08) and (35.78,183.69) .. (45.17,183.69) -- (96.17,183.69) .. controls (105.56,183.69) and (113.17,176.08) .. (113.17,166.69) -- (113.17,97.64) .. controls (113.17,88.25) and (105.56,80.64) .. (96.17,80.64) -- (45.17,80.64) .. controls (35.78,80.64) and (28.17,88.25) .. (28.17,97.64) -- cycle ;
+%Shape: Rectangle [id:dp7147766556498871] 
+\draw  [fill={rgb, 255:red, 255; green, 255; blue, 255 }  ,fill opacity=1 ][general shadow={fill={rgb, 255:red, 0; green, 0; blue, 0 }  ,shadow xshift=0.75pt,shadow yshift=-0.75pt, opacity=0.15 }] (35,159.14) .. controls (35,157.49) and (36.34,156.14) .. (38,156.14) -- (102,156.14) .. controls (103.66,156.14) and (105,157.49) .. (105,159.14) -- (105,171) .. controls (105,172.66) and (103.66,174) .. (102,174) -- (38,174) .. controls (36.34,174) and (35,172.66) .. (35,171) -- cycle ;
+%Shape: Rectangle [id:dp6945641114766774] 
+\draw  [fill={rgb, 255:red, 255; green, 255; blue, 255 }  ,fill opacity=1 ][general shadow={fill={rgb, 255:red, 0; green, 0; blue, 0 }  ,shadow xshift=0.75pt,shadow yshift=-0.75pt, opacity=0.15 }] (35,136.14) .. controls (35,134.49) and (36.34,133.14) .. (38,133.14) -- (102,133.14) .. controls (103.66,133.14) and (105,134.49) .. (105,136.14) -- (105,148) .. controls (105,149.66) and (103.66,151) .. (102,151) -- (38,151) .. controls (36.34,151) and (35,149.66) .. (35,148) -- cycle ;
+%Shape: Rectangle [id:dp6352913495307582] 
+\draw  [fill={rgb, 255:red, 255; green, 255; blue, 255 }  ,fill opacity=1 ][general shadow={fill={rgb, 255:red, 0; green, 0; blue, 0 }  ,shadow xshift=0.75pt,shadow yshift=-0.75pt, opacity=0.15 }] (35,113.14) .. controls (35,111.49) and (36.34,110.14) .. (38,110.14) -- (102,110.14) .. controls (103.66,110.14) and (105,111.49) .. (105,113.14) -- (105,125) .. controls (105,126.66) and (103.66,128) .. (102,128) -- (38,128) .. controls (36.34,128) and (35,126.66) .. (35,125) -- cycle ;
+%Shape: Rectangle [id:dp47123715282050216] 
+\draw  [fill={rgb, 255:red, 255; green, 255; blue, 255 }  ,fill opacity=1 ][general shadow={fill={rgb, 255:red, 0; green, 0; blue, 0 }  ,shadow xshift=0.75pt,shadow yshift=-0.75pt, opacity=0.15 }] (35,193.14) .. controls (35,191.49) and (36.34,190.14) .. (38,190.14) -- (102,190.14) .. controls (103.66,190.14) and (105,191.49) .. (105,193.14) -- (105,205) .. controls (105,206.66) and (103.66,208) .. (102,208) -- (38,208) .. controls (36.34,208) and (35,206.66) .. (35,205) -- cycle ;
+
+% Text Node
+\draw (34,61) node [anchor=north west][inner sep=0.75pt]  [font=\footnotesize] [align=left] {AnalysisState};
+% Text Node
+\draw (35,90) node [anchor=north west][inner sep=0.75pt]  [font=\footnotesize] [align=left] {AbstractState};
+% Text Node
+\draw (39.2,113.2) node [anchor=north west][inner sep=0.75pt]   [align=left] {{\scriptsize HeapDomain}};
+% Text Node
+\draw (39.2,136.2) node [anchor=north west][inner sep=0.75pt]   [align=left] {{\scriptsize ValueDomain}};
+% Text Node
+\draw (40.6,158.8) node [anchor=north west][inner sep=0.75pt]   [align=left] {{\scriptsize TypeDomain}};
+% Text Node
+\draw (45.4,192.4) node [anchor=north west][inner sep=0.75pt]   [align=left] {{\scriptsize Expr stack}};
+\end{tikzpicture}
+    \caption{Architettura dello stato dell'analisi in LiSA}
+    \label{fig:analysisState}
+\end{wrapfigure}
+
+La classe che definisce lo stato di analisi è \texttt{AnalysisState}. \'E formato da due componenti: un \texttt{AbstractState} e lo stack delle espressioni, ovvero l'insieme di \texttt{SymbolicExpression} che rimangono sullo stack dopo il calcolo di una espressione (è importante notare che questa è solo una visione sommaria dell'\texttt{AnalysisState}). Il principale compito di questa classe è quello però di fare da wrap tra l'\texttt{AbstractState} e informazioni semantiche aggiuntive utili al raggiungimento del fix-point durante il calcolo dell'analisi. L'\texttt{AnalysisState} implementa entrambe le interfacce mostrate prima (\hyperref[subsec:lattice]{\texttt{Lattice}} e \hyperref[subsec:semanticDomain]{\texttt{SemanticDomain}}) rendendolo un oggetto sia capace di ragionare sulla semantica delle espressioni simboliche che un sistema ordinato con le caratteristiche di un reticolo. Ogni sua componente, scendendo gerarchicamente nella struttura, implementa queste due interfacce. 
