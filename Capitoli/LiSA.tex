@@ -133,7 +133,7 @@ La classe \texttt{Edge} collega tra di loro due nodi. Esistono tre tipi di \text
 
 
 Per fare un esempio prendiamo in considerazione lo statement \texttt{x = a + b} in un linguaggio non tipato (come Python), in cui non sappiamo i tipi dei valori di \texttt{a} e \texttt{b}. Questo statement in LiSA può essere tradotto in due espressioni simboliche, una per le parte sinistra, ovvero un riferimento alla variabile \texttt{x}, che può essere ulteriormente processata dal dominio astratto che modula l'heap, e una per la parte destra e modella la semantica dell'addizione \texttt{a + b}. Questa può anche controllare i tipi delle due variabili di \texttt{a} e \texttt{b} a run-time e in alcuni casi generare una \texttt{SymbolicExpression} che rappresenta l'addizione tra interi (se le due variabili possono avere valori numerici interi) e in altri casi una che rappresenta la concatenazione di stringhe (se entrambe possono contenere stringhe), o qualsiasi altro tipo di operazione modellata tramite il \texttt{+} che dipende dalle caratteristiche dei suoi operandi.
-Questa traduzione run-time degli \texttt{Statement} in più \texttt{SymbolicExpression} rende i CFG di LiSA dinamici e plastici, quindi capaci di rappresentare un grande numero di costrutti semantici e la possibilità di modellare le funzioni della maggior parte dei linguaggi. Il compito del front-end in LiSA sarà quello di trasformare un programma scritto in un qualsiasi linguaggio di programmazione in un insieme di CFG comprendibili a LiSA, fatti di \texttt{Statement} (anche language-specific) e\texttt{edge}, e capaci di simulare \textit{completamente} la semantica del programma originale.
+Questa traduzione run-time degli \texttt{Statement} in più \texttt{SymbolicExpression} rende i CFG di LiSA dinamici e plastici, quindi capaci di rappresentare un grande numero di costrutti semantici e la possibilità di modellare le funzioni della maggior parte dei linguaggi. Il compito del front-end in LiSA sarà quello di trasformare un programma scritto in un qualsiasi linguaggio di programmazione in un insieme di CFG comprendibili a LiSA, fatti di \texttt{Statement} (anche language-specific) e \texttt{edge}, e capaci di simulare \textit{completamente} la semantica del programma originale.
 
 \subsection{Domini astratti in LiSA}
 Ora parleremo invece di come sono definiti in LiSA i domini astratti. Ogni dominio in LiSA implementa due interfacce: \texttt{SemanticDomain}, che rende il dominio capace di valutare l'esecuzione di \texttt{SymbolicExpression} su istanze di esso, e \texttt{Lattice}, che fornisce al dominio le caratteristiche di un reticolo. Ora vediamo queste due interfacce più nel dettaglio.
@@ -171,7 +171,7 @@ In LiSA sono definite alcune implementazioni base di reticoli con comportamenti 
 
 Vediamo ora come LiSA organizza lo stato dell'analisi. Lo stato dell'analisi è l'oggetto che viene mappato ad ogni nodo del CFG e indica l'astrazione della semantica  concreta che si vuole approssimare in quel punto di programma (solitamente in LiSA è una astrazione della collecting semantics, ovvero la semantica che ci dice tutti i possibili valori della memoria in un dato punto di programma o equivalentemente l'insieme di tutti gli stati attraversabili durante l'esecuzione del programma). Lo stato dell'analisi è costruito modularmente bottom-up come mostrato in figura \ref{fig:analysisState}.
 
-\begin{wrapfigure}{l}{0.35\textwidth}
+\begin{figure}{0.35\textwidth}
 \centering
 \tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt  
 \begin{tikzpicture}[x=0.75pt,y=0.75pt,yscale=-1,xscale=1]
@@ -206,12 +206,46 @@ Vediamo ora come LiSA organizza lo stato dell'analisi. Lo stato dell'analisi è 
 \end{tikzpicture}
     \caption{Architettura dello stato dell'analisi in LiSA}
     \label{fig:analysisState}
-\end{wrapfigure}
+\end{figure}
 
-La classe che definisce lo stato di analisi è \texttt{AnalysisState}. \'E formato da due componenti: un \texttt{AbstractState} e lo stack delle espressioni, ovvero l'insieme di \texttt{SymbolicExpression} che rimangono sullo stack dopo il calcolo di una espressione (è importante notare che questa è solo una visione sommaria dell'\texttt{AnalysisState}). Il principale compito di questa classe è quello però di fare da wrap tra l'\texttt{AbstractState} e informazioni semantiche aggiuntive utili al raggiungimento del fix-point durante il calcolo dell'analisi. L'\texttt{AnalysisState} implementa entrambe le interfacce mostrate prima (\hyperref[subsec:lattice]{\texttt{Lattice}} e \hyperref[subsec:semanticDomain]{\texttt{SemanticDomain}}) rendendolo un oggetto sia capace di ragionare sulla semantica delle espressioni simboliche che un sistema ordinato con le caratteristiche di un reticolo. Ogni sua componente, scendendo gerarchicamente nella struttura, implementa queste due interfacce. L'\texttt{AbstractState} è l'astrazione dello stato della memoria e, come si vede dall'immagine, è composto da tre sotto-domini (ognuno dei quali implementa le interfacce \hyperref[subsec:lattice]{\texttt{Lattice}} e \hyperref[subsec:semanticDomain]{\texttt{SemanticDomain}}): 
+La classe che definisce lo stato dell'analisi è \texttt{AnalysisState}. \'E formato da due componenti: un \texttt{AbstractState} e lo stack delle espressioni, ovvero l'insieme di \texttt{SymbolicExpression} che rimangono sullo stack dopo il calcolo di una espressione (è importante notare che questa è solo una visione sommaria dell'\texttt{AnalysisState}). Il principale compito di questa classe è quello però di fare da wrap tra l'\texttt{AbstractState} e informazioni semantiche aggiuntive utili al raggiungimento del fix-point durante il calcolo dell'analisi. L'\texttt{AnalysisState} implementa entrambe le interfacce mostrate prima (\hyperref[subsec:lattice]{\texttt{Lattice}} e \hyperref[subsec:semanticDomain]{\texttt{SemanticDomain}}) rendendolo un oggetto sia capace di ragionare sulla semantica delle espressioni simboliche che un sistema ordinato con le caratteristiche di un reticolo. Ogni sua componente, scendendo gerarchicamente nella struttura, implementa queste due interfacce. L'\texttt{AbstractState} è l'astrazione dello stato della memoria e, come si vede dall'immagine, è composto da tre sotto-domini (ognuno dei quali implementa le interfacce \hyperref[subsec:lattice]{\texttt{Lattice}} e \hyperref[subsec:semanticDomain]{\texttt{SemanticDomain}}): 
 \begin{itemize}
 \setlength\itemsep{0.1em}
-    \item un \texttt{HeapDomain} che è responsabile di tracciare l'evoluzione dello stato della memoria dinamica durante l'esecuzione. Opera prima del \texttt{ValueDomain} e risolve gli indirizzi traducendoli in token che il \texttt{ValueDomain} può comprendere;
-    \item un \texttt{ValueDomain} che è responsabile di tracciare proprietà astratte (come per esempio il valore astratto) delle variabili (o degli identificatori della memoria dinamica tradotti dall'\texttt{HeapDomain}) del programma. In LiSA è possibile definire \texttt{ValueDomain} sia relazionali (come i Polyhedra) sia non. Per quest'ultimi è definito dentro LiSA una classe base chiamata \texttt{ValueEnvironment} che implementa \texttt{ValueDomain} e \texttt{FunctionalLattice<Identifier, L>} capace di tracciare un valore del dominio astratto L (che può essere per esempio Interval, Sign, Modulo) ad ogni identificatore tenuto in memoria;
+    \item un \texttt{HeapDomain} che è responsabile di tracciare l'evoluzione dello stato della memoria dinamica durante l'esecuzione. Opera prima del \texttt{ValueDomain} e risolve gli indirizzi traducendo le espressioni simboliche e rinominando le variabili in modo tale che il \texttt{ValueDomain} possa comprenderle e si preocccupi \textit{solamente} di tracciarne le proprietà;
+    
+    \item un \texttt{ValueDomain} che è responsabile di tracciare proprietà astratte (come per esempio il valore astratto) delle variabili (possibilmente pre-processate e riscritte prima dall'\texttt{HeapDomain}) del programma. In LiSA è possibile definire \texttt{ValueDomain} sia relazionali (come i Polyhedra) sia non. Per quest'ultimi è definito dentro LiSA una classe base chiamata \texttt{Environment} che estende  \texttt{FunctionalLattice<Identifier, L>} ed implementa \texttt{SemanticDomain}, ed è capace di tracciare un valore del dominio astratto \texttt{L} (che può essere per esempio un Interval, un Sign, un Modulo) ad ogni identificatore tenuto in memoria. Va sottolineato che il dominio \texttt{L} di un \texttt{Environment} ha si la struttura reticolare, ed estende \texttt{Lattice}, e può anche ragionare semanticamente sulle \texttt{SymbolicExpression} senza però implementare \texttt{SemanticDomain}. Infatti per il caso specifico dei domini non-relazionali gestiti tramite \texttt{Environment} il dominio astratto si costruirà attraverso l'interfaccia \texttt{NonRelationalDomain} che ha solo un sottoinsieme dei metodi di \texttt{SemanticDomain}. Per capire perchè pensiamo ai metodi \texttt{assign}, \texttt{forgetIdentifier/s} in \texttt{SemanticDomain}. La definizione di questi metodi, potenzialmente, è uguale per tutti i dominio non-relazionali, ed infatti di queste se ne prende carico la classe \texttt{Environment}, lasciando alla creazione dei domini astratti non-relazionali solo la necessità di definire: (i) le operazioni riguardanti la struttura reticolare del dominio (lub, glb, lessOrEqual, \(\cdots\)), e (ii) la logica per la valutazione delle espressioni simboliche;
+    
     \item un \texttt{TypeDomain} che è un \texttt{ValueDomain} che associa ad ogni variabile l'insieme dei possibili tipi a run-time delle variabili. Questa può essere usata durante l'analisi per generare espressioni simboliche specifiche a seconda dei tipi delle variabili coinvolte nello statement;
 \end{itemize}
+
+L'\texttt{AbstractState} principlamente fa quindi da coordinatore tra l'\texttt{HeapDomain} e il \texttt{ValueDoamin}, passando all'ultimo le espressioni tradotte e gli identificatori trasformati dal primo quando i due mondi devono comunicare e invece compartizzando e separando i due domini quando le espressioni riguardano solo su uno dei due.
+
+\subsection{Calcolo del fix-point in LiSA}
+Abbiamo visto nel capitolo [??] che fare interpretazione astratta (sezione [??]) non significa altro che trovare una soluzione ad un sistema di equazioni costruito a partire dal CFG del programma. Tutte le soluzioni del sistema sono per definizione suoi fix-point e quindi cercare la soluzione significa cercarne un fix-point (possibilmente il più preciso, ovvero il least fix-point). Come viene mostrato nell'articolo di Cousot [??] qualsiasi metodo caotico di risoluzione ci permette di ottenere una soluzione del sistema (non necessariamente la minima). Tra tutti questi metodi ci conviene usarne uno efficiente e che sfrutti la struttura del CFG in modo da velocizzare la convergenza verso un fix-point. L'algoritmo che viene utilizzato in LiSA per la risoluzione del sistema di equazioni è quello classico basato su working-set e prima delle mie modifiche seguiva la definizione in pseudo-codice fornita in \ref{alg:fixpointAsc}.
+
+\begin{algorithm}[ht]
+	\caption{Algoritmo per il calcolo del fix-point con working-set list con solo fase ascendente}
+	\label{alg:fixpointAsc}
+	\begin{algorithmic}
+		\Statex
+		%\Function{MST-Prim}{grafo G, funzione\_peso $\omega$, nodo\_radice r}\\
+		\State{\textit{Q}: coda di priorita contenente tutti i vertici in \textit{V}}
+		\For{ogni \textit{u} $\in$ V(G)}
+		\Let{\textit{u.key}}{$\infty$}
+		\Let{\textit{u.}$\pi$}{\textit{NIL}} 
+		\EndFor
+		\Let{\textit{r.key}}{0}
+		\Let{\textit{Q}}{\textit{V(G)}}
+		\While{\textit{Q} $\neq$ 0}
+		\Let{\textit{u}}{EXTRACT-MIN(\textit{Q})}
+		\For{ogni \textit{v} $\in$ \textit{G.Adj[u]}}
+		\If{$v \in Q$ and $\omega(u,v) < v.key$}
+		\Let{\textit{v.key}}{$\omega(u,v)$}
+		\Let{\textit{v.}$\pi$}{\textit{v}}
+		\EndIf
+		\EndFor
+		\EndWhile
+		\State \Return{}
+		%\EndFunction
+	\end{algorithmic}
+\end{algorithm}

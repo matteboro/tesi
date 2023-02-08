@@ -161,7 +161,7 @@ Dato un insieme \(A\) non vuoto, un reticolo \(\completeLattice{L}\) l'insieme d
 Nella terminologia di LiSA questo verrà chiamato \texttt{FunctionalLattice}.
 \end{example}
 
-\begin{example}
+\begin{example}\label{ex:intervalDomain}
 Mostriamo un'altro esempio di reticolo completo. Il dominio del reticolo è l'insieme:
 \[\textrm{Int}=\{[l, u]\ |\ l, u\in\mathbb{Z} \wedge l\leq u\} \cup \{[-\infty, u]\ |\ u\in\mathbb{Z}\} \cup \{[l, +\infty]\ |\ l\in\mathbb{Z}\} \cup \{\perp, \top\}\]
 l'elemento \(\top\) equivale a \([-\infty, +\infty]\) e l'elemento \(\perp\) all'insieme vuoto [ ].
@@ -986,56 +986,83 @@ F^{\natural}=
 \end{figure}
 \end{example}
 
-\subsection{Dominio delle parti dell'insieme finite}
+\section{Dominio delle parti dell'insieme finite e non ridondanti}
 In questa sezione parleremo di un particolare dominio che si può costruire a partire da un qualsiasi reticolo, ovvero il dominio delle parti dell'insieme finite e non ridondanti di un reticolo. Mostreremo inoltre una possibile definizione di widening per questo dominio seguendo l'articolo [??].
 
 \begin{definition}[Non ridondanza]
 Dato un reticolo \ un insieme \(D\in\wp_{\textrm{f}} (S)\) è \textit{non ridondante} se e solo se:
 \begin{itemize}
 	\item \(\perp\notin D\);
-	\item \(\forall d_1, d_2 \in S.\ d_1\preceq d_2\Rightarrow d_1=d_2\);
+	\item \(\forall d_1, d_2 \in D.\ d_1\preceq d_2\Rightarrow d_1=d_2\);
 \end{itemize}
-L'insieme dei sottoinsiemi non ridonanti si \emph{S} rispetto a \(\preceq\) è denominato con \(\wp_{fn}(S, \preceq)\).
+L'insieme dei sottoinsiemi non ridonanti si \(S\) rispetto a \(\preceq\) è denominato con \(\wp_{\textrm{fn}}(S, \preceq)\).
 \end{definition}
 
-\noindent\textbf{Definizione} (funzione di riduzione). La \emph{funzione di riduzione} \(\Omega_{S}^{\preceq} : \wp_{\textrm{f}}(S)\rightarrow\wp_{\textrm{fn}}(S, \preceq)\) che trasforma ogni sottoinsieme finito di \emph{S} nel suo omonimo non ridondante in rispetto a \(\preceq\) è cosi definita per ogni \(D\in\wp_{\textrm{f}}(S)\):
-\[\Omega_{S}^{\preceq}(D) \triangleq D \backslash \lbrace d \in D     \ \vert\ d= \perp \vee\ \exists d'\in D . d\prec d' \rbrace\]
+\'E importante notare che ogni sottoinsieme finito di un insieme con ordinamento parziale ha una corrispettivo equivalente non ridondante che si può ottenere tramite una funzione di riduzione che definiamo di seguito.
 
-\noindent\textbf{Definizione} (dominio delle parti dell'insieme finite). Dato un join semilattice \(\langle S,\preceq, \perp ,\vee\rangle\) il dominio delle parti dell'insieme finite su \emph{S} è il join semilattice:
-\[\hat{S}_P = \langle \wp_{\textrm{fn}}(S, \preceq),\preceq_P, \perp_P ,\vee_P\rangle\]
+\begin{definition}[Funzione di riduzione]
+La \textit{funzione di riduzione} \(\Omega_{S}^{\preceq} : \wp_{\textrm{f}}(S)\rightarrow\wp_{\textrm{fn}}(S, \preceq)\) che trasforma ogni sottoinsieme finito di \(S\) nel suo omonimo non ridondante in rispetto a \(\preceq\) è cosi definita per ogni \(D\in\wp_{\textrm{f}}(S)\):
+\[\Omega_{S}^{\preceq}(D) \triangleq D \backslash \lbrace d \in D     \ \vert\ d= \perp \vee\ \exists d'\in D . d\prec d' \rbrace\]
+\end{definition}
+
+\begin{definition}[dominio delle parti dell'insieme finite e non ridondanti]\label{def:powersetDomain}
+Dato un reticolo \(\completeLattice{S}\) il dominio delle parti dell'insieme finite su \(S\) è il reticolo:
+\[\hat{S}_P = \langle \wp_{\textrm{fn}}(S, \preceq),\preceq_P, \sqcup_P, \sqcap_P, \perp_P, \top_P \rangle\]
 dove:
 \begin{itemize}
-	\item \(\perp_p=\emptyset\),
-	\item dati \(S_1, S_2\in\wp_{\textrm{fn}}(S, \preceq).\ S_1\vee S_2 = \Omega_{S}^{\preceq}(S_1 \cup S_2)\),
-	\item dati \(S_1, S_2\in\wp_{\textrm{fn}}(S, \preceq)\) allora \(S_1 \preceq_P S_2\) se e solo se \(\forall s_1 \in S_1 : \exists s_2 \in S_2.\ s_1\preceq s_2\).
+	\item \(\perp_P=\emptyset\);
+	\item \(\top_P=\{\top\}\);
+	\item dati \(S_1, S_2\in\wp_{\textrm{fn}}(S, \preceq).\ S_1 \sqcup_P S_2 = \Omega_{S}^{\preceq}(S_1 \cup S_2)\);
+	\item dati \(S_1, S_2\in\wp_{\textrm{fn}}(S, \preceq).\ S_1 \sqcap_P S_2 = \Omega_{S}^{\preceq}(\{s_1 \sqcap s_2\ |\ s_1\in S_1, s_2\in S_2\})\);
+	\item dati \(S_1, S_2\in\wp_{\textrm{fn}}(S, \preceq)\) allora \(S_1 \preceq_P S_2\) se e solo se \(\forall s_1 \in S_1 : \exists s_2 \in S_2.\ s_1\preceq s_2\);
 \end{itemize}
-\noindent\textbf{Definizione} (relazione di ordine parziale di Egli-Milner). E' possibile costruire una relazione di ordine parziale Egli-Milner tale che, dati \(S_1, S_2\in\wp_{\textrm{fn}}(S, \preceq)\) allora \(S_1 \preceq_{\textrm{EM}} S_2 \textrm{ se e solo se o:} \)
-\[S_1=\perp_P\textrm{ oppure,}\]
-\[S_1\preceq_P S_2 \wedge \forall s_2\in S_2 : \exists s_1\in S_1.\ s_1\preceq s_2\]
-\noindent\textbf{Definizione} (connettore di Egli-Milner). Un connettore di Egli-Milner per \(\hat{S}_P = \langle \wp_{\textrm{fn}}(S, \preceq),\preceq_P, \perp_P ,\vee_P\rangle\), denotato con \(\boxplus_{\textrm{EM}}\), è un qualunque operatore di upper bound per l'ordinamento di Egli-Milner su \(\wp_{fn}(S, \preceq)\), definito precedentemente. Anche se una operazione di least-upper bound non può essere sempre definita, un connettore di Egli-Milner si, ad esempio possiamo sempre usare: \(S_1\boxplus_{\textrm{EM}} S_2 = \bigvee\lbrace S_1 \cup S_2\rbrace\).
+\end{definition}
 
-\noindent\textbf{Definizione} (ordinamento parziale indotto da widening). Ogni operatore di widening \(\nabla\) su un join semilattice \(\langle S,\preceq, \perp ,\vee\rangle\) induce un corrispondente ordinamento parziale \(\preceq_{\nabla}\) sul dominio \emph{S}, che è definito come la chiusura transitiva e riflessiva della relazione:
+Abbiamo quindi costruito un dominio che è inerentemente più preciso di quello sottostanze, a partire dal quale viene costruito. Pensiamo ad esempio al dominio degli intervalli interi mostrato in esempio \ref{ex:intervalDomain} e costruiamone la versione mostrata sopra nella definizione \ref{def:powersetDomain}, cioè \(\hat{\textrm{Int}}_P\). In \(\hat{\textrm{Int}}_P\) possiamo rappresentare elementi come \(\{[0, 10], [20, 30]\}\), ovvero possiamo rappresentare dei gap tra gli intervalli raggiungendo una precisione più alta rispetto al sottostante Int, dove il massimo che si potrebbe fare per rappresentare l'insieme di intervalli appena mostrato, e rimanendo sound, è \([0, 30]\).
+
+Il nuovo dominio così creato però eredita tutti i problemi di quello su cui è basato, quindi come nel caso degli intervalli, si può ottenere un reticolo che non rispetta la condizione di catena ascendente. In questi casi diventa necessario cercare un operatore di widening per il nuovo dominio capace di garantire la convergenza del calcolo del fix-point durante l'analisi. In [??] vengono mostrati tre metodi costruttivi per ottenere un widening per il dominio delle parti dell'insieme finite e non ridondanti partendo da quello del dominio sottostante. Nel seguito daremo alcune definizioni di operatori che ci serveranno per la costruzione di tale widening (mostreremo uno solo dei tre metodi mostrati, che è poi quello implementato in LiSA per tali domini, come vedremo nel capitolo \ref{chapter:lisa}).
+
+\begin{definition} [relazione di ordine parziale di Egli-Milner] 
+\'E possibile costruire una relazione di ordine parziale Egli-Milner tale che, dati \(S_1, S_2\in\wp_{\textrm{fn}}(S, \preceq)\) allora \(S_1 \preceq_{\textrm{EM}} S_2 \textrm{ se e solo se o:} \)
+\[S_1=\perp_P\textrm{ oppure,}\]
+\[S_1\preceq_P S_2 \wedge \forall s_2\in S_2 : \exists s_1\in S_1: s_1\preceq s_2\]
+\end{definition}
+
+\begin{definition}[connettore di Egli-Milner] 
+Un connettore di Egli-Milner per \(\hat{S}_P = \langle \wp_{\textrm{fn}}(S, \preceq),\preceq_P, \perp_P ,\vee_P\rangle\), denotato con \(\boxplus_{\textrm{EM}}\), è un qualunque operatore di upper bound per l'ordinamento di Egli-Milner su \(\wp_{\textrm{fn}}(S, \preceq)\), definito precedentemente. Anche se una operazione di least-upper bound non può essere sempre definita, un connettore di Egli-Milner si, ad esempio possiamo sempre usare: \(S_1\boxplus_{\textrm{EM}} S_2 = \bigsqcup\{ S_1 \cup S_2\}\).
+\end{definition}
+
+\begin{definition}[ordinamento parziale indotto da widening] Ogni operatore di widening \(\nabla\) su un join semilattice \(\langle S,\preceq, \perp ,\vee\rangle\) induce un corrispondente ordinamento parziale \(\preceq_{\nabla}\) sul dominio \emph{S}, che è definito come la chiusura transitiva e riflessiva della relazione:
 \[\lbrace(s_1, s)\in S\times S\ \vert\ \exists s_2\in S.\ s_1\prec s_2 \wedge s = s_1\nabla s_2\rbrace\]
 Inoltre la relazione \(\preceq_{\nabla}\) rispetta la ascending chain condition.
+\end{definition}
 
-\noindent\textbf{Definizione} (estrapolatore euristico). Un operatore parziale \(h_{P}^{\bigtriangledown} : \wp_{\textrm{fn}}(S, \preceq)^2\rightarrow\wp_{\textrm{fn}}(S, \preceq)\) è un estrapolatore euristico per \(\hat{S}_P = \langle \wp_{\textrm{fn}}(S, \preceq),\preceq_P, \perp_P ,\vee_P\rangle\) se \(\forall S_1, S_2\in\wp_{\textrm{fn}}(S, \preceq)\) tale che \(S_1 \prec S_2\), \(h_{P}^{\bigtriangledown}(S_1, S_2)\) è definito e soddisfa le seguenti condizioni:
+\begin{definition}[estrapolatore euristico] 
+Un operatore parziale \(h_{P}^{\nabla} : \wp_{\textrm{fn}}(S, \preceq)^2\rightarrow\wp_{\textrm{fn}}(S, \preceq)\) è un estrapolatore euristico per \(\hat{S}_P = \langle \wp_{\textrm{fn}}(S, \preceq),\preceq_P, \perp_P ,\vee_P\rangle\) se \(\forall S_1, S_2\in\wp_{\textrm{fn}}(S, \preceq)\) tale che \(S_1 \prec S_2\), \(h_{P}^{\nabla}(S_1, S_2)\) è definito e soddisfa le seguenti condizioni:
 \begin{itemize}
-	\item \(S_2 \preceq_{\textrm{EM}}h_{P}^{\bigtriangledown}(S_1, S_2)\), e
-	\item \(\forall d \in h_{P}^{\bigtriangledown}(S_1, S_2)\backslash S_2 : \exists d_1\in S_1.\ d_1\preceq_{\nabla} d\).
+	\item \(S_2 \preceq_{\textrm{EM}}h_{P}^{\nabla}(S_1, S_2)\), e
+	\item \(\forall d \in h_{P}^{\nabla}(S_1, S_2)\backslash S_2 : \exists d_1\in S_1.\ d_1\preceq_{\nabla} d\).
 \end{itemize}
+\end{definition}
 
-\noindent\textbf{Definizione} (estrapolatore euristico \(\nabla\)-connesso). Un estrapolatore euristico \(h_{P}^{\bigtriangledown}\)
+\begin{definition}[estrapolatore euristico \(\nabla\)-connesso] 
+Un estrapolatore euristico \(h_{P}^{\nabla}\)
 è detto \(\nabla\)-connesso se per ogni \(S_1, S_2\in\wp_{\textrm{fn}}(S, \preceq)\) dove \(S_1\prec_P S_2\) abbiamo che:
-\[\forall d \in h_{P}^{\bigtriangledown}(S_1, S_2)\cap S_2:((\exists s_1\in S_1.\ s_1\prec d)\longrightarrow (\exists s'_1\in S_1.\ s'_1 \prec_{\nabla} d))\]
+\[\forall d \in h_{P}^{\nabla}(S_1, S_2)\cap S_2:((\exists s_1\in S_1.\ s_1\prec d)\Rightarrow (\exists s'_1\in S_1.\ s'_1 \prec_{\nabla} d))\]
+\end{definition}
 
-\noindent\textbf{Proposizione} Dato \(\hat{S}_P = \langle \wp_{\textrm{fn}}(S, \preceq),\preceq_P, \perp_P ,\vee_P\rangle\). per ogni \(S_1, S_2\in\wp_{\textrm{fn}}(S, \preceq)\) tale che \(S_1\preceq_P S_2\) sia
-\[h_{P}^{\bigtriangledown}(S_1, S_2) = S_2\vee_P\Omega_{S}^{\preceq}(\lbrace s_1\nabla s_2 \in S\ \vert\ s_1\in S_1, s_2\in S_2, s_1\prec s_2 \rbrace)\]
-allora \(h_{P}^{\bigtriangledown}\) è un estrapolatore euristico \(\nabla\)-connesso per per \(\hat{S}_P\).
+\begin{proposition}
+Dato \(\hat{S}_P = \langle \wp_{\textrm{fn}}(S, \preceq),\preceq_P, \perp_P ,\vee_P\rangle\). per ogni \(S_1, S_2\in\wp_{\textrm{fn}}(S, \preceq)\) tale che \(S_1\preceq_P S_2\) sia
+\[h_{P}^{\nabla}(S_1, S_2) = S_2\vee_P\Omega_{S}^{\preceq}(\lbrace s_1\nabla s_2 \in S\ \vert\ s_1\in S_1, s_2\in S_2, s_1\prec s_2 \rbrace)\]
+allora \(h_{P}^{\nabla}\) è un estrapolatore euristico \(\nabla\)-connesso per per \(\hat{S}_P\).
+\end{proposition}
 
-\noindent\textbf{Definizione} (il \(_{\textrm{EM}}\nabla_P\)widening). Dato \(\hat{S}_P = \langle \wp_{\textrm{fn}}(S, \preceq),\preceq_P, \perp_P ,\vee_P\rangle\), sia \(h_{P}^{\bigtriangledown}\) un estrapolatore euristico \(\nabla\)-connesso e \(\boxplus_{\textrm{EM}}\) un connettore per \(\hat{S}_P\). Siano poi \(S_1, S_2\in\wp_{\textrm{fn}}(S, \preceq)\), dove \(S_1\prec_P S_2\). Allora \(S_1\ _{\textrm{EM}}\nabla_P S_2 = h_{P}^{\bigtriangledown}(S_1, S'_2)\) dove:
+\begin{definition}[il \(_{\textrm{EM}}\nabla_P\)widening] 
+Dato \(\hat{S}_P = \langle \wp_{\textrm{fn}}(S, \preceq),\preceq_P, \perp_P ,\vee_P\rangle\), sia \(h_{P}^{\nabla}\) un estrapolatore euristico \(\nabla\)-connesso e \(\boxplus_{\textrm{EM}}\) un connettore per \(\hat{S}_P\). Siano poi \(S_1, S_2\in\wp_{\textrm{fn}}(S, \preceq)\), dove \(S_1\prec_P S_2\). Allora \(S_1\ _{\textrm{EM}}\nabla_P S_2 = h_{P}^{\nabla}(S_1, S'_2)\) dove:
 	\begin{align*}
 	S'_2 &=  \begin{cases}
 				S_2 &\textrm{se} S_1\prec_{\textrm{EM}} S_2 \\
 				S_1\boxplus_{\textrm{EM}} S_2 &\textrm{altrimenti}
 				\end{cases}
 	\end{align*}
+\end{definition}
