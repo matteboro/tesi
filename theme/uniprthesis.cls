@@ -14,7 +14,7 @@
 \usepackage{fancyhdr} 							% abstract
 \usepackage{listings}							% code
 \usepackage{algorithm}							% pseudo-code
-\usepackage[noend]{algpseudocode}				% pseudo-code
+\usepackage{algpseudocode}				        % pseudo-code
 \usepackage{amsthm}								% math environment
 \usepackage{amsmath}							% math environment
 \usepackage{color}		
