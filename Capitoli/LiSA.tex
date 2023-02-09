@@ -135,7 +135,7 @@ La classe \texttt{Edge} collega tra di loro due nodi. Esistono tre tipi di \text
 Per fare un esempio prendiamo in considerazione lo statement \texttt{x = a + b} in un linguaggio non tipato (come Python), in cui non sappiamo i tipi dei valori di \texttt{a} e \texttt{b}. Questo statement in LiSA può essere tradotto in due espressioni simboliche, una per le parte sinistra, ovvero un riferimento alla variabile \texttt{x}, che può essere ulteriormente processata dal dominio astratto che modula l'heap, e una per la parte destra e modella la semantica dell'addizione \texttt{a + b}. Questa può anche controllare i tipi delle due variabili di \texttt{a} e \texttt{b} a run-time e in alcuni casi generare una \texttt{SymbolicExpression} che rappresenta l'addizione tra interi (se le due variabili possono avere valori numerici interi) e in altri casi una che rappresenta la concatenazione di stringhe (se entrambe possono contenere stringhe), o qualsiasi altro tipo di operazione modellata tramite il \texttt{+} che dipende dalle caratteristiche dei suoi operandi.
 Questa traduzione run-time degli \texttt{Statement} in più \texttt{SymbolicExpression} rende i CFG di LiSA dinamici e plastici, quindi capaci di rappresentare un grande numero di costrutti semantici e la possibilità di modellare le funzioni della maggior parte dei linguaggi. Il compito del front-end in LiSA sarà quello di trasformare un programma scritto in un qualsiasi linguaggio di programmazione in un insieme di CFG comprendibili a LiSA, fatti di \texttt{Statement} (anche language-specific) e \texttt{edge}, e capaci di simulare \textit{completamente} la semantica del programma originale.
 
-\subsection{Domini astratti in LiSA}
+\subsection{Domini astratti in LiSA}\label{sec:abstractDomainLiSA}
 Ora parleremo invece di come sono definiti in LiSA i domini astratti. Ogni dominio in LiSA implementa due interfacce: \texttt{SemanticDomain}, che rende il dominio capace di valutare l'esecuzione di \texttt{SymbolicExpression} su istanze di esso, e \texttt{Lattice}, che fornisce al dominio le caratteristiche di un reticolo. Ora vediamo queste due interfacce più nel dettaglio.
 
 \subsubsection{\texttt{SemanticDomain}}\label{subsec:semanticDomain}
@@ -223,7 +223,7 @@ L'\texttt{AbstractState} principlamente fa quindi da coordinatore tra l'\texttt{
 \subsection{Calcolo del fix-point in LiSA}
 Abbiamo visto nel capitolo [??] che fare interpretazione astratta (sezione [??]) non significa altro che trovare una soluzione ad un sistema di equazioni costruito a partire dal CFG del programma. Tutte le soluzioni del sistema sono per definizione suoi fix-point e quindi cercare la soluzione significa cercarne un fix-point (possibilmente il più preciso, ovvero il least fix-point). Come viene mostrato nell'articolo di Cousot [??] qualsiasi metodo caotico di risoluzione ci permette di ottenere una soluzione del sistema (non necessariamente la minima). Tra tutti questi metodi ci conviene usarne uno efficiente e che sfrutti la struttura del CFG in modo da velocizzare la convergenza verso un fix-point. L'algoritmo che viene utilizzato in LiSA per la risoluzione del sistema di equazioni è quello classico basato su working-set e prima delle mie modifiche seguiva la definizione in pseudo-codice fornita in \ref{alg:fixpointAsc}.
 
-\begin{algorithm}[H]
+\begin{algorithm}
 	\caption{Algoritmo per il calcolo del fix-point con working-set list con solo fase ascendente}
 	\label{alg:fixpointAsc}
 	\begin{algorithmic}[1]
@@ -251,7 +251,7 @@ Abbiamo visto nel capitolo [??] che fare interpretazione astratta (sezione [??])
 	\end{algorithmic}
 \end{algorithm}
 
-Nell'algoritmo \(result\) è una mappa che associa ogni statement del grafo ad uno stato astratto (in LiSA in sostanza è una istanza di \texttt{Map<Statement, AnalysisState>}). All'inizio la mappa è vuota. \(ws\) è la lista contente gli statement ancora da calcolare e inizialmente viene caricata con l'entry-point del CFG (ovvero \(st_0\)). Si enra poi in un ciclo while che viene ripetuto finchè nella \(ws\) sono presenti statement. I passaggi all'interno del while sono:
+Nell'algoritmo \(result\) è una mappa che associa ogni statement del grafo ad uno stato astratto (in LiSA in sostanza è una istanza di \texttt{Map<Statement, AnalysisState>}). All'inizio la mappa è vuota. \(ws\) è la lista contente gli statement ancora da calcolare e inizialmente viene caricata con l'entry-point del CFG (ovvero \(st_0\)). Si entra poi in un ciclo while che viene ripetuto finchè nella \(ws\) sono presenti statement. I passaggi all'interno del while sono:
 \begin{enumerate}
 \itemsep0em 
     \item si estrae un elemento dal \(ws\);
@@ -262,4 +262,102 @@ Nell'algoritmo \(result\) è una mappa che associa ogni statement del grafo ad u
 \end{enumerate}
 
 Prima o poi non ci sono più aggiornamenti da fare a \(result\) e quindi non vengono più aggiunti statement a \(ws\), che di conseguenza si svuota e rende falsa la condizione del ciclo while alla riga 3 terminando la computazione e lasciando in \(result\) un fix-point, e quindi una soluzione, del sistema di equazioni generato a partire dal CFG.
+
+\section{Le mie implementazioni dentro LiSA}
+
+\definecolor{keywordsColor}{rgb}{0.5, 0.0, 0.333}
+\lstset
+    {
+    basicstyle=\footnotesize\ttfamily,
+    breaklines=true,
+    keywordstyle=\color{keywordsColor}\bfseries,
+    language=Java, 
+    numbers=none
+    }
+
+Fino'ora abbiamo introdotto tutte le nozioni matematiche e teoriche necessarie per capire come funzioni l'analisi statica tramite interpretazione astratta (nel capitolo []) ed abbiamo visto come questi concetti vengono applicati all'interno di LiSA (nella sezione [] di questo capitolo). In questa sezione verrà spiegato il contributo che io ho dato per espandere la libreria, guardando nel dettaglio ogni implementazione. 
+
+\subsection{Dominio dell'insieme delle parti finite e non ridondanti}
+
+Come abbiamo detto nella piccola introduzione al concetto di \texttt{ValueDomain} in LiSA è possibile sviluppare domini sia relazionali che non. Lo sviluppo nei due casi prende "percorsi" diversi, e questo perchè, abbiamo detto, molte operazioni sono comuni a tutti i domini non-relazionali e quindi aveva senso avere un strato in più che si prendesse carico di queste operazioni comuni, ovvero l'\texttt{Environment}, semplificando per l'utente l'operazione di sviluppare domini non-relazionali. Per questo motivo l'introduzione di un sistema generico per lo sviluppo del dominio dell'insieme delle parti finite e non ridondanti di un altro dominio astratto, già definito in LiSA, ha dovuto coprire entrambi casi. Partiamo dal caso generale. 
+
+\subsubsection{Il caso generale}
+
+Nella sezione \ref{sec:abstractDomainLiSA} abbiamo mostrato le caratteristiche che deve avere un dominio astratto in LiSA (sottoforma delle interfacce che deve implementare). In \ref{code:nonRedundantPowerset} è mostrata la definizione (non completa) della classe che implementa la versione più generale del concetto di dominio dei sottinsiemi finiti e non ridondanti di un altro dominio.
+%(a partire dalla quale si possono sviluppare sia domini relazionali che non).
+\begin{algorithm}
+\begin{lstlisting}[belowskip=-1.3 \baselineskip]
+public abstract class NonRedundantPowerset<
+        C extends NonRedundantPowerset<C, T, E, I>,
+        T extends SemanticDomain<T, E, I> & Lattice<T>,
+        E extends SymbolicExpression,
+        I extends Identifier> 
+    extends SetLattice<C, T> 
+    implements SemanticDomain<C, E, I> {
+
+    public final T valueDomain;
+	
+    public NonRedundantPowerset(Set<T> elements, 
+                                boolean isTop, 
+                                T valueDomain) {...}
+    
+    protected C removeRedundancy() {...}
+    
+    @Override
+    public C lubAux(C other) {...}
+    
+    @Override
+    public C glbAux(C other) {...}
+    
+    protected C EgliMilnerConnector(C other) {...}
+    
+    protected C extrapolationHeuristic(C other) {...}
+    
+    @Override
+    public C wideningAux(C other) {...}
+    
+    @Override
+    public boolean lessOrEqualAux(C other) {...}
+    
+    public boolean lessOrEqualEgliMilner(C other) {...}
+    
+    @Override
+    public C mk(Set<T> set) {...}
+    
+    public abstract C mk(Set<T> set, 
+                         boolean isTop, 
+                         T valueDomain);
+    
+    @Override
+    public Satisfiability satisfies(E expression, 
+                                    ProgramPoint pp) {...}
+}
+\end{lstlisting}
+\caption{La classe \texttt{NonRedundantPowerset}}
+\label{code:nonRedundantPowerset}
+\end{algorithm}
+La classe astratta \texttt{NonRedundantPowerset<C,T,E,I>} è parametrica a quattro classi:
+\begin{itemize}
+    \itemsep0pt
+    \item \texttt{C} è la classe concreta del dominio;
+    \item \texttt{T} è il dominio sottostante, ovvero il tipo degli elementi all'interno degli insiemi, e deve avere anche lui le caratteristiche di un dominio astratto (quindi deve implementare le interfacce \texttt{SemanticDomain} e \texttt{Lattice});
+    \item \texttt{E} è il tipo delle \texttt{SymbolicExpression} su cui questo dominio, e quindi quello sottostante \texttt{T}, riesce a ragionare semanticamente;
+    \item \texttt{I} è il tipo di \texttt{Identifiers} che questo dominio,  e quindi quello sottostante \texttt{T}, sa manipolare;
+\end{itemize}\ 
+La classe, poi, invece di implementare \texttt{Lattice<C>} estende \texttt{SetLattice<C,T>}, che definisce la struttura reticolare che ci serve in questo caso e che viene mostrata formalmente nel capitolo \hyperref[chapter:background]{Background} all'esempio \ref{ex:setLattice}. Sintetizzando molto la classe astratta \texttt{SetLattice} è cosi definita in LiSA:
+\begin{lstlisting}[belowskip=-1.3 \baselineskip]
+public abstract class SetLattice<S extends SetLattice<S,T>,T> 
+    implements BaseLattice<S>, Iterable<T> {
+
+    public final Set<T> elements;
+    public boolean isTop;
+    ...
+}
+\end{lstlisting}
+Dove \texttt{elements} è l'insieme contenente oggetti di tipo \texttt{T}, il campo \textt{isTop} traccia il fatto che l'elemento in questioni rappresenti l'elemento top, l'operazione di lub è l'unione tra insiemi \(\cup\) e la relazione di ordine parziale è il contenimento insiemistico \(\subseteq\).
+
+Il campo \texttt{public final T valueDomain} introdotto da \texttt{NonRedundantPowerset} è un elemento qualsiasi del dominio sottostante e serve in alcune operazioni riguardanti la struttura reticolare del dominio per ottenere i valori \texttt{top} e \texttt{bottom}. 
+
+
+
 
