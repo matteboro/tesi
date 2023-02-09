@@ -1000,7 +1000,7 @@ L'insieme dei sottoinsiemi non ridonanti si \(S\) rispetto a \(\preceq\) è deno
 
 \'E importante notare che ogni sottoinsieme finito di un insieme con ordinamento parziale ha una corrispettivo equivalente non ridondante che si può ottenere tramite una funzione di riduzione che definiamo di seguito.
 
-\begin{definition}[Funzione di riduzione]
+\begin{definition}[Funzione di riduzione]\label{def:funzioneRiduzione}
 La \textit{funzione di riduzione} \(\Omega_{S}^{\preceq} : \wp_{\textrm{f}}(S)\rightarrow\wp_{\textrm{fn}}(S, \preceq)\) che trasforma ogni sottoinsieme finito di \(S\) nel suo omonimo non ridondante in rispetto a \(\preceq\) è cosi definita per ogni \(D\in\wp_{\textrm{f}}(S)\):
 \[\Omega_{S}^{\preceq}(D) \triangleq D \backslash \lbrace d \in D     \ \vert\ d= \perp \vee\ \exists d'\in D . d\prec d' \rbrace\]
 \end{definition}
@@ -1022,22 +1022,23 @@ Abbiamo quindi costruito un dominio che è inerentemente più preciso di quello 
 
 Il nuovo dominio così creato però eredita tutti i problemi di quello su cui è basato, quindi come nel caso degli intervalli, si può ottenere un reticolo che non rispetta la condizione di catena ascendente. In questi casi diventa necessario cercare un operatore di widening per il nuovo dominio capace di garantire la convergenza del calcolo del fix-point durante l'analisi. In [??] vengono mostrati tre metodi costruttivi per ottenere un widening per il dominio delle parti dell'insieme finite e non ridondanti partendo da quello del dominio sottostante. Nel seguito daremo alcune definizioni di operatori che ci serveranno per la costruzione di tale widening (mostreremo uno solo dei tre metodi mostrati, che è poi quello implementato in LiSA per tali domini, come vedremo nel capitolo \ref{chapter:lisa}).
 
-\begin{definition} [relazione di ordine parziale di Egli-Milner] 
+\begin{definition} [relazione di ordine parziale di Egli-Milner]\label{def:EgliMilnerRelation}
 \'E possibile costruire una relazione di ordine parziale Egli-Milner tale che, dati \(S_1, S_2\in\wp_{\textrm{fn}}(S, \preceq)\) allora \(S_1 \preceq_{\textrm{EM}} S_2 \textrm{ se e solo se o:} \)
 \[S_1=\perp_P\textrm{ oppure,}\]
 \[S_1\preceq_P S_2 \wedge \forall s_2\in S_2 : \exists s_1\in S_1: s_1\preceq s_2\]
 \end{definition}
 
-\begin{definition}[connettore di Egli-Milner] 
+\begin{definition}[connettore di Egli-Milner]\label{def:connettoreEgliMilner}
 Un connettore di Egli-Milner per \(\hat{S}_P = \langle \wp_{\textrm{fn}}(S, \preceq),\preceq_P, \perp_P ,\vee_P\rangle\), denotato con \(\boxplus_{\textrm{EM}}\), è un qualunque operatore di upper bound per l'ordinamento di Egli-Milner su \(\wp_{\textrm{fn}}(S, \preceq)\), definito precedentemente. Anche se una operazione di least-upper bound non può essere sempre definita, un connettore di Egli-Milner si, ad esempio possiamo sempre usare: \(S_1\boxplus_{\textrm{EM}} S_2 = \bigsqcup\{ S_1 \cup S_2\}\).
 \end{definition}
 
-\begin{definition}[ordinamento parziale indotto da widening] Ogni operatore di widening \(\nabla\) su un join semilattice \(\langle S,\preceq, \perp ,\vee\rangle\) induce un corrispondente ordinamento parziale \(\preceq_{\nabla}\) sul dominio \emph{S}, che è definito come la chiusura transitiva e riflessiva della relazione:
+\begin{definition}[ordinamento parziale indotto da widening] 
+Ogni operatore di widening \(\nabla\) su un join semilattice \(\langle S,\preceq, \perp ,\vee\rangle\) induce un corrispondente ordinamento parziale \(\preceq_{\nabla}\) sul dominio \emph{S}, che è definito come la chiusura transitiva e riflessiva della relazione:
 \[\lbrace(s_1, s)\in S\times S\ \vert\ \exists s_2\in S.\ s_1\prec s_2 \wedge s = s_1\nabla s_2\rbrace\]
 Inoltre la relazione \(\preceq_{\nabla}\) rispetta la ascending chain condition.
 \end{definition}
 
-\begin{definition}[estrapolatore euristico] 
+\begin{definition}[estrapolatore euristico]
 Un operatore parziale \(h_{P}^{\nabla} : \wp_{\textrm{fn}}(S, \preceq)^2\rightarrow\wp_{\textrm{fn}}(S, \preceq)\) è un estrapolatore euristico per \(\hat{S}_P = \langle \wp_{\textrm{fn}}(S, \preceq),\preceq_P, \perp_P ,\vee_P\rangle\) se \(\forall S_1, S_2\in\wp_{\textrm{fn}}(S, \preceq)\) tale che \(S_1 \prec S_2\), \(h_{P}^{\nabla}(S_1, S_2)\) è definito e soddisfa le seguenti condizioni:
 \begin{itemize}
 	\item \(S_2 \preceq_{\textrm{EM}}h_{P}^{\nabla}(S_1, S_2)\), e
@@ -1045,19 +1046,19 @@ Un operatore parziale \(h_{P}^{\nabla} : \wp_{\textrm{fn}}(S, \preceq)^2\rightar
 \end{itemize}
 \end{definition}
 
-\begin{definition}[estrapolatore euristico \(\nabla\)-connesso] 
+\begin{definition}[estrapolatore euristico \(\nabla\)-connesso]\label{def:estrapolatoreEuristicoWideningConnesso}
 Un estrapolatore euristico \(h_{P}^{\nabla}\)
 è detto \(\nabla\)-connesso se per ogni \(S_1, S_2\in\wp_{\textrm{fn}}(S, \preceq)\) dove \(S_1\prec_P S_2\) abbiamo che:
 \[\forall d \in h_{P}^{\nabla}(S_1, S_2)\cap S_2:((\exists s_1\in S_1.\ s_1\prec d)\Rightarrow (\exists s'_1\in S_1.\ s'_1 \prec_{\nabla} d))\]
 \end{definition}
 
-\begin{proposition}
+\begin{proposition}\label{prop:estrapolatoreEuristicoWideningConnesso}
 Dato \(\hat{S}_P = \langle \wp_{\textrm{fn}}(S, \preceq),\preceq_P, \perp_P ,\vee_P\rangle\). per ogni \(S_1, S_2\in\wp_{\textrm{fn}}(S, \preceq)\) tale che \(S_1\preceq_P S_2\) sia
 \[h_{P}^{\nabla}(S_1, S_2) = S_2\vee_P\Omega_{S}^{\preceq}(\lbrace s_1\nabla s_2 \in S\ \vert\ s_1\in S_1, s_2\in S_2, s_1\prec s_2 \rbrace)\]
 allora \(h_{P}^{\nabla}\) è un estrapolatore euristico \(\nabla\)-connesso per per \(\hat{S}_P\).
 \end{proposition}
 
-\begin{definition}[il \(_{\textrm{EM}}\nabla_P\)widening] 
+\begin{definition}[il \(_{\textrm{EM}}\nabla_P\)widening]\label{def:wideningPowersetDomain}
 Dato \(\hat{S}_P = \langle \wp_{\textrm{fn}}(S, \preceq),\preceq_P, \perp_P ,\vee_P\rangle\), sia \(h_{P}^{\nabla}\) un estrapolatore euristico \(\nabla\)-connesso e \(\boxplus_{\textrm{EM}}\) un connettore per \(\hat{S}_P\). Siano poi \(S_1, S_2\in\wp_{\textrm{fn}}(S, \preceq)\), dove \(S_1\prec_P S_2\). Allora \(S_1\ _{\textrm{EM}}\nabla_P S_2 = h_{P}^{\nabla}(S_1, S'_2)\) dove:
 	\begin{align*}
 	S'_2 &=  \begin{cases}

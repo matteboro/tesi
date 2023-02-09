@@ -260,10 +260,8 @@ Nell'algoritmo \(result\) è una mappa che associa ogni statement del grafo ad u
     \item si controlla se il post-state del nodo sia minore o uguale allo stato astratto mappato a quello statement in \(result\). Se ciò che abbiamo calcolato nel post-state è minore od uguale a quello che abbiamo già possiamo evitare di aggiungere i nodi successivi al corrente in \(ws\), perchè siamo sicuri di non poter dare loro nessuna informazione in più che già non gli abbiamo dato precedentemente e che quindi non li aiuterebbe a cambiare il loro post-state. Se invece non è minore o uguale bisogna aggiornare \(result\) e propagare il cambiamento a tutti gli statement successivi a quello corrente sotto analisi. 
     \item se siamo entrati nel corpo dell'if a riga 7 vuol dire che dobbiamo aggiornare \(result\). Come abbiamo visto nel capitolo sull'intepretazione astatta per raggiungere un fix-point (che sia il least fix-point o una approssimazione di esso) dobbiamo applicare un'operazione di join tra i risultati degli step della iterazione sul sistema di equazioni. Questa operazione di join deve essere un operatore di upper bound (quindi il lub o una sua approssimazione, per esempio il widening). Per scegliere se usare il widening o il lub settiamo a priori nell'analisi un valore di threshold. Una volta passati threshold volte per uno statement durante l'analisi passiamo dall'usare il lub all'usare il widening. Questa logica decisionale ci permette di garantire la finitudine dell'analisi, infatti siamo sicuri che dopo un numero finito di step si cominci ad usare il widening, il quale a sua volta, come abbiamo visto, ci garantisce la convergenza. Infine, dopo aver aggiornato \(result\), dobbiamo garantire di propagare i cambiamenti effettuati e quindi inseriamo tutti gli statement successivi al corrente nel \(ws\). 
 \end{enumerate}
-
 Prima o poi non ci sono più aggiornamenti da fare a \(result\) e quindi non vengono più aggiunti statement a \(ws\), che di conseguenza si svuota e rende falsa la condizione del ciclo while alla riga 3 terminando la computazione e lasciando in \(result\) un fix-point, e quindi una soluzione, del sistema di equazioni generato a partire dal CFG.
-
-\section{Le mie implementazioni dentro LiSA}
+\\
 
 \definecolor{keywordsColor}{rgb}{0.5, 0.0, 0.333}
 \lstset
@@ -272,21 +270,23 @@ Prima o poi non ci sono più aggiornamenti da fare a \(result\) e quindi non ven
     breaklines=true,
     keywordstyle=\color{keywordsColor}\bfseries,
     language=Java, 
-    numbers=none
+    numbers=none,
+    frame=single
     }
 
 Fino'ora abbiamo introdotto tutte le nozioni matematiche e teoriche necessarie per capire come funzioni l'analisi statica tramite interpretazione astratta (nel capitolo []) ed abbiamo visto come questi concetti vengono applicati all'interno di LiSA (nella sezione [] di questo capitolo). In questa sezione verrà spiegato il contributo che io ho dato per espandere la libreria, guardando nel dettaglio ogni implementazione. 
 
-\subsection{Dominio dell'insieme delle parti finite e non ridondanti}
+\section{Dominio dell'insieme delle parti finite e non ridondanti in LiSA}
 
 Come abbiamo detto nella piccola introduzione al concetto di \texttt{ValueDomain} in LiSA è possibile sviluppare domini sia relazionali che non. Lo sviluppo nei due casi prende "percorsi" diversi, e questo perchè, abbiamo detto, molte operazioni sono comuni a tutti i domini non-relazionali e quindi aveva senso avere un strato in più che si prendesse carico di queste operazioni comuni, ovvero l'\texttt{Environment}, semplificando per l'utente l'operazione di sviluppare domini non-relazionali. Per questo motivo l'introduzione di un sistema generico per lo sviluppo del dominio dell'insieme delle parti finite e non ridondanti di un altro dominio astratto, già definito in LiSA, ha dovuto coprire entrambi casi. Partiamo dal caso generale. 
 
-\subsubsection{Il caso generale}
+\subsection{Il caso generale}
 
 Nella sezione \ref{sec:abstractDomainLiSA} abbiamo mostrato le caratteristiche che deve avere un dominio astratto in LiSA (sottoforma delle interfacce che deve implementare). In \ref{code:nonRedundantPowerset} è mostrata la definizione (non completa) della classe che implementa la versione più generale del concetto di dominio dei sottinsiemi finiti e non ridondanti di un altro dominio.
 %(a partire dalla quale si possono sviluppare sia domini relazionali che non).
 \begin{algorithm}
-\begin{lstlisting}[belowskip=-1.3 \baselineskip]
+\lstset{frame=none}
+\begin{lstlisting}[belowskip=-1.1 \baselineskip]
 public abstract class NonRedundantPowerset<
         C extends NonRedundantPowerset<C, T, E, I>,
         T extends SemanticDomain<T, E, I> & Lattice<T>,
@@ -324,7 +324,7 @@ public abstract class NonRedundantPowerset<
     @Override
     public C mk(Set<T> set) {...}
     
-    public abstract C mk(Set<T> set, 
+    public abstract C mkAux(Set<T> set, 
                          boolean isTop, 
                          T valueDomain);
     
@@ -345,7 +345,7 @@ La classe astratta \texttt{NonRedundantPowerset<C,T,E,I>} è parametrica a quatt
     \item \texttt{I} è il tipo di \texttt{Identifiers} che questo dominio,  e quindi quello sottostante \texttt{T}, sa manipolare;
 \end{itemize}\ 
 La classe, poi, invece di implementare \texttt{Lattice<C>} estende \texttt{SetLattice<C,T>}, che definisce la struttura reticolare che ci serve in questo caso e che viene mostrata formalmente nel capitolo \hyperref[chapter:background]{Background} all'esempio \ref{ex:setLattice}. Sintetizzando molto la classe astratta \texttt{SetLattice} è cosi definita in LiSA:
-\begin{lstlisting}[belowskip=-1.3 \baselineskip]
+\begin{lstlisting}[belowskip=-1.1 \baselineskip]
 public abstract class SetLattice<S extends SetLattice<S,T>,T> 
     implements BaseLattice<S>, Iterable<T> {
 
@@ -354,10 +354,146 @@ public abstract class SetLattice<S extends SetLattice<S,T>,T>
     ...
 }
 \end{lstlisting}
-Dove \texttt{elements} è l'insieme contenente oggetti di tipo \texttt{T}, il campo \textt{isTop} traccia il fatto che l'elemento in questioni rappresenti l'elemento top, l'operazione di lub è l'unione tra insiemi \(\cup\) e la relazione di ordine parziale è il contenimento insiemistico \(\subseteq\).
+Dove \texttt{elements} è l'insieme contenente oggetti di tipo \texttt{T}, il campo \texttt{isTop} traccia il fatto che l'elemento in questioni rappresenti l'elemento top, l'operazione di lub è l'unione tra insiemi \(\cup\) e la relazione di ordine parziale è il contenimento insiemistico \(\subseteq\).
 
-Il campo \texttt{public final T valueDomain} introdotto da \texttt{NonRedundantPowerset} è un elemento qualsiasi del dominio sottostante e serve in alcune operazioni riguardanti la struttura reticolare del dominio per ottenere i valori \texttt{top} e \texttt{bottom}. 
+Il campo \texttt{public final T valueDomain} introdotto da \texttt{NonRedundantPowerset} è un elemento qualsiasi del dominio sottostante e serve in alcune operazioni riguardanti la struttura reticolare del dominio per ottenere i valori \texttt{top} e \texttt{bottom}. Il metodo \texttt{public C mk ( Set <T > set )} viene ereditato da \texttt{SetLattice} e serve a costruire una istanza concreta del dominio a partire dagli oggeti contenuti in \texttt{set}. In \texttt{NonRedundantPowerset} è difinita in modo tale da richiamare \texttt{mkAux(...)}, ovvero la versione estesa di \texttt{mk} fatta per comprendere \texttt{ValueDomain} e \texttt{isTop}, il quale deve essere definito nelle classi concrete che estendono \texttt{NonRedundantPowerset} (infatti \texttt{mkAux} è dichiarato come metodo astratto).
+
+Un altro metodo molto importante è \texttt{removeRedundancy}. Non è altro che la funzione di riduzione mostrata nella definizione \ref{def:funzioneRiduzione}. Serve a rimuovere la ridondanza dall'insieme. \'E necessaria perchè alcune operazioni sugli elementi del dominio potrebbero togliergli questa proprietà, che quindi deve essere ripristinata. La definizione del metodo è la seguente:
+\begin{lstlisting}[belowskip=-1.1 \baselineskip]
+protected C removeRedundancy(){
+    Set<T> newElementsSet = new HashSet<T>();
+    for (T element : this.elements) {
+        if (!element.isBottom()) {
+            boolean toRemove = false;
+            for (T otherElement : this.elements)
+                if (element.lessOrEqual(otherElement) && 
+                    !otherElement.lessOrEqual(element))
+                    toRemove = true;
+            if (!toRemove)
+                newElementsSet.add(element);
+        }
+    }
+    return mk(newElementsSet);
+}
+\end{lstlisting}
+
+\subsubsection{Le operazioni reticolari in \texttt{NonRedundantPowerset}}
+Passiamo ora a dare la definizione dei metodi delle operazioni riguardanti la struttura reticolare del dominio. Partiamo dal metodo che definisce l'ordine parziale che segue la definizione in \ref{def:powersetDomain}.
+\begin{lstlisting}[belowskip=-1.1 \baselineskip]
+@Override
+public boolean lessOrEqualAux(C other) throws SemanticException {
+    for (T s1 : this.elements) {
+        boolean existsGreaterElement = false;
+        for (T s2 : other.elements) {
+            if (s1.lessOrEqual(s2)) {
+                existsGreaterElement = true;
+                break;
+            }
+        }
+        if (!existsGreaterElement)
+            return false;
+    }
+    return true;
+}
+\end{lstlisting}
+Proseguiamo con le operazioni di least upper bound e greatest lower bound che seguono le definizioni date in \ref{def:powersetDomain}.
+\begin{lstlisting}[belowskip=-1.1 \baselineskip]
+@Override
+public C lubAux(C other) {
+    Set<T> lubSet = new HashSet<T>(this.elements);
+    lubSet.addAll(other.elements);
+    return mk(lubSet).removeRedundancy();
+}
+
+@Override
+public C glbAux(C other)
+        throws SemanticException {
+    Set<T> glbSet = new HashSet<T>();
+    for (T s1 : this.elements)
+        for (T s2 : other.elements)
+            glbSet.add(s1.glb(s2));
+    return mk(glbSet).removeRedundancy();
+}
+\end{lstlisting}
+Abbiamo poi la relazione di ordine parziale di Egli-Milner che segue la definizione in \ref{def:EgliMilnerRelation}.
+\begin{lstlisting}[belowskip=-1.1 \baselineskip]
+public boolean lessOrEqualEgliMilner(C other) throws SemanticException {
+    if (lessOrEqual(other)) {
+        if (!isBottom()) {
+            for (T s2 : other.elements) {
+                boolean existsLowerElement = false;
+                for (T s1 : this.elements) {
+                    if (s1.lessOrEqual(s2)) {
+                        existsLowerElement = true;
+                        break;
+                    }
+                }
+                if (!existsLowerElement)
+                    return false;
+            }
+        }
+    } else
+        return false;
+    return true;
+}
+\end{lstlisting}
+Dichiariamo poi un metodo che fa da connettore di Egli-Milner (\ref{def:connettoreEgliMilner}) tra due elementi e ne diamo una implementazione di default, che anche se corretta per ogni dominio è grossolana ed imprecisa (nell'esempio specifico degli \texttt{Interval}, nel caso dei domini non-relazionali, ne vedremo una ridefinizione più "intelligente" che ci permette di preservare precisione nell'analisi).
+\begin{lstlisting}[belowskip=-1.1 \baselineskip]
+protected C EgliMilnerConnector(C other) {
+    Set<T> unionSet = new HashSet<T>(this.elements);
+    unionSet.addAll(other.elements);
+    T completeLub = valueDomain.bottom();
+    if (!unionSet.isEmpty()) {
+        for (T element : unionSet) {
+            completeLub = completeLub.lub(element);
+        }
+    }
+    Set<T> newSet = new HashSet<T>();
+    if (completeLub != null)
+        newSet.add(completeLub);
+    return mk(newSet);
+}
+\end{lstlisting}
+L'implementazione base semplicemente crea un nuovo insieme singoletto con il least upper bound di tutti gli elementi dei due insieme uniti.
 
 
 
+\subsubsection{L'interfaccia \texttt{SemanticDomain} in \texttt{NonRedundantPowerset}}
+Nel pezzo di codice mostrato in \ref{code:nonRedundantPowerset} sono stati omessi la maggior parte dei metodi dell'interfaccia \texttt{SemanticDomain} (tutti tranne \texttt{satisfies}). La loro definizione in \texttt{NonRedundantPowerset} è molto semplice. Qui di seguito mostreremo quella di \texttt{smallStepSemantics}:
+\begin{lstlisting}[belowskip=-1.1 \baselineskip]
+@Override
+public C smallStepSemantics(E expression, ProgramPoint pp) {
+    Set<T> newElements = new HashSet<T>();
+    for (T elem : this.elements) {
+        newElements.add(
+            elem.smallStepSemantics(expression, pp));
+    }
+    return mk(newElements).removeRedundancy();
+}
+\end{lstlisting}
+Gli altri metodi di \texttt{SemanticDomain} seguono la stessa struttura: (i) viene creato un insieme di oggetti di tipo \texttt{T} vuoto, (ii) viene caricato con gli oggetti precedenetemente contenuti nell'insieme ma trasformati semanticamente tramite il metodo in questione (in questo caso \texttt{smallStepSemantics}) passando gli appositi argomenti ed infine (iii) viene restituita una nuova istanza del dominio a partire dal nuovo insieme costruito, assicurandoci di rimuovere la ridondanza che potrebbe essersi venuta a formare. 
+Un caso a parte è il metodo \texttt{satisfies} che segue la definizione seguente:
+\begin{lstlisting}[belowskip=-1.1 \baselineskip]
+@Override
+public Satisfiability satisfies(E expression, 
+                                ProgramPoint pp){
+    
+    Set<Satisfiability> setSatisf = 
+                        new HashSet<Satisfiability>();
 
+    for (T element : this.elements) {
+        setSatisf.add(element.satisfies(expression, pp));
+    }
+
+    if ((setSatisf.contains(Satisfiability.SATISFIED) &&    
+        setSatisf.contains(Satisfiability.NOT_SATISFIED)) ||
+        setSatisf.contains(Satisfiability.UNKNOWN))
+        return Satisfiability.UNKNOWN;
+    else if (setSatisf.contains(Satisfiability.SATISFIED))
+        return Satisfiability.SATISFIED;
+    else if (setSatisf.contains(Satisfiability.NOT_SATISFIED))
+        return Satisfiability.NOT_SATISFIED;
+
+    return Satisfiability.UNKNOWN;
+}
+\end{lstlisting}
