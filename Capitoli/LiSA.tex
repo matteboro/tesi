@@ -251,7 +251,7 @@ Abbiamo visto nel capitolo [??] che fare interpretazione astratta (sezione [??])
 	\end{algorithmic}
 \end{algorithm}
 
-Nell'algoritmo \(result\) è una mappa che associa ogni statement del grafo ad uno stato astratto (in LiSA in sostanza è una istanza di \texttt{Map<Statement, AnalysisState>}). All'inizio la mappa è vuota. \(ws\) è la lista contente gli statement ancora da calcolare e inizialmente viene caricata con l'entry-point del CFG (ovvero \(st_0\)). Si entra poi in un ciclo while che viene ripetuto finchè nella \(ws\) sono presenti statement. I passaggi all'interno del while sono:
+Nell'algoritmo \(result\) è una mappa che associa ogni statement del grafo ad uno stato astratto (in LiSA in sostanza è una istanza di \texttt{Map<Statement, AnalysisState>}). All'inizio la mappa è vuota (che può essere visto come il partire dall'elemento \(\perp\)). \(ws\) è la lista contente gli statement ancora da calcolare e inizialmente viene caricata con l'entry-point del CFG (ovvero \(st_0\)). Si entra poi in un ciclo while che viene ripetuto finchè nella \(ws\) sono presenti statement. I passaggi all'interno del while sono:
 \begin{enumerate}
 \itemsep0em 
     \item si estrae un elemento dal \(ws\);
@@ -271,7 +271,10 @@ Prima o poi non ci sono più aggiornamenti da fare a \(result\) e quindi non ven
     keywordstyle=\color{keywordsColor}\bfseries,
     language=Java, 
     numbers=none,
-    frame=single
+    %showspaces=true,
+    literate={\ \ }{{\ }}1,
+    frame=single,
+    breaklines=true
     }
 
 Fino'ora abbiamo introdotto tutte le nozioni matematiche e teoriche necessarie per capire come funzioni l'analisi statica tramite interpretazione astratta (nel capitolo []) ed abbiamo visto come questi concetti vengono applicati all'interno di LiSA (nella sezione [] di questo capitolo). In questa sezione verrà spiegato il contributo che io ho dato per espandere la libreria, guardando nel dettaglio ogni implementazione. 
@@ -296,7 +299,7 @@ public abstract class NonRedundantPowerset<
     implements SemanticDomain<C, E, I> {
 
     public final T valueDomain;
-	
+    
     public NonRedundantPowerset(Set<T> elements, 
                                 boolean isTop, 
                                 T valueDomain) {...}
@@ -325,8 +328,8 @@ public abstract class NonRedundantPowerset<
     public C mk(Set<T> set) {...}
     
     public abstract C mkAux(Set<T> set, 
-                         boolean isTop, 
-                         T valueDomain);
+                            boolean isTop, 
+                            T valueDomain);
     
     @Override
     public Satisfiability satisfies(E expression, 
@@ -417,7 +420,7 @@ public C glbAux(C other)
 \end{lstlisting}
 Abbiamo poi la relazione di ordine parziale di Egli-Milner che segue la definizione in \ref{def:EgliMilnerRelation}.
 \begin{lstlisting}[belowskip=-1.1 \baselineskip]
-public boolean lessOrEqualEgliMilner(C other) throws SemanticException {
+public boolean lessOrEqualEgliMilner(C other){
     if (lessOrEqual(other)) {
         if (!isBottom()) {
             for (T s2 : other.elements) {
@@ -454,12 +457,37 @@ protected C EgliMilnerConnector(C other) {
     return mk(newSet);
 }
 \end{lstlisting}
-L'implementazione base semplicemente crea un nuovo insieme singoletto con il least upper bound di tutti gli elementi dei due insieme uniti.
+L'implementazione base semplicemente crea un nuovo insieme singoletto con il least upper bound di tutti gli elementi dei due insieme uniti. 
 
-
+\noindent Il widening implementato per i \texttt{NonRedundantPowerset} utilizza un estrapolatore euristico \(\nabla\)-connesso. Per questo seguendo la definizione \ref{def:estrapolatoreEuristicoWideningConnesso} e la proposizione \ref{prop:estrapolatoreEuristicoWideningConnesso} lo implementiamo così: 
+\begin{lstlisting}[belowskip=-1.1 \baselineskip]
+protected C extrapolationHeuristic(C other){
+    Set<T> extrapolatedSet = new HashSet<T>();
+    for (T s1 : this.elements) {
+        for (T s2 : other.elements) {
+            if (s1.lessOrEqual(s2) && !s2.lessOrEqual(s1))
+                extrapolatedSet.add(s1.widening(s2));
+        }
+    }
+    return mk(extrapolatedSet).removeRedundancy().lub(other);
+}
+\end{lstlisting}
+Ed infine abbiamo l'operatore di widening binario che segue la definizione in \ref{def:wideningPowersetDomain}. 
+\begin{lstlisting}[belowskip=-1.1 \baselineskip]
+@Override
+public C wideningAux(C other){
+    if (lessOrEqualEgliMilner(other))
+        return extrapolationHeuristic(other)
+                .removeRedundancy();
+    else
+        return extrapolationHeuristic(EgliMilnerConnector(other))
+                .removeRedundancy();
+}
+\end{lstlisting}
 
 \subsubsection{L'interfaccia \texttt{SemanticDomain} in \texttt{NonRedundantPowerset}}
 Nel pezzo di codice mostrato in \ref{code:nonRedundantPowerset} sono stati omessi la maggior parte dei metodi dell'interfaccia \texttt{SemanticDomain} (tutti tranne \texttt{satisfies}). La loro definizione in \texttt{NonRedundantPowerset} è molto semplice. Qui di seguito mostreremo quella di \texttt{smallStepSemantics}:
+\label{code:smallStepSemanticsPowersetGeneral}
 \begin{lstlisting}[belowskip=-1.1 \baselineskip]
 @Override
 public C smallStepSemantics(E expression, ProgramPoint pp) {
@@ -497,3 +525,231 @@ public Satisfiability satisfies(E expression,
     return Satisfiability.UNKNOWN;
 }
 \end{lstlisting}
+Possiamo dire che l'elemento soddisfa (non soddisfa) l'espressione \texttt{expression} solamente se tutti gli elementi dell'insieme soddisfano (non soddisfano) l'espressione. In tutti gli altri casi non possiamo concludere nulla di preciso e restituiamo \texttt{UNKNOWN}.
+
+\subsection{Il caso dei domini non relazionali}
+
+Prima di vedere come è stato implementato il dominio dei sottoinsiemi finiti e non ridondanti nel caso in qui dominio sottostante sia non-relazionale dobbiamo parlare più approfonditamente di come questi sono implementati in LiSA. Partiamo dal vedere la classe \texttt{Environement}. 
+
+\begin{lstlisting}[belowskip=-1.1 \baselineskip]
+public abstract class Environment<
+    M extends Environment<M, E, T, V>,
+    E extends SymbolicExpression,
+    T extends NonRelationalElement<T, E, M>,
+    V extends Lattice<V>>
+    extends FunctionalLattice<M, Identifier, T> 
+    implements SemanticDomain<M, E, Identifier>
+\end{lstlisting}
+Un \texttt{Environment} è una \texttt{FunctionalLattice} (visto nell'esempio \ref{ex:functionalLattice}) che mappa \texttt{Identifier} a valori del dominio \texttt{T}. \texttt{T} dovrà per forza essere un \texttt{NonRelationalElement}, chè è l'interfaccia vera e propria dalla quale si parte per sviluppare domini non-relazionali, ad esempio viene implementata da \texttt{Interval} e \texttt{Sign} in LiSA. \texttt{Environment} implementa poi l'interfaccia \texttt{SemanticDomain}. Esiste una versione specifica di \texttt{Environment} per i domini che tracciano il valore delle variabili, ovvero \texttt{ValueEnvironment}.
+
+\begin{lstlisting}[belowskip=-1.1 \baselineskip]
+public class ValueEnvironment<
+    T extends NonRelationalValueDomain<T>>
+    extends Environment<
+                        ValueEnvironment<T>, 
+                        ValueExpression, 
+                        T, T>
+    implements ValueDomain<ValueEnvironment<T>> 
+\end{lstlisting}
+Come si vede \texttt{ValueEnvironment} è un \texttt{Environment} che mappa \texttt{Identifier} a \texttt{NonRelationalValueDomain} e capace di ragionare solo su \texttt{ValueExpression}. Inoltre implementa \texttt{ValueDomain} così da poter essere usato in un \texttt{AbstractState}.
+
+Ora dobbiamo guardare un pò più a fondo come viene costruito un vero e proprio dominio non-relazionale a partire da \texttt{NonRelationalElement} e tutte le sue sottoclassi. L'interfaccia \texttt{NonRelationalElement} è così definita:
+
+\begin{lstlisting}[belowskip=-1.1 \baselineskip]
+public interface NonRelationalElement<
+    T extends NonRelationalElement<T, E, F>,
+    E extends SymbolicExpression,
+    F extends FunctionalLattice<F, Identifier, T>>
+    extends Lattice<T>, SemanticEvaluator {
+
+    Satisfiability satisfies(E expression, F environment, ProgramPoint pp);
+    
+    F assume(F environment, E expression, ProgramPoint pp);
+}
+\end{lstlisting}
+
+\'E generica alla istanza concreta che implementa l'interfaccia, alle espressioni simboliche su cui sa ragionare e al \texttt{FunctionalLattice} che fa da environment per quel dominio non-relazionale. Estende \texttt{Lattice}, così da assicurarci di avere la struttura reticolare necessaria ad un dominio astratto, e \texttt{SemanticEvaluator} di cui tra poco vedremo la defnizione. Sono definiti solo due metodi: 
+\begin{itemize}
+    \item \texttt{Satisfiability satisfies(E expression, F environment, ProgramPoint pp)}: ci dice se l'espressione \texttt{expression} è soddisfatta all'intrerno dell'\texttt{environment} passato; 
+    \item \texttt{F assume(F environment, E expression, ProgramPoint pp);}: ritorna un \texttt{environment} modificato rispetto a quello passato in cui l'espressione \texttt{expression} viene assunte essere vera;
+\end{itemize}
+L'interfaccia \texttt{SemanticEvaluator} rappresenta un oggetto che sa ragionare semanticamente sulle espressione sembioliche e sugli identificatori ma che non è un \texttt{SemanticDomain}. \'E così definita:
+\begin{lstlisting}[belowskip=-1.1 \baselineskip]
+public interface SemanticEvaluator {
+    boolean tracksIdentifiers(Identifier id);
+    boolean canProcess(SymbolicExpression expression);
+}
+\end{lstlisting}
+I due metodi ritornano \texttt{true} se, rispettivamente, l'elemento del dominio sta tracciando una proprietà dell'identificatore \texttt{id} e se il dominio è in grado di ragionare sull'espessione \texttt{expression}.
+
+\noindent Ciò che manca fino ad ora a \texttt{NonRelationalElement} e che è necessaria ad un dominio astratto è la capacità di valutare una espressione. Per questo motivo abbiamo l'interfaccia \texttt{NonRelationalElement}. Questa estende \texttt{NonRelationalDomain} e aggiunge il metodo \texttt{eval} il quale valuta l'espressione \texttt{expression} sapendo il valore di tutte le variabili del programma grazie all'\texttt{environment} passato.
+\begin{lstlisting}[belowskip=-1.1 \baselineskip]
+public interface NonRelationalDomain<
+    T extends NonRelationalDomain<T, E, F>,
+    E extends SymbolicExpression,
+    F extends FunctionalLattice<F, Identifier, T>>
+    extends NonRelationalElement<T, E, F> {
+
+    T eval(E expression, F environment, ProgramPoint pp);
+}
+\end{lstlisting}
+Abbiamo poi una estensione di \texttt{NonRelationalDomain} specificio per i domini che tracciano il valore delle variabili chiamato \texttt{NonRelationalValueDomain}:
+\begin{lstlisting}[belowskip=-1.1 \baselineskip]
+public interface NonRelationalValueDomain<T extends NonRelationalValueDomain<T>>
+    extends NonRelationalDomain<T, ValueExpression, ValueEnvironment<T>> {
+}
+\end{lstlisting}
+\'E semplicemente un \texttt{NonRelationalDomain} che sa ragionare solo su \texttt{ValueExpression} e che come \texttt{FunctionalLattice} che traccia le proprietà delle variabili ha un \texttt{ValueEnvironment} (infatti se vediamo la definizione di \texttt{ValueEnvironemnt} data prima possiamo vedere come esso mappi agli identificatori valori di un \texttt{NonRelationalValueDomain}).
+
+Per concludere abbiamo la classe base \texttt{BaseNonRelationalValueDomain} (questa è la classe che ogni dominio non-relazionale che traccia il valore delle variabili deve estendere) che si prende carico delle operazioni base comuni a tutti i domini (ad esempio quelle riguardanti i valori \texttt{top} e \texttt{bottom} o l'estrazione del valore di una variabile dato il suo \texttt{Identifier}). Inoltre in questa classe i metodi \texttt{eval}, \texttt{satisfies} e \texttt{assume} smistano la loro esecuzione su sotto-metodi che si occupano di specifiche istanze di espressioni simboliche, ognuna con la propria implementazione di default (quindi per esempio \texttt{eval} reinderizzerà la valutazione a \texttt{evalBinaryExpression} se l'espressione simbolica passata è binaria). Questo cosicchè nella definizione del dominio astratto vero e proprio si deve dare la definizione semantica solo ai tipi di espressioni che il dominio può valutare (per esempio non esiste nessuna espressione simbolica ternaria che riguardi il dominio non-relazionale \texttt{Interval} e quindi in questa non verrà data una definizione per \texttt{evalTernaryExpression}, \texttt{satisfiesTernaryExpression} o \texttt{assumeTernatExpression} e si userà quella di defualt). 
+
+\definecolor{deepyellow}{RGB}{220, 130, 0}
+\definecolor{deepgreen}{RGB}{38, 115, 38}
+\definecolor{deepblue}{RGB}{0, 51, 153}
+
+\begin{lstlisting}[belowskip=-1.1 \baselineskip, escapechar=|]
+public interface BaseNonRelationalValueDomain<
+    T extends BaseNonRelationalValueDomain<T>>
+    extends BaseLattice<T>, NonRelationalValueDomain<T> {
+    
+    public class EvaluationVisitor<T extends BaseNonRelationalValueDomain<T>> implements ExpressionVisitor<T> {...}
+    
+    @Override
+    default boolean tracksIdentifiers(Identifier id) 
+    {...}
+    
+    @Override
+    default boolean canProcess(SymbolicExpression expression) 
+    {...}
+
+    @Override
+    default T |\textcolor{deepyellow}{eval}|(ValueExpression expression, ValueEnvironment<T> environment, ProgramPoint pp) 
+    {...}
+    
+    default T |\textcolor{deepyellow}{evalIdentifier}|(Identifier id, ValueEnvironment<T> environment, ProgramPoint pp)
+    {...}
+    
+    default T |\textcolor{deepyellow}{evalPushAny}|(PushAny pushAny, ProgramPoint pp)
+    {...}
+    
+    default T |\textcolor{deepyellow}{evalTypeConv}|(BinaryExpression conv, T left, T right, ProgramPoint pp) 
+    {...}
+    
+    default T |\textcolor{deepyellow}{evalTypeCast}|(BinaryExpression cast, T left, T right, ProgramPoint pp)
+    {...}
+    
+    default T |\textcolor{deepyellow}{evalNullConstant}|(ProgramPoint pp) 
+    {...}
+    
+    default T |\textcolor{deepyellow}{evalNonNullConstant}|(Constant constant, ProgramPoint pp)
+    {...}
+    
+    default T |\textcolor{deepyellow}{evalUnaryExpression}|(UnaryOperator operator, T arg, ProgramPoint pp)
+    {...}
+    
+    default T |\textcolor{deepyellow}{evalBinaryExpression}|(BinaryOperator operator, T left, T right, ProgramPoint pp)
+    {...}
+    
+    default T |\textcolor{deepyellow}{evalTernaryExpression}|(TernaryOperator operator, T left, T middle, T right, ProgramPoint pp)
+    {...}
+
+    @Override
+    default Satisfiability |\textcolor{deepgreen}{satisfies}|(ValueExpression expression, ValueEnvironment<T> environment, ProgramPoint pp)
+    {...}
+    
+    default Satisfiability |\textcolor{deepgreen}{satisfiesAbstractValue}|(T value, ProgramPoint pp) 
+    {...}
+    
+    default Satisfiability |\textcolor{deepgreen}{satisfiesNullConstant}|(ProgramPoint pp)
+    {...}
+    
+    default Satisfiability |\textcolor{deepgreen}{satisfiesNonNullConstant}|(Constant constant, ProgramPoint pp) 
+    {...}
+    
+    default Satisfiability |\textcolor{deepgreen}{satisfiesUnaryExpression}|(UnaryOperator operator, T arg, ProgramPoint pp) 
+    {...}
+    
+    default Satisfiability |\textcolor{deepgreen}{satisfiesBinaryExpression}|(BinaryOperator operator, T left, T right, ProgramPoint pp) 
+    {...}
+
+    default Satisfiability |\textcolor{deepgreen}{satisfiesTernaryExpression}|(TernaryOperator operator, T left, T middle, T right,ProgramPoint pp) 
+    {...}
+    
+    @Override
+    default ValueEnvironment<T> |\textcolor{deepblue}{assume}|(ValueEnvironment<T> environment, ValueExpression expression, ProgramPoint pp) 
+    {...}
+    
+    default ValueEnvironment<T> |\textcolor{deepblue}{assumeTernaryExpression}|(ValueEnvironment<T> environment, TernaryOperator operator, ValueExpression left, ValueExpression middle, ValueExpression right, ProgramPoint pp) 
+    {...}
+    
+    default ValueEnvironment<T> |\textcolor{deepblue}{assumeBinaryExpression}|(ValueEnvironment<T> environment, BinaryOperator operator, ValueExpression left, ValueExpression right, ProgramPoint pp) 
+    {...}
+    
+    default ValueEnvironment<T> |\textcolor{deepblue}{assumeUnaryExpression}|(ValueEnvironment<T> environment, UnaryOperator operator, ValueExpression expression, ProgramPoint pp) 
+    {...}
+}
+\end{lstlisting}
+
+Possiamo dare finalmente la definizione della classe base per lo sviluppo del dominio dei sottoinsiemi finiti e non ridondanti di un dominio non-relazionale. La classe si chiama \texttt{NonRedundantPowersetOfBaseNonRelationalValueDomain} e la definizione si può vedere in \ref{code:nonRedundantPowersetNonRelational}. \'E parametrica all'istanza concreta del dominio e ad un \texttt{BaseNonRelationalValueDomain}, che è il dominio non-relazionale sottostante di cui creaiamo insiemi non ridondanti (per esmpio \texttt{Interval} o \texttt{Sign}). I campi \texttt{elementsSet} e \texttt{valueDomain} hanno lo stesso significato che nella definizione del caso generale. Anche i metodi legati alle operazioni reticolari sono definiti equivalentemente al caso generale mostrato in \ref{code:nonRedundantPowerset}). In più in questo caso abbiamo il metodo \texttt{removeOverlapping} che, come suggerisce il nome, serve a rimuovere la sovrapposizione tra gli elementi dell'insieme. Anche se questa proprietà non è necesseria affinchè il widening costruito con il connettore di Egli-Milner visto nella sezione \ref{sec:EgliMilnerWidening} funzioni correttamente, sicuramente diminuisce il rumore dei risultati aumentandone la leggibilità oltre che a fargli occupare meno spazio in memoria (ad esempio un insieme non ridondante di intervalli interi come \(\{[0, 10], [5, 20], [15, 25]\}\) può essere rappresentato senza perdita di precisione da un insieme senza sovrapposizioni come \(\{[0, 25]\}\)). \texttt{removeOverlappingBetweenElements} è un metodo ausiliario utilizzato da \texttt{removeOverlapping} per ottenere un elemento equivalente ai due sovrapposti passati come argomenti. Di default questo metodo applica l'operatore di least upper bound tra i due.
+
+Per i sotto-metodi di eval la definizione segue la struttura di \texttt{evalBinaryExpression} riportata di seguito, che è simile a quella data per i metodi di \texttt{SemanticDomain} (tranne \texttt{satisfies}) mostrata nell'esempio di \hyperref[code:smallStepSemanticsPowersetGeneral]{\texttt{smallStepSemantics}} del caso generale.
+\begin{lstlisting}[belowskip=-1.1 \baselineskip]
+@Override
+public C evalBinaryExpression(BinaryOperator operator, C left, C right, ProgramPoint pp){
+
+    Set<E> newSet = new HashSet<E>();
+    
+    for (E current_left : left.elementsSet) {
+        for (E current_ight : right.elementsSet) {
+            newSet.add(valueDomain.evalBinaryExpression(operator, current_left, current_ight, pp));
+        }
+    }
+    return mk(newSet).removeRedundancy().removeOverlapping();
+}
+\end{lstlisting}
+I passagi informalmente sono i seguenti: (i) viene creato un insieme vuoto, (ii) si cicla sull'insieme degli operandi (in questo caso un doppio ciclo annidato perchè gli operandi sono due) estrando i valori singoli del tipo del dominio sottostante, (iii) viene valutata l'espressione sui valori correnti del ciclo (in questo caso \texttt{current\_left} e \texttt{current\_right}), (iv) il valore calcolato viene inserito nel nuovo insieme ed infine, concluso il ciclo, (v) viene creato un nuovo elemento a partire dall'insieme ottenuto a cui viene rimossa la ridondanza e l'overlapping.
+
+
+\begin{algorithm}
+\lstset{frame=none}
+\begin{lstlisting}[belowskip=-1.1 \baselineskip, escapechar=|]
+public abstract class NonRedundantPowersetOfBaseNonRelationalValueDomain<
+    C extends NonRedundantPowersetOfBaseNonRelationalValueDomain<C, E>,
+    E extends BaseNonRelationalValueDomain<E>> 
+    implements BaseNonRelationalValueDomain<C> {
+    
+    protected final Set<E> elementsSet;
+    protected final E valueDomain;
+    
+    protected NonRedundantPowersetOfBaseNonRelationalValueDomain(Set<E> elements, E element) 
+    
+    protected abstract C mk(Set<E> elements) {...}
+    
+    protected C removeRedundancy() {...}
+    
+    protected C removeOverlapping() {...}
+    protected E removeOverlappingBetweenElements(E e1, E e2) 
+    {...}
+    
+    public boolean lessOrEqualAux(C other) {...}
+    public C lubAux(C other) {...}
+    public C glbAux(C other) {...}
+    public boolean lessOrEqualEgliMilner(C other) {...}
+    protected C EgliMilnerConnector(C other) {...}
+    protected C extrapolationHeuristic(C other) {...}
+    public C wideningAux(C other) {...}   
+
+    // specific |\textcolor{deepyellow}{eval}| methods
+    public C |\textcolor{deepyellow}{evalUnaryExpression}|(...) {...}
+    public C |\textcolor{deepyellow}{evalBinaryExpression}|(...) {...}
+    ...
+
+    // specific |\textcolor{deepgreen}{satisfies}| methods
+    public Satisfiability |\textcolor{deepgreen}{satisfiesUnaryExpression}|(...) {...}
+    public Satisfiability |\textcolor{deepgreen}{satisfiesBinaryExpression}|(...) {...}
+    ...
+}
+\end{lstlisting}
+\caption{La classe \\ \texttt{NonRedundantPowersetOfBaseNonRelationalValueDomain}}
+\label{code:nonRedundantPowersetNonRelational}
+\end{algorithm}
