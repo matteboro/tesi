@@ -501,6 +501,7 @@ public C smallStepSemantics(E expression, ProgramPoint pp) {
 \end{lstlisting}
 Gli altri metodi di \texttt{SemanticDomain} seguono la stessa struttura: (i) viene creato un insieme di oggetti di tipo \texttt{T} vuoto, (ii) viene caricato con gli oggetti precedenetemente contenuti nell'insieme ma trasformati semanticamente tramite il metodo in questione (in questo caso \texttt{smallStepSemantics}) passando gli appositi argomenti ed infine (iii) viene restituita una nuova istanza del dominio a partire dal nuovo insieme costruito, assicurandoci di rimuovere la ridondanza che potrebbe essersi venuta a formare. 
 Un caso a parte è il metodo \texttt{satisfies} che segue la definizione seguente:
+\label{code:satisfiesPowersetGeneral}
 \begin{lstlisting}[belowskip=-1.1 \baselineskip]
 @Override
 public Satisfiability satisfies(E expression, 
@@ -690,25 +691,7 @@ public interface BaseNonRelationalValueDomain<
 }
 \end{lstlisting}
 
-Possiamo dare finalmente la definizione della classe base per lo sviluppo del dominio dei sottoinsiemi finiti e non ridondanti di un dominio non-relazionale. La classe si chiama \texttt{NonRedundantPowersetOfBaseNonRelationalValueDomain} e la definizione si può vedere in \ref{code:nonRedundantPowersetNonRelational}. \'E parametrica all'istanza concreta del dominio e ad un \texttt{BaseNonRelationalValueDomain}, che è il dominio non-relazionale sottostante di cui creaiamo insiemi non ridondanti (per esmpio \texttt{Interval} o \texttt{Sign}). I campi \texttt{elementsSet} e \texttt{valueDomain} hanno lo stesso significato che nella definizione del caso generale. Anche i metodi legati alle operazioni reticolari sono definiti equivalentemente al caso generale mostrato in \ref{code:nonRedundantPowerset}). In più in questo caso abbiamo il metodo \texttt{removeOverlapping} che, come suggerisce il nome, serve a rimuovere la sovrapposizione tra gli elementi dell'insieme. Anche se questa proprietà non è necesseria affinchè il widening costruito con il connettore di Egli-Milner visto nella sezione \ref{sec:EgliMilnerWidening} funzioni correttamente, sicuramente diminuisce il rumore dei risultati aumentandone la leggibilità oltre che a fargli occupare meno spazio in memoria (ad esempio un insieme non ridondante di intervalli interi come \(\{[0, 10], [5, 20], [15, 25]\}\) può essere rappresentato senza perdita di precisione da un insieme senza sovrapposizioni come \(\{[0, 25]\}\)). \texttt{removeOverlappingBetweenElements} è un metodo ausiliario utilizzato da \texttt{removeOverlapping} per ottenere un elemento equivalente ai due sovrapposti passati come argomenti. Di default questo metodo applica l'operatore di least upper bound tra i due.
-
-Per i sotto-metodi di eval la definizione segue la struttura di \texttt{evalBinaryExpression} riportata di seguito, che è simile a quella data per i metodi di \texttt{SemanticDomain} (tranne \texttt{satisfies}) mostrata nell'esempio di \hyperref[code:smallStepSemanticsPowersetGeneral]{\texttt{smallStepSemantics}} del caso generale.
-\begin{lstlisting}[belowskip=-1.1 \baselineskip]
-@Override
-public C evalBinaryExpression(BinaryOperator operator, C left, C right, ProgramPoint pp){
-
-    Set<E> newSet = new HashSet<E>();
-    
-    for (E current_left : left.elementsSet) {
-        for (E current_ight : right.elementsSet) {
-            newSet.add(valueDomain.evalBinaryExpression(operator, current_left, current_ight, pp));
-        }
-    }
-    return mk(newSet).removeRedundancy().removeOverlapping();
-}
-\end{lstlisting}
-I passagi informalmente sono i seguenti: (i) viene creato un insieme vuoto, (ii) si cicla sull'insieme degli operandi (in questo caso un doppio ciclo annidato perchè gli operandi sono due) estrando i valori singoli del tipo del dominio sottostante, (iii) viene valutata l'espressione sui valori correnti del ciclo (in questo caso \texttt{current\_left} e \texttt{current\_right}), (iv) il valore calcolato viene inserito nel nuovo insieme ed infine, concluso il ciclo, (v) viene creato un nuovo elemento a partire dall'insieme ottenuto a cui viene rimossa la ridondanza e l'overlapping.
-
+Possiamo dare finalmente la definizione della classe base per lo sviluppo del dominio dei sottoinsiemi finiti e non ridondanti di un dominio non-relazionale. La classe si chiama \texttt{NonRedundantPowersetOfBaseNonRelationalValueDomain} e la definizione si può vedere in \ref{code:nonRedundantPowersetNonRelational}. 
 
 \begin{algorithm}
 \lstset{frame=none}
@@ -753,3 +736,125 @@ public abstract class NonRedundantPowersetOfBaseNonRelationalValueDomain<
 \caption{La classe \\ \texttt{NonRedundantPowersetOfBaseNonRelationalValueDomain}}
 \label{code:nonRedundantPowersetNonRelational}
 \end{algorithm}
+
+\'E parametrica all'istanza concreta del dominio e ad un \texttt{BaseNonRelationalValueDomain}, che è il dominio non-relazionale sottostante di cui creaiamo insiemi non ridondanti (per esmpio \texttt{Interval} o \texttt{Sign}). I campi \texttt{elementsSet} e \texttt{valueDomain} hanno lo stesso significato che nella definizione del caso generale. Anche i metodi legati alle operazioni reticolari sono definiti equivalentemente al caso generale (mostrato in \ref{code:nonRedundantPowerset}). In più in questo caso abbiamo il metodo \texttt{removeOverlapping} che, come suggerisce il nome, serve a rimuovere la sovrapposizione tra gli elementi dell'insieme. Anche se questa proprietà non è necesseria affinchè il widening costruito con il connettore di Egli-Milner visto nella sezione \ref{sec:EgliMilnerWidening} funzioni correttamente, sicuramente diminuisce il rumore dei risultati aumentandone la leggibilità oltre che a fargli occupare meno spazio in memoria (ad esempio un insieme non ridondante di intervalli interi come \(\{[0, 10], [5, 20], [15, 25]\}\) può essere rappresentato senza perdita di precisione da un insieme senza sovrapposizioni come \(\{[0, 25]\}\)). \texttt{removeOverlappingBetweenElements} è un metodo ausiliario utilizzato da \texttt{removeOverlapping} per ottenere un elemento equivalente ai due sovrapposti passati come argomenti. Di default questo metodo applica l'operatore di least upper bound tra i due.
+
+Per i sotto-metodi di eval la definizione segue la struttura di \texttt{evalBinaryExpression} riportata di seguito, che è simile a quella data per i metodi di \texttt{SemanticDomain} (tranne \texttt{satisfies}) mostrata nell'esempio di \hyperref[code:smallStepSemanticsPowersetGeneral]{\texttt{smallStepSemantics}} del caso generale.
+\begin{lstlisting}[belowskip=-1.1 \baselineskip]
+@Override
+public C evalBinaryExpression(BinaryOperator operator, C left, C right, ProgramPoint pp){
+
+    Set<E> newSet = new HashSet<E>();
+    
+    for (E current_left : left.elementsSet) {
+        for (E current_ight : right.elementsSet) {
+            newSet.add(valueDomain.evalBinaryExpression(operator, current_left, current_ight, pp));
+        }
+    }
+    return mk(newSet).removeRedundancy().removeOverlapping();
+}
+\end{lstlisting}
+I passagi informalmente sono i seguenti: (i) viene creato un insieme vuoto, (ii) si cicla sull'insieme degli operandi (in questo caso un doppio ciclo annidato perchè gli operandi sono due) estrando i valori singoli del tipo del dominio sottostante, (iii) viene valutata l'espressione sui valori correnti del ciclo (in questo caso \texttt{current\_left} e \texttt{current\_right}), (iv) il valore calcolato viene inserito nel nuovo insieme ed infine, concluso il ciclo, (v) viene creato un nuovo elemento a partire dall'insieme ottenuto a cui viene rimossa la ridondanza e l'overlapping.
+
+Anche i sotto-metodi di \texttt{satisfies} sono strutturalmente equivalenti al caso generale mostrato nella definizione di \hyperref[code:satisfiesPowersetGeneral]{\texttt{satisfies} per \texttt{NonRedundantPowerset}}. Per esempio \texttt{satisfiesBinaryExpression} è così definita:  
+\begin{lstlisting}[belowskip=-1.1 \baselineskip]
+@Override
+public Satisfiability satisfiesBinaryExpression(
+                                            BinaryOperator operator, 
+                                            C left, C right, 
+                                            ProgramPoint pp) {
+
+    if (left.isTop() || right.isTop())
+        return Satisfiability.UNKNOWN;
+
+    Set<Satisfiability> setSatisf = 
+                            new HashSet<Satisfiability>();
+                            
+    for (E current_left : left.elementsSet) {
+        for (E current_right : right.elementsSet) {
+            setSatisf.add(valueDomain.satisfiesBinaryExpression(
+            operator, current_left, current_right, pp));
+        }
+    }
+    
+    if ((setSatisf.contains(Satisfiability.SATISFIED) && 
+            setSatisf.contains(Satisfiability.NOT_SATISFIED)) ||
+            setSatisf.contains(Satisfiability.UNKNOWN))
+        return Satisfiability.UNKNOWN;
+    else if (setSatisf.contains(Satisfiability.SATISFIED))
+        return Satisfiability.SATISFIED;
+    else if (setSatisf.contains(Satisfiability.NOT_SATISFIED))
+        return Satisfiability.NOT_SATISFIED;
+
+    return Satisfiability.UNKNOWN;
+}
+\end{lstlisting}
+Anche qua viene fatto il ciclo sugli elementi degli insiemi degli operandi e viene verificata la soddisfacibilità dell'espressione sfruttando la definizione specifica del dominio sottostante. L'insieme di oggetti della classe \texttt{Satisfiability} viene infine controllato e viene ritornato \texttt{SATISFIED} (o \texttt{NOT\_SATISFIED}) solo se l'espressione è soddisfatta (o non soddisfatta) su tutti i valori singoli degli insiemi degli operandi. 
+
+Non è possibile dare una definizione generale per i sotto-metodi di \texttt{assume}. Mentre per \texttt{eval} e \texttt{satisfies} basta ciclare sugli insiemi degli operandi e applicare la definizione data dal dominio non-relazionale sottostante ed al massimo fare qualche semplice operazione sugli insiemi così ottenuti, nel caso di \texttt{assume} (ed i suoi sotto-metodi) per utilizzare la definizione del dominio sottostante dovremmo fare una inefficiente e dispendiosa traduzione dal \texttt{ValueEnvironment<NonRedundantPowersetOfBaseNonRelationalValueDomain<T>>} ad un insieme di \texttt{ValueEnvironment<T>} (possibilmente anche molto grande) ed una serie di poco pratiche operazioni per ottenere il risultato. Per questo la definizione dei metodi \texttt{assume} è lasciata alle istanze concrete di \texttt{NonRedundantPowersetOfBaseNonRelationalValueDomain}.
+
+\subsection{\texttt{NonRedundantPowersetOfInterval}}
+
+
+
+Una volta vista come è stata costruita la base infrastrutturale attraverso cui è possibile sviluppare a partire da un dominio astratto il dominio dei suoi sottoinsiemi finiti e non ridondanti in LiSA, vediamo un esempio di come è stata utilizzata in un caso concreto. Vedremo la definizione di, secondo la sintassi della sezione \ref{sec:EgliMilnerWidening}:
+\[\widehat{\textrm{Int}} = \langle \wp_{\textrm{fn}}(\textrm{Int}, \preceq_\textrm{Int}),\widehat{\preceq_{\textrm{Int}}}, \widehat{\sqcup_{\textrm{Int}}}, \widehat{\sqcap_{\textrm{Int}}}, \emptyset, \widehat{\top_{\textrm{Int}}} \rangle\]
+ovvero del dominio dell'insieme delle parti finite e non ridondanti del dominio degli intervalli interi. In \ref{code:nonRedundantPowersetOfInterval} è mostrata la definizione di questo dominio astratto in LiSA. 
+\begin{algorithm}
+\lstset{frame=none}
+\begin{lstlisting}[belowskip=-1.1 \baselineskip, escapechar=|]
+public class NonRedundantPowersetOfInterval
+    extends NonRedundantPowersetOfBaseNonRelationalValueDomain<
+                    NonRedundantPowersetOfInterval, 
+                    Interval> 
+    {
+
+    public NonRedundantPowersetOfInterval() 
+    {...}
+    public NonRedundantPowersetOfInterval(Set<Interval> elements) 
+    {...}
+    
+    @Override
+    protected NonRedundantPowersetOfInterval EgliMilnerConnector(NonRedundantPowersetOfInterval other) 
+    {...}
+    
+    private MathNumber middlePoint(Interval interval) 
+    {...}
+    
+    @Override
+    public ValueEnvironment<NonRedundantPowersetOfInterval> |\textcolor{deepblue}{assumeBinaryExpression}|(...) 
+    {...}
+}
+\end{lstlisting}
+\caption{La classe \\ \texttt{NonRedundantPowersetOfInterval}}
+\label{code:nonRedundantPowersetOfInterval}
+\end{algorithm}
+Innanzitutto notiamo che essendo \texttt{Interval} un dominio non-relazionale dobbbiamo utilizzare \texttt{NonRedundantPowersetOfBaseNonRelationalValueDomain} come classe base da estendere, e non \texttt{NonRedundantPowerset}. Poi vediamo come tutti i metodi legati ad \texttt{eval} e a \texttt{satisfies} non sono ridefiniti, percheè di questi se ne prende carico la classe base sottostante. L'unico metodo delle operazioni reticolari qua ridefinito è il connettore di Egli-Milner. Abbiamo detto in precedenza che la sua definizione di default era poco precisa (semplicemente faceva il lub tra tutti gli elementi dei due insiemi restituendolo in un insieme singoletto), e che ogni caso concreto avrebbe potuto trovarne una versione migliore. Nel caso degli \texttt{Interval} ho seguito questa definizione: dati \(I_1, I_2\in\wp_{\textrm{fn}}(\textrm{Int})\): 
+\begin{align*}
+ I_1 \boxplus_{\textrm{EM}} I_2 = &\{ y \in I_2\ |\ \exists x \in I_1 : x \preceq_{\textrm{Int}} y \}\ \cup \\
+ &\{ x' \sqcup_{\textrm{Int}} y\ |\ x' \in I_1, y \in I_2, \nexists x \in I_1 : x \preceq_{\textrm{Int}} y \}
+\end{align*}
+La scelta di \(x'\) può essere casuale, ma ovviamente conviene avere una logica che sfrutta la struttura degli elementi per preservare precisione. In \texttt{NonRedundantPowersetOfInterval} scelgo come \(x'\) l'intervallo più vicino a \(y\) in termini di punto medio. Infatti nella classe si può notare il metodo \texttt{middlePoint(Interval iterval)} che appunto calcola il punto medio dell'\texttt{Interval} passato. Lo pseudocodice dell'algoritmo usato in \texttt{EgliMilnerConnector} per \texttt{NonRedundantPowersetOfInterval} è mostrato in \ref{alg:EgliMilnerConnectorInterval}.
+\begin{algorithm}
+	\caption{Algoritmo usato per la definizione del connettore di Egli-Milner per la classe \texttt{NonRedundantPowersetOfInterval}}
+	\label{alg:EgliMilnerConnectorInterval}
+	\begin{algorithmic}[1]
+	\Function{EgliMilnerConnector}{Interval $I_1$, Interval $I_2$}
+        \Let{newSet}{$\{\}$}
+        \For{$y \in I_2$}
+            \If{$\exists\ x \in I_1 : x \preceq y$}
+                \State newSet.push({$y$})
+            \Else
+                \Let{$x'$}{findClosest($y$, $I_1$)}
+                \State newSet.push($x'\sqcup y$)
+            \EndIf
+        \EndFor
+        \State \Return{$\Omega(newSet)$}
+	\EndFunction
+	\end{algorithmic}
+\end{algorithm}
+
+\noindent L'unico sotto-metodo di \texttt{assume} definito per \texttt{Interval} è \texttt{assumeBinaryExpression} e quindi è stata l'unico metodo da implementare in \texttt{NonRedundantPowersetOfInterval}.
+
+\section{La fase discendente in LiSA}
+
