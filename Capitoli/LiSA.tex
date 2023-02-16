@@ -1039,4 +1039,26 @@ Program program = Frontend.processFile(programFilePath);
 LiSA lisa = new LiSA(configuration);
 lisa.run(program);
 \end{lstlisting}
-Se invece non si vuole che venga calcolata la fase discendente basta non settare il campo \texttt{descendingPhaseType} di \texttt{LiSAConfiguration}, che come default ha il valore \texttt{NONE}. Questo valore verrà passato duarante il flow del metodo \texttt{fixpoint} fino alla classe \texttt{CFG} che eviterà di fare la seconda chiamata a \texttt{Fixpoint.fixpoint} restituendo direttamente i risultati ottenuti dalla sola fase ascendente.
+Se invece non si vuole che venga calcolata la fase discendente basta non settare il campo \texttt{descendingPhaseType} di \texttt{LiSAConfiguration}, che come default ha il valore \texttt{NONE}. Questo valore verrà passato duarante il flow del metodo \texttt{fixpoint} fino alla classe \texttt{CFG} che eviterà di fare la seconda chiamata a \texttt{Fixpoint.fixpoint} restituendo direttamente i risultati ottenuti dalla sola fase ascendente. Nella figura \ref{fig:risultatoDOTDesc} è mostrato il risultato dell'analisi con anche la fase discendente del programma in \ref{fig:codiceEsempio2} e le configurazioni mostrate sopra.
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.8\textwidth]{Immagini/graphvizDesc.png}
+	\caption{Risultato in formato DOT dell'analisi del programma \ref{fig:codiceEsempio2} con anche fase discendente}
+	\label{fig:risultatoDOTDesc}
+\end{figure}
+
+\section{Decoupling della fase ascendente e discendente in LiSA}
+In questa sezione vedremo come è stato possibile modificare LiSA per permettere il decoupling della fase ascendente e discendente come mostrato nel capitolo \ref{chapter:decoupling}. Bisogna però dire che l'implementazione non è stata fatta per essere inserita ufficialmente dentro LiSA, ma come prova sperimentale per vedere realizzato in pratica il concetto e per fare qualche test. Anche per questo motivo non verrà data una spiegazione approfondita con estratti di codice come fatto in precedenza, ma solo una spiegazione generale del funzionamento e dell'architettura. Nella figura \ref{fig:flowDecoupling} viene mostrato un sequence diagram che schematizza le chiamate e i passaggi che avvengono in LiSA durante una analisi con decoupling delle fasi. 
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=\textwidth]{Immagini/decouplingFlow.png}
+	\caption{}
+	\label{fig:flowDecoupling}
+\end{figure}
+Partiamo dal descrivere le componenti e i metodi aggiunti:
+\begin{itemize}
+\itemsep0pt
+    \item \texttt{DecouplingInterproceduralAnalysis<A, D>}: è la \texttt{InterpoceduralAnalysis} da utilizzare per fare un'analisi con decoupling delle fasi. Incapsula al suo interno due \texttt{InterproceduralAnalysis} dello stesso tipo, una parametrica al tipo di stato astratto (che può essere considerato il dominio astratto) usato durante la fase ascendente, \texttt{A}, e una parametrica allo stato astratto usato durante la fase discendente, \texttt{D}. Questo oggetto deve essere progettato ad-hoc per ogni coppia di \texttt{A} e \texttt{D}. 
+    \item \texttt{Decoupler<A, D>}: è l'oggetto che si occupa della traduzione da un dominio all'altro. \'E capace quindi di trasformare l'\texttt{AbstractState<A>} utilizzato nella fase ascendente nell'\texttt{AbstractState<D>} usato in quello discendente. 
+    \item è poi stato poi aggiunto il metodo \texttt{descendingPhase(DescendingPhaseType, ascResult<D>)} alle classi \texttt{InterproceduralAnalysis} e \texttt{CFG}. Questo metodo si occupa di calcolare la sola fase discendente partendo dai risultati della fase ascendente tradotti nel dominio astratto discendente.
+\end{itemize}
