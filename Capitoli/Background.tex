@@ -758,8 +758,8 @@ Più generalmente se abbiamo un reticolo completo \(\completeLattice{S}\), parte
 Una idea è quella di usare come post-fix-point da cui iniziare la computazione discendente il risultato della fase ascendente, calcolata con il widening, di cui abbiamo dimostrato che il limite è post-fix-point della funzione.
 
 Come nella fase ascendente, anche discendendo il dominio si può incappare in catene infinite se il reticolo non rispetta la condizione di catena discendente. Per questo motivo abbiamo bisogno di un operatore di interpolazione che accelleri o forzi la convergenza della iterazione di sequenze decrescenti. Questo operatore lo chiamiamo narrowing e lo definiamo così:
-
-\begin{definition}[Narrowing]
+\
+\begin{definition}[Narrowing]\label{def:narrowing}
 Dato un poset \(\simplePoset{S}\), la funzione \(\Delta:S\times S\rightarrow S\) è detta \textit{narrowing} se rispetta le seguenti condizioni:
 \begin{itemize}
 	\item per ogni coppia di elementi \(x, y\in S\) se \(x\preceq_S y\) si ha che \(x\preceq_S (x\Delta y) \preceq_S y\);
@@ -856,7 +856,7 @@ In figura \ref{fig:phasesFig} è mostrata una rappresentazione grafica del della
 \vspace{\fill}
 \begin{lstlisting}[language=Python, numbers=none]
 x = 0
-if x < 100:
+while x < 100:
     if x < 50:
         x = x + 2;
     else
