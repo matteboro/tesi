@@ -882,11 +882,19 @@ La scelta di \(x'\) può essere casuale, ma ovviamente conviene avere una logica
 
 \noindent L'unico sotto-metodo di \texttt{assume} definito per \texttt{Interval} è \texttt{assumeBinaryExpression} e quindi è stata l'unico metodo da implementare in \texttt{NonRedundantPowersetOfInterval}.
 
+Nella figura \ref{fig:risultatoAscPowerset} è mostrato il risultato dell'analisi con le configurazioni identiche a \ref{code:simpleAnalysisAsc} ma con il dominio \texttt{NonRedundantPowersetOfInterval} al posto di \texttt{Interval}.
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.7\textwidth]{Immagini/graphvizAscPowerset.png}
+	\caption{Risultato in formato DOT dell'analisi del programma \ref{fig:codiceEsempio2} con il dominio non relazionale dei sottoinsiemi non ridondanti di \texttt{Interval}}
+	\label{fig:risultatoAscPowerset}
+\end{figure}
+
 \section{La fase discendente in LiSA}
 In questa sezione vedremo come è stata aggiunta in LiSA la possibilità di calcolare anche la fase discendente. Prima però di parlare delle modifiche apportate bisogna mostrare come effettivamente (quali classi e metodi sono utilizziati) è implementato il calcolo del fix-point di un programma in LiSA. Il flow che segue il calcolo è mostrato in figura \ref{fig:flowFixpoint}. 
 \begin{figure}[ht]
 	\centering
-	\includegraphics[width=0.9\textwidth]{Immagini/flowFixpoint.png}
+	\includegraphics[width=\textwidth]{Immagini/flowFixpoint.png}
 	\caption{Sequence diagram del calcolo del fixpoint}
 	\label{fig:flowFixpoint}
 \end{figure}
@@ -988,7 +996,7 @@ public static enum DescendingPhaseType {
 \end{lstlisting}
 Se a \texttt{CFGFixpointImplementation} viene passato \texttt{DescendingPhaseType.NONE} supporrà di essere nella fase ascendente, se invece riceve \texttt{DescendingPhaseType.GLB} o \texttt{DescendingPhaseType.NARROWING} supporrà di essere in quella discendente. I tipi \texttt{GLB} e \texttt{NARROWING} indicano entrambi la fase discendente, ma con una diversa logica di scelta tra glb e narrowing durante l'esecuzione dell'operazione di meet (che dopo vedremo più nel dettaglio). A questo punto i metodi \texttt{equality} e \texttt{operation}, quando chiamati, controlleranno in quale fase si trovano e smisteranno il calcolo al metodo appropriato. Nella figura \ref{fig:flowFaseDisc} è schematizzata la sequenza di chiamate di \texttt{CFG} a \texttt{Fixpoint}.
 
-\begin{figure}[ht]
+\begin{figure}
 	\centering
 	\includegraphics[width=0.9\textwidth]{Immagini/flowFaseDisc.png}
 	\caption{Sequence diagram delle chiamata da \texttt{CFG} a \texttt{Fixpoint} dopo l'implementazione della fase discendente}
@@ -1023,6 +1031,7 @@ Sostanzialmente esistono due tipi di meet (o logiche per la scelta tra glb e nar
 \end{itemize}
 
 A questo punto se vogliamo aggiungere il calcolo della fase discendente all'analisi mostrata in \ref{code:simpleAnalysisAsc} basterà aggiungere alla configurazione il tipo di fase discendente voluta ed i suoi eventuali parametri, come mostrato nell'esempio qui di seguito. 
+\label{code:analisiDescending}
 \begin{lstlisting}[belowskip=-1.1 \baselineskip]
 LiSAConfiguration conf = new LiSAConfiguration();
 conf.abstractState = LiSAFactory.getDefaultFor(
@@ -1055,10 +1064,50 @@ In questa sezione vedremo come è stato possibile modificare LiSA per permettere
 	\caption{}
 	\label{fig:flowDecoupling}
 \end{figure}
+
 Partiamo dal descrivere le componenti e i metodi aggiunti:
 \begin{itemize}
 \itemsep0pt
-    \item \texttt{DecouplingInterproceduralAnalysis<A, D>}: è la \texttt{InterpoceduralAnalysis} da utilizzare per fare un'analisi con decoupling delle fasi. Incapsula al suo interno due \texttt{InterproceduralAnalysis} dello stesso tipo, una parametrica al tipo di stato astratto (che può essere considerato il dominio astratto) usato durante la fase ascendente, \texttt{A}, e una parametrica allo stato astratto usato durante la fase discendente, \texttt{D}. Questo oggetto deve essere progettato ad-hoc per ogni coppia di \texttt{A} e \texttt{D}. 
-    \item \texttt{Decoupler<A, D>}: è l'oggetto che si occupa della traduzione da un dominio all'altro. \'E capace quindi di trasformare l'\texttt{AbstractState<A>} utilizzato nella fase ascendente nell'\texttt{AbstractState<D>} usato in quello discendente. 
+    \item \texttt{DecouplingInterproceduralAnalysis<A, D>}: è la \texttt{InterpoceduralAnalysis} da utilizzare per fare un'analisi con decoupling delle fasi. Incapsula al suo interno due \texttt{InterproceduralAnalysis} dello stesso tipo, una parametrica al tipo di stato astratto (che può essere considerato il dominio astratto) usato durante la fase ascendente, \texttt{A}, e una parametrica allo stato astratto usato durante la fase discendente, \texttt{D}. 
+    \item \texttt{Decoupler<A, D>}: è l'oggetto che si occupa della traduzione da un dominio all'altro. \'E capace quindi di trasformare l'\texttt{AbstractState<A>} utilizzato nella fase ascendente nell'\texttt{AbstractState<D>} usato in quello discendente. Questo oggetto deve essere progettato ad-hoc per ogni coppia di \texttt{A} e \texttt{D}. 
     \item è poi stato poi aggiunto il metodo \texttt{descendingPhase(DescendingPhaseType, ascResult<D>)} alle classi \texttt{InterproceduralAnalysis} e \texttt{CFG}. Questo metodo si occupa di calcolare la sola fase discendente partendo dai risultati della fase ascendente tradotti nel dominio astratto discendente.
 \end{itemize}
+La sequenza di operazioni è la seguente:
+\begin{enumerate}
+\itemsep0pt
+    \item viene chiamato il metodo \texttt{fixpoint} sull'oggetto di tipo \texttt{DecouplingInterproceduralAnalysis<A, D>};
+    \item \texttt{DecouplingInterproceduralAnalysis<A, D>} chiama \texttt{fixpoint} sulla \texttt{InterproceduralAnalysis<A>}, dicendogli di calcolare solamente la fase ascendente. I risutalti ottenuti sono nel tipo del dominio astratto ascendente \texttt{A};
+    \item i risultati della fase ascendente vengono tradotti dal \texttt{Decoupler} nel dominio astratto discendente, così da poter essere usati come punto di partenza per la fase discendente;
+    \item \texttt{DecouplingInterproceduralAnalysis<A, D>} chiama \texttt{descendingPhase} sulla \texttt{InterproceduralAnalysis<D>} passando il tipo di fase discendente e il risultato della fase ascendente tradotto;
+\end{enumerate}
+Il seguente pezzo di codice descrive quello che deve essere aggiunto a quello mostrato prima in \ref{code:analisiDescending} per applicare il decoupling delle fasi all'analisi. Più precisamente per usare il dominio \texttt{Sign} nella fase ascendente e \texttt{Interval} in quella discendente. 
+\begin{lstlisting}[belowskip=-1.1 \baselineskip]
+LiSAConfiguration conf = new LiSAConfiguration();
+
+SignToIntervalDecoupler decoupler = new SignToIntervalDecoupler<>();
+decoupler.setStates(
+        getDefaultFor(AbstractState.class, 
+                        getDefaultFor(HeapDomain.class), 
+                        new Sign(), 
+                        new TypeEnvironment<>(new InferredTypes())), 
+        getDefaultFor(AbstractState.class, 
+                        getDefaultFor(HeapDomain.class), 
+                        new Interval(), 
+                        new TypeEnvironment<>(new InferredTypes())));
+
+DecouplingModularWorstCaseAnalysisInterprocedural interproc = 
+    new DecouplingModularWorstCaseAnalysisInterprocedural<>(
+    decoupler);
+
+conf.interproceduralAnalysis = interproc;
+//.....
+lisa.run(program);
+\end{lstlisting}
+I risultati dell'analisi sono mostrati in \ref{fig:risultatoDecoup}.
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.7\textwidth]{Immagini/graphvizDecoup.png}
+	\caption{Risultato in formato DOT dell'analisi del programma \ref{fig:codiceEsempio2} con anche fase discendente disaccoppiata da quella ascendente}
+	\label{fig:risultatoDecoup}
+\end{figure}
+
