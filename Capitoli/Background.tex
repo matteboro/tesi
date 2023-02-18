@@ -408,8 +408,7 @@ dove le funzioni \(\textrm{min},\textrm{max}:\wp(\mathbb{Z})\rightarrow\mathbb{Z
 \end{example}
 
 \section{Analisi statica ed Interpretazione astratta}
-
-Lo scopo dell'\textit{analisi statica} è quello di provare formalmente certe proprietà di un programma. Per essere definita statica una analisi deve avere la caratteristica di non eseguire il codice (in caso opposto l'analisi si dice \textit{dinamica}, un esempio è il tradizionale metodo di debug con test), o meglio di non eseguirlo nella sua forma concreta. L'\textit{interpretazione astratta} è un modello matematico che può essere utilizzato per compiere analisi statica. L'idea basilare è quella di astrarre la computazione su un dominio astratto e interpretare il codice muovendoci in uno spazio di oggetti astratti che approssimano il dominio concreto. Per fare ciò dobbiamo creare una semantica astratta, che ragiona nel mondo del dominio astratto, che sia \textit{sound} in rispetto alla semantica concreta, la quale invece ragiona su un dominio concreto. Il motivo per cui ci accontentiamo di una approssimazione è che spesso lavorare sul dominio concreto risulta impossibile a causa dei limiti della computazione o è estremamente costoso in termini di tempo. Ci basta perciò una soluzione approssimata, ma corretta, da cui si spera sia possibile verificare certe proprietà del programma analizzato.
+Lo scopo dell'\textit{analisi statica} è quello di provare formalmente certe proprietà di un programma. Per essere definita statica una analisi deve avere la caratteristica di non eseguire il codice (in caso opposto l'analisi si dice \textit{dinamica}, un esempio è il tradizionale metodo di debug con test), o meglio di non eseguirlo nella sua forma concreta. L'\textit{interpretazione astratta} è un modello matematico che può essere utilizzato per compiere analisi statica. L'idea basilare è quella di astrarre la computazione su un dominio astratto e interpretare il codice muovendoci in uno spazio di oggetti astratti che approssimano il dominio concreto. Per fare ciò dobbiamo creare una semantica astratta, che ragiona nel mondo del dominio astratto, che sia \textit{sound} in rispetto alla semantica concreta, la quale invece ragiona su un dominio concreto. Il motivo per cui ci accontentiamo di una approssimazione è che spesso lavorare sul dominio concreto risulta impossibile a causa dei limiti della computazione o è estremamente costoso in termini di tempo. Ci basta perciò una soluzione approssimata, ma corretta, da cui si spera sia possibile verificare certe proprietà del programma analizzato. L'idea di intepretazione astratta è nata negli anni '70, dove viene esposta in modo formale e sistematico negli articoli di Patrick e Radhia Cousot \cite{DBLP:conf/popl/CousotC77} e \cite{DBLP:conf/popl/CousotC79}. 
 
 \subsection{Interpretazione astratta}
 Un linguaggio \(\mathbb{L}\) mette a disposizione una semantica, ovvero una descrizione formale e matematica del comportamento di un programma \(\rho\) scritto in \(\mathbb{L}\) partendo da uno stato iniziale (che può rappresentare la collezione di elementi di input di \(\rho\)). Da tale semantica si possono ottenere diverse \textit{semantiche concrete}, ovvero funzioni \(\textbf{S}:Program_\mathbb{L}\rightarrow \mathbb{C}\),  che prendono un programma \(\rho\) in \(\mathbb{L}\) e restituiscono un oggetto dell'insieme \(\mathbb{C}\), detto \textit{dominio semantico concreto}, che ci dice qualcosa sul comportamento di \(\rho\) e attraverso cui è pssibile verificarne crete proprietà. Una caratteristica necessaria di un dominio concreto è che deve essere parte di un reticolo completo, per semplicità scriveremo \(\simplePoset{\mathbb{C}}\). Due esempi di semantiche concrete sono:
@@ -443,8 +442,6 @@ oppure equivalentemente:
 Inoltre date tutte le approssimazioni di \(f\) esistenti vorremmo sapere quale è quella più precisa, quella che perde meno informazione ovvero vorremmo conoscere la \textit{migliore approssimazione corretta}. Date le ipotesi di sopra la funzione \(\alpha\circ f\circ\gamma:A\rightarrow A\) è la migliore approssimazione corretta.
 \end{definition}
 
-
-
 \subsection{Calcolo del fix-point}
 Come già abbiamo detto spesso la semantica (sia astratta che concreta) viene espressa in termini di ricerca del least fix-point di un'altra funzione. Risulta molto utile, se non necessario, dare qualche definizione e teorema che ci permette di trasferire il calcolo del lfp di una funzione concreta \(f\) su una funzione astratta \(f^{\natural}\).
 
@@ -457,7 +454,6 @@ Presi \(\GaloisConnection{C}{A}\), una funzione concreta \(f:C\rightarrow C\) ed
 \end{theorem}
 
 \subsection{Interpretazione astratta di un Control Flow Graph}
-
 Un Control Flow Graph (CFG) è una rappresentazione di un programma tramite una coppia \(\cfg\) dove \(N\) è un insieme di nodi, questi rappresentano blocchi di codice basilari del programma (ad esempio gli statement), e \(E\subset N\times N\) è l'insieme di archi che collegano i nodi in \(N\), questi rappresentano il flusso di informazione tra i blocchi. Gli archi possono essere sequenziali (l'informazione passa dal nodo di partenza a quello di arrivo sempre senza modifiche), veri (l'informazione passa solo se la condizione nel nodo di partenza è vera) o falsi (opposti agli archi veri). In questo modo possiamo rappresentare anche l'if statement all'interno del linguaggio CFG. Per rappresentare gli statement di loop basta creare dei cicli all'interno del CFG.
 
 Dato un programma in CFG \(\cfg\) certe semantiche concrete possono essere espresse come il least fix-point del sistema di equazioni \(F:\mathbb{C}^{|N|}\rightarrow\mathbb{C}^{|N|}\) dove:
@@ -813,8 +809,8 @@ ed un narrowing \(\Delta:\textrm{Int}\times\textrm{Int}\rightarrow\textrm{Int}\)
 \]
 \end{example}
 
-Riassumendo il concetto nella prima fase (ascendente) utilizzeremo, per raggiungere un post-fix-point di \(F^{\natural}\), una versione del sistema di equazione che fa il join tra gli step della iterazione utilizzando il lub od il widening (con una logica in grado di decidere quando usare l'uno o l'altro), questo passaggio lo chiamiamo \(F^{\nabla}\). Nella fase discendente invece, partendo dal risultato calcolato da quella prima, modificheremo il sistema di equazioni in modo da fare il meet tra gli step utlizzando o il glb o il narrowing, questo passaggio lo chiamiamo \(F^{\Delta}\). 
-In figura \ref{fig:phasesFig} è mostrata una rappresentazione grafica del della fase ascendente e discendente su un dominio \(\mathbb{S}\).
+Riassumendo il concetto: nella prima fase (ascendente) utilizzeremo, per raggiungere un post-fix-point di \(F^{\natural}\), una versione del sistema di equazione che fa il join tra gli step della iterazione utilizzando il lub od il widening (con una logica in grado di decidere quando usare l'uno o l'altro), questo passaggio lo chiamiamo \(F^{\nabla}\). Nella fase discendente invece, partendo dal risultato calcolato da quella prima, modificheremo il sistema di equazioni in modo da fare il meet tra gli step utlizzando o il glb o il narrowing, questo passaggio lo chiamiamo \(F^{\Delta}\). 
+In figura \ref{fig:phasesFig} è mostrata una rappresentazione grafica della fase ascendente e discendente su un dominio \(\mathbb{S}\).
 
 \begin{figure}[H]
 \begin{tikzpicture}
@@ -987,7 +983,7 @@ F^{\natural}=
 \end{example}
 
 \section{Dominio delle parti dell'insieme finite e non ridondanti}\label{sec:EgliMilnerWidening}
-In questa sezione parleremo di un particolare dominio che si può costruire a partire da un qualsiasi reticolo, ovvero il dominio delle parti dell'insieme finite e non ridondanti di un reticolo. Mostreremo inoltre una possibile definizione di widening per questo dominio seguendo l'articolo [??].
+In questa sezione parleremo di un particolare dominio che si può costruire a partire da un qualsiasi reticolo, ovvero il dominio delle parti dell'insieme finite e non ridondanti di un reticolo. Mostreremo inoltre una possibile definizione di widening per questo dominio seguendo l'articolo \cite{DBLP:journals/sttt/BagnaraHZ07}.
 
 \begin{definition}[Non ridondanza]
 Dato un reticolo \ un insieme \(D\in\wp_{\textrm{f}} (S)\) è \textit{non ridondante} se e solo se:
