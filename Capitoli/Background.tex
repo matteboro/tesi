@@ -339,7 +339,7 @@ Dato un reticolo completo \(\completeLattice{S}\) ed una funzione monotona \(f:S
 
 Questo teorema garantisce l'esistenza di fix-point, e più in particolare garantisce l'esistenza di un least fix-point, \(\textrm{lfp}(f)=\bigsqcap\textrm{postfp}(f)\), e di un greatest fix-point, \(\textrm{gfp}(f)=\bigsqcup\textrm{prefp}(f)\). Il teorema non da però un metodo costruttivo per ottenere tali fix-point, per questo motivo c'è il teorema seguente.
 
-\begin{theorem}[Teorema del fix-point di Kleene]
+\begin{theorem}[Teorema del fix-point di Kleene]\label{teo:kleeneFixPoint}
 Dato un insieme parzialmente ordinato completo \(\simplePoset{S}\) ed una funzione Scott-continua \(f:S\rightarrow S\) allora f ha un least fix-point ed è il least upper bound della seguente catena crescente:
 \[\perp\preceq_S f(\perp) \preceq_S f(f(\perp)) \preceq_S f(f(f(\perp))) \preceq_S \cdots\]
 ovvero \(\textrm{lfp}(f)=\bigsqcup\{f^n(\perp)\ |\ n\geq 0\}\).
@@ -454,11 +454,11 @@ Presi \(\GaloisConnection{C}{A}\), una funzione concreta \(f:C\rightarrow C\) ed
 \end{theorem}
 
 \subsection{Interpretazione astratta di un Control Flow Graph}
-Un Control Flow Graph (CFG) è una rappresentazione di un programma tramite una coppia \(\cfg\) dove \(N\) è un insieme di nodi, questi rappresentano blocchi di codice basilari del programma (ad esempio gli statement), e \(E\subset N\times N\) è l'insieme di archi che collegano i nodi in \(N\), questi rappresentano il flusso di informazione tra i blocchi. Gli archi possono essere sequenziali (l'informazione passa dal nodo di partenza a quello di arrivo sempre senza modifiche), veri (l'informazione passa solo se la condizione nel nodo di partenza è vera) o falsi (opposti agli archi veri). In questo modo possiamo rappresentare anche l'if statement all'interno del linguaggio CFG. Per rappresentare gli statement di loop basta creare dei cicli all'interno del CFG.
+Un Control Flow Graph (CFG) è una rappresentazione di un programma tramite una coppia \(\cfg\) dove \(N\) è un insieme di nodi, questi rappresentano blocchi di codice basilari del programma (ad esempio gli statement), e \(E\subset N\times N\) è l'insieme di archi che collegano i nodi in \(N\), questi rappresentano il flusso di informazione tra i blocchi. Gli archi possono essere sequenziali (l'informazione passa dal nodo di partenza a quello di arrivo sempre senza modifiche), veri (l'informazione passa solo se la condizione nel nodo di partenza è vera) o falsi (opposti agli archi veri). In questo modo possiamo rappresentare anche l'if statement all'interno del linguaggio CFG. Per rappresentare i loop statement basta creare dei cicli all'interno del CFG.
 
 Dato un programma in CFG \(\cfg\) certe semantiche concrete possono essere espresse come il least fix-point del sistema di equazioni \(F:\mathbb{C}^{|N|}\rightarrow\mathbb{C}^{|N|}\) dove:
 \[F = \{x_i = f_i(x_1, x_2, \cdots, x_{|N|})\ |\ i=1, 2,\cdots, |N|\}\]
-in cui i vari \(f_i:\mathbb{C}^{|N|}\rightarrow\mathbb{C}\) sono funzioni trasformatrici concrete che simulano il comportamento del blocco di codice rappresentato dal nodo sulle informazioni provenienti dagli altri blocchi. La soluzione più piccola del sistema \(F\) sarà il least fix-point di \(F\), ovvero il least upper bound tra tutti gli step della iterazione di Kleene sul dominio concreto \(\mathbb{C}^{|N|}\) di \(F\) partendo dall'elemento bottom (in questo caso \(\perp_{\mathbb{C}}^{|N|}\)).
+in cui i vari \(f_i:\mathbb{C}^{|N|}\rightarrow\mathbb{C}\) sono funzioni trasformatrici concrete. Queste simulano il comportamento del blocco di codice del nodo a cui sono associate trasformando le informazioni provenienti dai nodi a cui sono collegati. La soluzione del sistema \(F\) sarà il least fix-point di \(F\), che come abbiamo visto nel teorema \ref{teo:kleeneFixPoint} si può trovare  facendo il least upper bound tra tutti gli step della iterazione di Kleene sul dominio concreto \(\mathbb{C}^{|N|}\) di \(F\) partendo dall'elemento bottom (in questo caso \(\perp_{\mathbb{C}}^{|N|}\)).
 
 \begin{example}\label{ex:easyCode}
 Nella figura \ref{fig:codiceEsempio1} si vede la traduzione di un semplice pezzo di codice scritto in Python in un CFG. 
@@ -897,8 +897,31 @@ return x;
 \label{fig:codiceEsempio2}
 \end{figure}
 
+Inoltre dobbiamo notare come widening e narrowing perdono la loro utilità se utilizzati come il lub nel \hyperref[teo:kleeneFixPoint]{teorema di Kleene per la ricerca del least fix-point}, ovvero solo una volta ottenuta la catena di step della iterazione di Kleene sulla funzione semantica. Questa, infatti, potrebbe essere infinita e quindi impossibile da calcolare, e questo è proprio il problema che vorremmo risolvere con questi operatori. Per questo motivo per l'interpretazione astratta su domini che necessitano di widening e narrowing utilizzeremo un'altra "versione" del teorema di Kleene, che però non ci assicura di ottenere il least fix-point della funzione, ma una sua approssimazione, ovvero un post-fix-point. In questa versione dovremo trovare il punto stazionario di quest'altra sequenza:
+
+\[
+f^{*}(d) =
+\begin{cases}
+    d &\textrm{se } i=0 \\
+    f^{i-1}(d) \oplus f^{i}(d) &\textrm{altrimenti}
+\end{cases}
+\]
+dove \(d\) è il punto di partenza, quindi \(\perp\) per la fase ascendente e il post-fix-point calcolata da essa per la fase discendente, e \(\oplus\) rappresenta l'operatore da usare, e quindi lub/widening o glb/narrowing. Come abbiamo detto però, ciò che si ottiene non è assicurato essere il least fix-point di \(f\), ovvero \(\textrm{lfp}(f^{*})\in\textrm{postfp}(f)\) e quindi \(\textrm{lfp}(f)\preceq \textrm{lfp}(f^{*})\). Nell'esempio che segue usere questo metodo applicato ai sistemi di equazioni. 
+
 \begin{example}\label{ex:esempio2}
-Nell'esempio che mostreremo ora analizzeremo il codice in \ref{fig:codiceEsempio2} cerrcando una approssimazione della collecting semantics tramite interpretazione astratta usando il dominio degli intervalli interi. Nella figura \ref{fig:ris} è mostrata anche il sistema di equazioni astratte di cui cerchiamo la soluzione minima. A differenza dell'esempio \ref{ex:easyCode} risoleveremo il sistema di equazioni in modo diverso, infatti adesso calcoleremo entrambe le fasi (ascendente e discendente) ed utilizzeremo gli operatori di widening e narrowing per velocizzare la convergenza del calcolo, in questo modo: 
+Nell'esempio che mostreremo ora analizzeremo il codice in \ref{fig:codiceEsempio2} cercando una approssimazione della collecting semantics tramite interpretazione astratta usando il dominio degli intervalli interi. Il sistema di equzioni astratte legate al CFG è questo:
+\[
+F^{\natural}=
+\begin{cases}
+    x_1 = \top \\
+    x_2 = [0, 0]\sqcup(x_4 +_{\textrm{Int}} [2, 2])\sqcup(x_5 +_{\textrm{Int}} [10, 10]) \\
+    x_3 = \textrm{if}_{[x<100]}(x_2) \\
+    x_4 = \textrm{if}_{[x<50]}(x_3) \\
+    x_5 = \textrm{else}_{[x<50]}(x_3) \\
+    x_6 = \textrm{else}_{[x<100]}(x_2) \\
+\end{cases}
+\]  
+A differenza dell'esempio \ref{ex:easyCode} risoleveremo il sistema di equazioni in modo diverso, infatti adesso calcoleremo entrambe le fasi (ascendente e discendente) utilizzando gli operatori di widening e narrowing per velocizzare la convergenza del calcolo, in questo modo: 
 \[
 F^{\nabla} = 
 \begin{cases}
@@ -917,25 +940,8 @@ F^{\Delta} =
 per la fase discendente.
 
 Per WP intendiamo i \textit{widening points}, ovvero i punti del CFG in cui viene applicato il widening. Si può mostrare che per ogni ciclo del grafo si può etichettare un nodo al suo interno come WP e il calcolo del fix-point convergerà comunque (questo ci permette di essere più selettivi nell'uso del widening e quindi migliorare la precisione dell'approssimazione). Per questo esempio abbiamo \(x_3\) come unico WP.
-
-I risultati dell'analisi sono mostrati nella tabelle della figura \ref{fig:ris}.
-\begin{figure}[H]
-\begin{minipage}{\textwidth}
-\vspace{1cm}
-\[
-F^{\natural}=
-\begin{cases}
-    x_1 = \top \\
-    x_2 = [0, 0]\sqcup(x_4 +_{\textrm{Int}} [2, 2])\sqcup(x_5 +_{\textrm{Int}} [10, 10]) \\
-    x_3 = \textrm{if}_{[x<100]}(x_2) \\
-    x_4 = \textrm{if}_{[x<50]}(x_3) \\
-    x_5 = \textrm{else}_{[x<50]}(x_3) \\
-    x_6 = \textrm{else}_{[x<100]}(x_2) \\
-\end{cases}
-\]  
-\centering
-(a)
-\end{minipage}
+I risultati dell'analisi sono mostrati nella tabelle della figura \ref{fig:ris}. 
+\begin{table}
 \begin{minipage}{\textwidth}
     \centering
     \vspace{1cm}
@@ -975,11 +981,10 @@ F^{\natural}=
         \hline
         \end{tabular}
         \]
-        (b)
     \end{minipage}
-    \caption{(a) sistema di equazioni astratte per il CFG in \ref{fig:codiceEsempio2} (b) tabella dei risultati divisi per step e fase.}
+    \caption{Tabella dei risultati dell'analisi di fase ascendente e discendente sul programma \ref{fig:codiceEsempio2}.}
     \label{fig:ris}
-\end{figure}
+\end{table}
 \end{example}
 
 \section{Dominio delle parti dell'insieme finite e non ridondanti}\label{sec:EgliMilnerWidening}
@@ -1016,7 +1021,7 @@ dove:
 
 Abbiamo quindi costruito un dominio che è inerentemente più preciso di quello sottostanze, a partire dal quale viene costruito. Pensiamo ad esempio al dominio degli intervalli interi mostrato in esempio \ref{ex:intervalDomain} e costruiamone la versione mostrata sopra nella definizione \ref{def:powersetDomain}, cioè \(\hat{\textrm{Int}}_P\). In \(\hat{\textrm{Int}}_P\) possiamo rappresentare elementi come \(\{[0, 10], [20, 30]\}\), ovvero possiamo rappresentare dei gap tra gli intervalli raggiungendo una precisione più alta rispetto al sottostante Int, dove il massimo che si potrebbe fare per rappresentare l'insieme di intervalli appena mostrato, e rimanendo sound, è \([0, 30]\).
 
-Il nuovo dominio così creato però eredita tutti i problemi di quello su cui è basato, quindi come nel caso degli intervalli, si può ottenere un reticolo che non rispetta la condizione di catena ascendente. In questi casi diventa necessario cercare un operatore di widening per il nuovo dominio capace di garantire la convergenza del calcolo del fix-point durante l'analisi. In [??] vengono mostrati tre metodi costruttivi per ottenere un widening per il dominio delle parti dell'insieme finite e non ridondanti partendo da quello del dominio sottostante. Nel seguito daremo alcune definizioni di operatori che ci serveranno per la costruzione di tale widening (mostreremo uno solo dei tre metodi mostrati, che è poi quello implementato in LiSA per tali domini, come vedremo nel capitolo \ref{chapter:lisa}).
+Il nuovo dominio così creato però eredita tutti i problemi di quello su cui è basato, quindi come nel caso degli intervalli, si può ottenere un reticolo che non rispetta la condizione di catena ascendente. In questi casi diventa necessario cercare un operatore di widening per il nuovo dominio capace di garantire la convergenza del calcolo del fix-point durante l'analisi. Nell'articolo \cite{DBLP:journals/sttt/BagnaraHZ07} vengono mostrati tre metodi costruttivi per ottenere un widening per il dominio delle parti dell'insieme finite e non ridondanti partendo da quello del dominio sottostante. Nel seguito daremo alcune definizioni di operatori che ci serveranno per la costruzione di tale widening (mostreremo uno solo dei tre metodi mostrati, che è poi quello implementato in LiSA per tali domini, come vedremo nel capitolo \ref{chapter:lisa}).
 
 \begin{definition} [relazione di ordine parziale di Egli-Milner]\label{def:EgliMilnerRelation}
 \'E possibile costruire una relazione di ordine parziale Egli-Milner tale che, dati \(S_1, S_2\in\wp_{\textrm{fn}}(S, \preceq)\) allora \(S_1 \preceq_{\textrm{EM}} S_2 \textrm{ se e solo se o:} \)
