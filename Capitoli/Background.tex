@@ -407,11 +407,11 @@ $
 dove le funzioni \(\textrm{min},\textrm{max}:\wp(\mathbb{Z})\rightarrow\mathbb{Z}\cup\{-\infty, +\infty\}\) possono restituire anche più/meno infinito nel caso l'insieme non sia vuoto ma non abbia un massimo/minimo (quindi se cresce/decresce all'infinito).
 \end{example}
 
-\section{Analisi statica ed Interpretazione astratta}
+\section{Analisi statica ed Interpretazione astratta}\label{sec:abstractInt}
 Lo scopo dell'\textit{analisi statica} è quello di provare formalmente certe proprietà di un programma. Per essere definita statica una analisi deve avere la caratteristica di non eseguire il codice (in caso opposto l'analisi si dice \textit{dinamica}, un esempio è il tradizionale metodo di debug con test), o meglio di non eseguirlo nella sua forma concreta. L'\textit{interpretazione astratta} è un modello matematico che può essere utilizzato per compiere analisi statica. L'idea basilare è quella di astrarre la computazione su un dominio astratto e interpretare il codice muovendoci in uno spazio di oggetti astratti che approssimano il dominio concreto. Per fare ciò dobbiamo creare una semantica astratta, che ragiona nel mondo del dominio astratto, che sia \textit{sound} in rispetto alla semantica concreta, la quale invece ragiona su un dominio concreto. Il motivo per cui ci accontentiamo di una approssimazione è che spesso lavorare sul dominio concreto risulta impossibile a causa dei limiti della computazione o è estremamente costoso in termini di tempo. Ci basta perciò una soluzione approssimata, ma corretta, da cui si spera sia possibile verificare certe proprietà del programma analizzato. L'idea di intepretazione astratta è nata negli anni '70, dove viene esposta in modo formale e sistematico negli articoli di Patrick e Radhia Cousot \cite{DBLP:conf/popl/CousotC77} e \cite{DBLP:conf/popl/CousotC79}. 
 
 \subsection{Interpretazione astratta}
-Un linguaggio \(\mathbb{L}\) mette a disposizione una semantica, ovvero una descrizione formale e matematica del comportamento di un programma \(\rho\) scritto in \(\mathbb{L}\) partendo da uno stato iniziale (che può rappresentare la collezione di elementi di input di \(\rho\)). Da tale semantica si possono ottenere diverse \textit{semantiche concrete}, ovvero funzioni \(\textbf{S}:Program_\mathbb{L}\rightarrow \mathbb{C}\),  che prendono un programma \(\rho\) in \(\mathbb{L}\) e restituiscono un oggetto dell'insieme \(\mathbb{C}\), detto \textit{dominio semantico concreto}, che ci dice qualcosa sul comportamento di \(\rho\) e attraverso cui è pssibile verificarne crete proprietà. Una caratteristica necessaria di un dominio concreto è che deve essere parte di un reticolo completo, per semplicità scriveremo \(\simplePoset{\mathbb{C}}\). Due esempi di semantiche concrete sono:
+Un linguaggio \(\mathbb{L}\) mette a disposizione una semantica, ovvero una descrizione formale e matematica del comportamento di un programma \(\rho\) scritto in \(\mathbb{L}\) partendo da uno stato iniziale (che può rappresentare la collezione di elementi di input di \(\rho\)). Da tale semantica si possono ottenere diverse \textit{semantiche concrete}, ovvero funzioni \(\textbf{S}:Program_\mathbb{L}\rightarrow \mathbb{C}\),  che prendono un programma \(\rho\) in \(\mathbb{L}\) e restituiscono un oggetto dell'insieme \(\mathbb{C}\), detto \textit{dominio semantico concreto}, che ci dice qualcosa sul comportamento di \(\rho\) e attraverso cui è pssibile verificarne certe proprietà. Una caratteristica necessaria di un dominio concreto è che deve essere parte di un reticolo completo, per semplicità scriveremo \(\simplePoset{\mathbb{C}}\). Due esempi di semantiche concrete sono:
 \begin{itemize}
     \item \textit{trace semantics}: il dominio concreto \(\mathbb{C}\) di questa semantica è l'insieme delle parti di tutte le tracce di esecuzione possibili (anche quelle infinite) per ogni possibile programma scritto in \(\mathbb{L}\) per ogni possibile input di tale programma. Per traccia intendiamo una sequenza di stati e per stato intendiamo una coppia che comprende un punto di programma e uno stato della memoria (quindi lo stato rappresenta una fotografia della memoria in un dato istante). La trace semantics prenderò come input un porgramma \(\rho\) in \(\mathbb{L}\) e restituirà l'insieme comprendente tutte le tracce di esecuzione possibili per quel programma partendo dal set di tutti i possibili input. Questa semantica quindi vede il comportamento di un programma come un insieme di tracce. Avendo a disposizione questa semantica possiamo verificare numerose proprietà di un programma tra cui la liveness, la reachability ma anche la terminazione, basterebbe infatti mostrare che l'insieme di tracce possibili comprenda solo tracce finite. Dal famoso problema della terminazione formulato da Turing sappiamo però che tale verifica è impossibile.
     \item \textit{collecting semantics}: un'altra, ma meno precisa, semantica concreta è la collecting semantics. Il dominio \(\mathbb{C}\) di questa semantica è l'insieme di tutte le funzioni che mappano ogni punto di programma possibile a un insieme di stati della memoria (si noti che il concetto di stato della memoria può essere semplificato al concetto di environment, ovvero una mappa che associa ad ogni variabile del programma un valore). La collecting semantics è una funzione che associa ad ogni programma \(\rho\) in \(\mathbb{L}\) una funzione che mappa ogni punto di programma di \(\rho\) all'insieme di tutti gli stati della memoria atraversabili in quel punto (o nella visione semplificata è una funzione che associa ad ogni punto di programma tutti gli environment che possono passare per quel punto). In pratica la collecting semantics ci dice tutti gli stati possibili durante l'esecuzione del programma ignorando l'ordine temporale che li lega (per questo la trace semantics contiene più informazione, essa infatti non ignora la sequenzialità tra gli stati). Anche questa semantica risulta impossibile da calcolare, sia per motivi legati alla terminazione che per l'impossibilità di rappresentare certi elementi di \(\mathbb{C}\) su una macchina (si pensi ad esempio ad un programma con un ciclo infinito che possiede un punto di programma attraverso cui passano infiniti environemnt diversi). 
@@ -454,7 +454,7 @@ Presi \(\GaloisConnection{C}{A}\), una funzione concreta \(f:C\rightarrow C\) ed
 \end{theorem}
 
 \subsection{Interpretazione astratta di un Control Flow Graph}
-Un Control Flow Graph (CFG) è una rappresentazione di un programma tramite una coppia \(\cfg\) dove \(N\) è un insieme di nodi, questi rappresentano blocchi di codice basilari del programma (ad esempio gli statement), e \(E\subset N\times N\) è l'insieme di archi che collegano i nodi in \(N\), questi rappresentano il flusso di informazione tra i blocchi. Gli archi possono essere sequenziali (l'informazione passa dal nodo di partenza a quello di arrivo sempre senza modifiche), veri (l'informazione passa solo se la condizione nel nodo di partenza è vera) o falsi (opposti agli archi veri). In questo modo possiamo rappresentare anche l'if statement all'interno del linguaggio CFG. Per rappresentare i loop statement basta creare dei cicli all'interno del CFG.
+Per approfondire i concetti si semantica concreta, semantica stratta e inetrpretazione astratta in questa sezioni li vedremo applicati a programmi scritti in un linguaggio di programmazione, il linguaggio CFG. Un Control Flow Graph (CFG) è una rappresentazione di un programma tramite una coppia \(\cfg\) dove \(N\) è un insieme di nodi, questi rappresentano blocchi di codice basilari del programma (ad esempio gli statement), e \(E\subset N\times N\) è l'insieme di archi che collegano i nodi in \(N\), questi rappresentano il flusso di informazione tra i blocchi. Gli archi possono essere sequenziali (l'informazione passa dal nodo di partenza a quello di arrivo sempre senza modifiche), veri (l'informazione passa solo se la condizione nel nodo di partenza è vera) o falsi (opposti agli archi veri). In questo modo possiamo rappresentare anche l'if statement all'interno del linguaggio CFG. Per rappresentare i loop statement basta creare dei cicli all'interno del CFG.
 
 Dato un programma in CFG \(\cfg\) certe semantiche concrete possono essere espresse come il least fix-point del sistema di equazioni \(F:\mathbb{C}^{|N|}\rightarrow\mathbb{C}^{|N|}\) dove:
 \[F = \{x_i = f_i(x_1, x_2, \cdots, x_{|N|})\ |\ i=1, 2,\cdots, |N|\}\]
@@ -513,7 +513,7 @@ Il sistema di equazioni equivalente per trovare la collecting semantics è:
 \[
 F = 
 \begin{cases}
-   x_1 = \emptyset \\ 
+   x_1 =  \top \\ 
    x_2 = \{0\} \\
    x_3 = \textrm{if}_{[x < 10]}(x_2) \\
    x_4 = \textrm{else}_{[x < 10]}(x_2) \cup (x_3 + \{10\}) \\
@@ -522,7 +522,7 @@ F =
 
 dove la funzione \(\textrm{if}_{[st]}:\wp(\mathbb{Z})\rightarrow\wp(\mathbb{Z})\) filtra i valori passati in input lasciando passare solo quelli che soddisfano la candizione in \(st\) (\(\textrm{else}_{[st]}:\wp(\mathbb{Z})\rightarrow\wp(\mathbb{Z})\) è simile ma fa passare solo quelli che non soddisfano la condizione \(st\)) e la funzione \(+:\wp(\mathbb{Z})\times\wp(\mathbb{Z})\rightarrow\wp(\mathbb{Z})\) somma elemento per elemento i valori dei due insiemi di interi passati come input. 
 
-La collecting semantics sarà pari al least fix-point del sistema di equazioni \(F\) che è uguale al least upper bound tra tutti gli step della iterazione di Kleene (mostrata nel teorema [?]) di \(F\) su \(\wp(\mathbb{Z})^{|N|}\) partendo dal valore bottom di \(\wp(\mathbb{Z})\), ovvero \(\emptyset\), per ogni nodo.  
+La collecting semantics sarà pari al least fix-point del sistema di equazioni \(F\), che è uguale al least upper bound tra tutti gli step della iterazione di Kleene (mostrata nel teorema \ref{teo:kleeneFixPoint}) di \(F\) su \(\wp(\mathbb{Z})^{|N|}\) partendo dal valore bottom di \(\wp(\mathbb{Z})\), ovvero \(\emptyset\), per ogni nodo.  
 
 Per questo semplice esempio possiamo facilmente trovare il least fix-point. Partiamo da un vettore con tutti valori bottom:
 
@@ -551,7 +551,7 @@ Per questo semplice esempio possiamo facilmente trovare il least fix-point. Part
     $t_1$ \\
     $
     \begin{bmatrix}
-       \perp \\
+       \top \\
        \{0\} \\
        \perp \\
        \perp
@@ -565,7 +565,7 @@ Per questo semplice esempio possiamo facilmente trovare il least fix-point. Part
     $t_2$ \\
     $
     \begin{bmatrix}
-       \perp \\
+       \top \\
        \{0\} \\
        \{0\} \\
        \perp
@@ -579,7 +579,7 @@ Per questo semplice esempio possiamo facilmente trovare il least fix-point. Part
     $t_3$ \\
     $
     \begin{bmatrix}
-       \perp \\
+       \top \\
        \{0\} \\
        \{0\} \\
        \{10\}
@@ -593,7 +593,7 @@ Per questo semplice esempio possiamo facilmente trovare il least fix-point. Part
     $t_4$ \\
     $
     \begin{bmatrix}
-       \perp \\
+       \top \\
        \{0\} \\
        \{0\} \\
        \{10\}
@@ -622,7 +622,7 @@ Riprendendo l'esempio \ref{ex:easyCode} e sostituendo il dominio concreto con il
 \[
 F^{\natural} = 
 \begin{cases}
-   x_1 = \perp_{\textrm{Int}} \\ 
+   x_1 = \top_{\textrm{Int}} \\ 
    x_2 = [0, 0] \\
    x_3 = \textrm{if}_{\textrm{Int}[x < 10]}(x_2) \\
    x_4 = \textrm{else}_{\textrm{Int}[x < 10]}(x_2) \sqcup (x_3 +_{\textrm{Int}} [10, 10]) \\
@@ -655,7 +655,7 @@ La sequenza di iterazioni di Kleene partendo da bottom di \(F^{\natural}\) diven
     $t_1$ \\
     $
     \begin{bmatrix}
-       \perp_{\textrm{Int}} \\
+       \top_{\textrm{Int}} \\
        [0, 0] \\
        \perp_{\textrm{Int}} \\
        \perp_{\textrm{Int}}
@@ -669,7 +669,7 @@ La sequenza di iterazioni di Kleene partendo da bottom di \(F^{\natural}\) diven
     $t_2$ \\
     $
     \begin{bmatrix}
-       \perp_{\textrm{Int}} \\
+       \top_{\textrm{Int}} \\
        [0, 0] \\
        [0, 0] \\
        \perp_{\textrm{Int}}
@@ -683,7 +683,7 @@ La sequenza di iterazioni di Kleene partendo da bottom di \(F^{\natural}\) diven
     $t_3$ \\
     $
     \begin{bmatrix}
-       \perp_{\textrm{Int}} \\
+       \top_{\textrm{Int}} \\
        [0, 0] \\
        [0, 0] \\
        [10, 10]
@@ -697,7 +697,7 @@ La sequenza di iterazioni di Kleene partendo da bottom di \(F^{\natural}\) diven
     $t_4$ \\
     $
     \begin{bmatrix}
-       \perp_{\textrm{Int}} \\
+       \top_{\textrm{Int}} \\
        [0, 0] \\
        [0, 0] \\
        [10, 10]
@@ -851,7 +851,7 @@ In figura \ref{fig:phasesFig} è mostrata una rappresentazione grafica della fas
 \begin{minipage}[c][5cm][c]{0.5\textwidth-2cm}
 \vspace{\fill}
 \begin{lstlisting}[language=Python, numbers=none]
-x = 0
+x = 0;
 while x < 100:
     if x < 50:
         x = x + 2;
@@ -903,10 +903,10 @@ Inoltre dobbiamo notare come widening e narrowing perdono la loro utilità se ut
 f^{*}(d) =
 \begin{cases}
     d &\textrm{se } i=0 \\
-    f^{i-1}(d) \oplus f^{i}(d) &\textrm{altrimenti}
+    f^{*(i-1)}(d) \oplus f^{i}(d) &\textrm{altrimenti}
 \end{cases}
 \]
-dove \(d\) è il punto di partenza, quindi \(\perp\) per la fase ascendente e il post-fix-point calcolata da essa per la fase discendente, e \(\oplus\) rappresenta l'operatore da usare, e quindi lub/widening o glb/narrowing. Come abbiamo detto però, ciò che si ottiene non è assicurato essere il least fix-point di \(f\), ovvero \(\textrm{lfp}(f^{*})\in\textrm{postfp}(f)\) e quindi \(\textrm{lfp}(f)\preceq \textrm{lfp}(f^{*})\). Nell'esempio che segue usere questo metodo applicato ai sistemi di equazioni. 
+dove \(d\) è il punto di partenza, quindi \(\perp\) per la fase ascendente e il post-fix-point calcolata da essa per la fase discendente, e \(\oplus\) rappresenta l'operatore da usare, e quindi lub/widening o glb/narrowing. Come abbiamo detto però, ciò che si ottiene non è assicurato essere il least fix-point di \(f\), ovvero \(\textrm{lfp}(f^{*})\in\textrm{postfp}(f)\) e quindi \(\textrm{lfp}(f)\preceq \textrm{lfp}(f^{*})\). Nell'esempio che segue useremo questo metodo applicato alle funzioni semantiche costruite come sistemi di equazioni. 
 
 \begin{example}\label{ex:esempio2}
 Nell'esempio che mostreremo ora analizzeremo il codice in \ref{fig:codiceEsempio2} cercando una approssimazione della collecting semantics tramite interpretazione astratta usando il dominio degli intervalli interi. Il sistema di equzioni astratte legate al CFG è questo:

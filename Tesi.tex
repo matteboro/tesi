@@ -54,6 +54,8 @@
 \newcommand{\completeLattice}[1]{\langle #1, \preceq,\sqcup, \sqcap, \perp, \top\rangle}
 \newcommand{\CompleteLattice}[1]{\langle #1, \preceq_{#1},\sqcup_{#1}, \sqcap_{#1}, \perp_{#1}, \top_{#1}\rangle}
 \newcommand{\cfg}{\langle N, E\rangle}
+\newcommand{\specialcell}[2][c]{%
+  \begin{tabular}[#1]{@{}c@{}}#2\end{tabular}}
 
 \makeatletter
 \newenvironment{breakablealgorithm}
@@ -83,7 +85,7 @@
 %\usepackage{todonotes}			% To ease the revision
 
 
-\usepackage{blindtext} 			% Dummy Text - remove
+%\usepackage{blindtext} 			% Dummy Text - remove
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -137,6 +139,7 @@
 %
 %
 %%%% La prefazione
+\pagenumbering{arabic}
 \include{Capitoli/Introduzione}
 %
 %%%% I Capitoli di Contenuto	
@@ -159,7 +162,7 @@
 \include{Capitoli/Ringraziamenti}
 %
 % Le appendici
-\appendix
-\include{Capitoli/Appendici/Appendice1}
+%\appendix
+%\include{Capitoli/Appendici/Appendice1}
 %
 \end{document}

@@ -124,6 +124,50 @@ Riprendiamo l'esempio \ref{ex:esempio2} e utilizziamo il dominio decoupled \(\te
 \end{table}
 \end{example}
 
+Il motivo per cui abbiamo introdotto il dominio dei sottoinsiemi non ridondanti nella sezione \ref{sec:EgliMilnerWidening} è che si rivela molto utile e adatto proprio nel caso del decoupling delle fasi. Ci permette infatti di avere un metodo costruttivo per ottenere un dominio più (o ugualmente) preciso a partire da un dominio qualunque. Potremo quindi sempre usare il dominio base per la fase ascendente e quello delle parti finite e non ridondanti di esso per quella discendente. 
+
 \begin{example}
-Sempre per il programma dell'esempio \ref{ex:esempio2}, possiamo utilizzare il dominio decoupled \(\textrm{Int}\uparrow\downarrow\widehat{\textrm{Int}}\), dove \(\widehat{\textrm{Int}}\) è il dominio dei sottoinsiemi non ridondanti di Int.
+Qua mostreremo un esempio pratico di questo concetto. Sempre per il programma dell'esempio \ref{ex:esempio2} utilizzeremo il dominio decoupled \(\textrm{Int}\uparrow\downarrow\widehat{\textrm{Int}}\), dove \(\widehat{\textrm{Int}}\) è il dominio dei sottoinsiemi non ridondanti di Int. Come narrowing per la fase discendente utilizzeremo il glb fermandoci dopo due step della iterazione, come post-fix-point di partenza utilizzeremo il risultato della fase ascendente calcolato già nell'esempio \ref{ex:esempio2} e come funzione concretizzante \(\gamma_{\textrm{Int}\uparrow\downarrow\widehat{\textrm{Int}}}\) semplicemente andremo a creare l'insieme singoletto con l'intervallo nel risultato della fase ascendente. Nella tabella \ref{fig:risDecSingInt} sono mostrati gli step della fase discendente dopo la trasformazione dei risultati della fase ascendente nel dominio astratto discendente. Dobbiamo notare come ci fermiamo dopo due step della iterazione, ma si potrebbe continuare ottenendo risultati ancora più precisi. 
+
+\begin{table}
+\begin{minipage}{\textwidth}
+    \centering
+    \vspace{1cm}
+        \[
+        \begin{tabular}{|c||c||c|c|}
+        \hline
+        \multicolumn{1}{|c||}{fase} & 
+        \multicolumn{1}{c||}{\textbf{decoupling}} & 
+        \multicolumn{2}{c|}{\textbf{discendente}}\\
+        
+        \hline 
+        \rule{0pt}{14pt} 
+        N &  
+        \(\gamma(x^{\nabla})\) & 
+        1st & 2nd \\
+        \hline
+        $x_1$ & $\{\left[\top\right]\}$ 
+        & $\{\left[\top\right]\}$ & $\{\left[\top\right]\}$ \\
+        \hline
+        $x_2$ & $\{\left[0, +\infty\right]\}$ 
+        & $\{[0, 0], [2, 51], \left[60, +\infty\right]\}$  & \specialcell{$\{[0, 0], [2, 2], [4, 51],$\\$ [60, 61], [70, 109]\}$} \\
+        \hline
+        $x_3$ & $\{\left[0, +\infty\right]\}$ 
+        & $\{[0, 0], [2, 51], [60, 99]\}$ & \specialcell{$\{[0, 0], [2, 2], [4, 51],$\\$[60, 61], [70, 99]\}$} \\
+        \hline
+        $x_4$ & $\{\left[0, 49\right]\}$ 
+        & $\{[0, 0], [2, 49]\}$& $\{[0, 0], [2, 2], [4, 49]\}$ \\
+        \hline
+        $x_5$ & $\{\left[50, +\infty\right]\}$ 
+        & $\{[50, 51], [60, 99]\}$& $\{[50, 51], [60, 61], [70, 99]\}$ \\
+        \hline
+        $x_6$ & $\{\left[100, +\infty\right]\}$
+        & $\{[100, +\infty]\}$& $\{[100, 109]\}$ \\
+        \hline
+        \end{tabular}
+        \]
+    \end{minipage}
+    \caption{tabella dei risultati del dominio \(\textrm{Sign}\uparrow\downarrow\textrm{Int}\) divisi per step e fase.}
+    \label{fig:risDecSingInt}
+\end{table}
 \end{example}

@@ -102,14 +102,14 @@ errors
     \label{fig:lisaAnalysisFlow}
 \end{figure}
 
-\section{LiSA}
+\section{LiSA}\label{sec:LiSA}
 In questa sezione faremo una overview della archutettura di LiSA focalizzandoci sulla struttura della rappresentazione interna dei programmi, sulle interfacce attraverso cui è possibile definire nuovi domini astratti e sull'organizzazione della vera e propria analisi statica (andando a guardarne le componenti e gli algoritmi).
 
 \subsection{I CFG di LiSA}
 La struttura dei CFG in LiSA è progettata per essere il più flessibile possibile così da essere in grado di rappresentare il maggior numero di costrutti semantici provenienti da più linguaggi di programmazione. Un LiSA CFG ha gli \texttt{Statement} come nodi (ognuno con il proprio significato semantico) e gli \texttt{Edge} come archi (i quali modellano il flusso di dati durante l'esecuzione del programma). 
 
 \subsubsection{\texttt{Statement}}
-Uno \texttt{Statement} rappresenta un costrutto semantico base di un linguaggio di programmazione che non modifica il flusso di esecuzione. Uno \texttt{Statement} che lascia un valore sullo stack è detto \texttt{Expression}, che è una sotto classe di \texttt{Statement}. La maggior parte delle \texttt{Expression} rappresentano operazioni base comuni a molti linguaggio (come addizione, sottrazione, e tutte le altre operazioni aritmetiche, operazioni sulle stringhe come concatenazione o lunghezza, operazioni logiche su booleani come and e or e così via). Una sotto-classe particolare di \texttt{Expression} è \texttt{Call}. Esistono molti tipi di \texttt{Call} in LiSA, ma riassuntivamente queste rappresentano chiamate ad altre funzioni, quindi altri CFG. Le \texttt{Call} vengono gestite tramite una classe che implementa l'interfaccia \texttt{InterproceduralAnalysis}, il compito di una di queste classi è proprio di gestire l'interproceduralità di un programma, ovvero la possibilità di avere, in una funzione, chiamate ad altre funzioni (o a se stesse, quindi chiamate ricorsive). In figura \ref{fig:gerarchiaStatement} si può vedere una sommaria e non completa gerarchia della classe \texttt{Statement}.
+Uno \texttt{Statement} rappresenta un costrutto semantico base di un linguaggio di programmazione che non modifica il flusso di esecuzione. Uno \texttt{Statement} che lascia un valore sullo stack è detto \texttt{Expression}, che è una sotto classe di \texttt{Statement}. La maggior parte delle \texttt{Expression} rappresentano operazioni base comuni a molti linguaggio (come addizione, sottrazione, e tutte le altre operazioni aritmetiche, operazioni sulle stringhe come concatenazione o lunghezza, operazioni logiche su booleani come and e or e così via). Una sotto-classe particolare di \texttt{Expression} è \texttt{Call}. Esistono molti tipi di \texttt{Call} in LiSA, ma riassumendo queste rappresentano chiamate ad altre funzioni, quindi altri CFG. Le \texttt{Call} vengono gestite tramite una classe che implementa l'interfaccia \texttt{InterproceduralAnalysis}, il compito di una di queste classi è proprio di gestire l'interproceduralità di un programma, ovvero la possibilità di avere, in una funzione, chiamate ad altre funzioni (o a se stesse, quindi chiamate ricorsive). In figura \ref{fig:gerarchiaStatement} si può vedere una sommaria e non completa gerarchia della classe \texttt{Statement}.
 
 \begin{figure}[ht]
 	\centering
@@ -139,19 +139,19 @@ Questa traduzione run-time degli \texttt{Statement} in più \texttt{SymbolicExpr
 Ora parleremo invece di come sono definiti in LiSA i domini astratti. Ogni dominio in LiSA implementa due interfacce: \texttt{SemanticDomain}, che rende il dominio capace di valutare l'esecuzione di \texttt{SymbolicExpression} su istanze di esso, e \texttt{Lattice}, che fornisce al dominio le caratteristiche di un reticolo. Ora vediamo queste due interfacce più nel dettaglio.
 
 \subsubsection{\texttt{SemanticDomain}}\label{subsec:semanticDomain}
-L'interfaccia \texttt{SemanticDomain} è parametrica all'istanza concreta D, agli \texttt{Identifier} I e alle \texttt{SymbolicExpression} E. Rappresenta un dominio che è capace di ragionare sulla semantica delle \texttt{SymbolicExpression} di tipo E su \texttt{Identifier} di tipo I. Un dominio semantico D deve implementare i seguenti metodi:
+L'interfaccia \texttt{SemanticDomain<D, E, I>} è parametrica all'istanza concreta D, agli \texttt{Identifier} I e alle \texttt{SymbolicExpression} E. Rappresenta un dominio che è capace di ragionare sulla semantica delle \texttt{SymbolicExpression} di tipo E su \texttt{Identifier} di tipo I. Un dominio semantico D deve implementare i seguenti metodi:
 \begin{itemize}
 \setlength\itemsep{0.1em}
     \item \texttt{D assign(I id, E exp)}: restituisce un istanza del dominio in cui viene assegnato il valore di \texttt{exp} ad \texttt{id};
     \item \texttt{D assume(E exp)}: restituisce una istanza del dominio in cui si assume che \texttt{exp} sia vera;
     \item \texttt{D forgetIdentifier(I id)}: restituisce una istanza del dominio in cui viene scordata qualsiasi informazione riguardante l'identificatore \texttt{id};
     \item \texttt{D forgetIdentifiers(Collection<I> ids)}: restituisce una istanza del dominio in cui viene scordata qualsiasi informazione riguardante gli identificatori \texttt{ids};
-    \item \texttt{Satisfiability satisfies(E exp)}: resituisce un valore (tra \texttt{SATISFIED}, \texttt{UNKNOWN}, \texttt{NOT\_SATISFIED} e \texttt{BOTTOM}) che indica se la espressione \texttt{exp} è soddisfatta nel dominio corrente;
+    \item \texttt{Satisfiability satisfies(E exp)}: resituisce un valore (tra \texttt{SATISFIED}, \texttt{UNKNOWN}, \texttt{NOT\_SATISFIED} e \texttt{BOTTOM}) che indica se la espressione \texttt{exp} è soddisfatta nell'istanza del dominio su cui viene chiamat;
     \item \texttt{D smallStepSemantics(E exp)}: resitutisce una istanza del dominio modificata dagli effetti della espressione \texttt{exp};
 \end{itemize}
 
 \subsubsection{\texttt{Lattice}}\label{subsec:lattice}
-L'interfaccia \texttt{Lattice} è parametrica all'istanza concreta L. Un reticolo in LiSA deve implementare questi metodi:
+L'interfaccia \texttt{Lattice<L>} è parametrica all'istanza concreta L. Un reticolo in LiSA deve implementare questi metodi:
 \begin{itemize}
 \setlength\itemsep{0.1em}
     \item \texttt{boolean lessOrEqual(L other)}: questo metodo definisce l'ordine parziale del reticolo e restituisce \texttt{true} se l'oggetto su cui viene chiamato è in relazione con \texttt{other};
@@ -213,15 +213,15 @@ La classe che definisce lo stato dell'analisi è \texttt{AnalysisState}. \'E for
 \setlength\itemsep{0.1em}
     \item un \texttt{HeapDomain} che è responsabile di tracciare l'evoluzione dello stato della memoria dinamica durante l'esecuzione. Opera prima del \texttt{ValueDomain} e risolve gli indirizzi traducendo le espressioni simboliche e rinominando le variabili in modo tale che il \texttt{ValueDomain} possa comprenderle e si preocccupi \textit{solamente} di tracciarne le proprietà;
     
-    \item un \texttt{ValueDomain} che è responsabile di tracciare proprietà astratte (come per esempio il valore astratto) delle variabili (possibilmente pre-processate e riscritte prima dall'\texttt{HeapDomain}) del programma. In LiSA è possibile definire \texttt{ValueDomain} sia relazionali (come i Polyhedra) sia non. Per quest'ultimi è definito dentro LiSA una classe base chiamata \texttt{Environment} che estende  \texttt{FunctionalLattice<Identifier, L>} ed implementa \texttt{SemanticDomain}, ed è capace di tracciare un valore del dominio astratto \texttt{L} (che può essere per esempio un Interval, un Sign, un Modulo) ad ogni identificatore tenuto in memoria. Va sottolineato che il dominio \texttt{L} di un \texttt{Environment} ha si la struttura reticolare, ed estende \texttt{Lattice}, e può anche ragionare semanticamente sulle \texttt{SymbolicExpression} senza però implementare \texttt{SemanticDomain}. Infatti per il caso specifico dei domini non-relazionali gestiti tramite \texttt{Environment} il dominio astratto si costruirà attraverso l'interfaccia \texttt{NonRelationalDomain} che ha solo un sottoinsieme dei metodi di \texttt{SemanticDomain}. Per capire perchè pensiamo ai metodi \texttt{assign}, \texttt{forgetIdentifier/s} in \texttt{SemanticDomain}. La definizione di questi metodi, potenzialmente, è uguale per tutti i dominio non-relazionali, ed infatti di queste se ne prende carico la classe \texttt{Environment}, lasciando alla creazione dei domini astratti non-relazionali solo la necessità di definire: (i) le operazioni riguardanti la struttura reticolare del dominio (lub, glb, lessOrEqual, \(\cdots\)), e (ii) la logica per la valutazione delle espressioni simboliche;
+    \item un \texttt{ValueDomain} che è responsabile di tracciare proprietà astratte (come per esempio il valore astratto) delle variabili (possibilmente pre-processate e riscritte prima dall'\texttt{HeapDomain}) del programma. In LiSA è possibile definire \texttt{ValueDomain} sia relazionali (come i Polyhedra) sia non. Per quest'ultimi è definito dentro LiSA una classe base chiamata \texttt{Environment} che estende  \texttt{FunctionalLattice<Identifier, L>} ed implementa \texttt{SemanticDomain}, capace di tracciare un valore del dominio astratto \texttt{L} (che può essere per esempio un Interval, un Sign, un Modulo) ad ogni identificatore tenuto in memoria. Va sottolineato che il dominio \texttt{L} di un \texttt{Environment} ha si la struttura reticolare, ed estende \texttt{Lattice}, e può anche ragionare semanticamente sulle \texttt{SymbolicExpression} senza però implementare \texttt{SemanticDomain}. Infatti per il caso specifico dei domini non-relazionali gestiti tramite \texttt{Environment} il dominio astratto si costruirà attraverso l'interfaccia \texttt{NonRelationalDomain} che ha solo un sottoinsieme dei metodi di \texttt{SemanticDomain}. Per capire perchè pensiamo ai metodi \texttt{assign}, \texttt{forgetIdentifier/s} in \texttt{SemanticDomain}. La definizione di questi metodi, potenzialmente, è uguale per tutti i dominio non-relazionali, ed infatti di queste se ne prende carico la classe \texttt{Environment}, lasciando alla creazione dei domini astratti non-relazionali solo la necessità di definire: (i) le operazioni riguardanti la struttura reticolare del dominio (lub, glb, lessOrEqual, \(\cdots\)), e (ii) la logica per la valutazione delle espressioni simboliche;
     
-    \item un \texttt{TypeDomain} che è un \texttt{ValueDomain} che associa ad ogni variabile l'insieme dei possibili tipi a run-time delle variabili. Questa può essere usata durante l'analisi per generare espressioni simboliche specifiche a seconda dei tipi delle variabili coinvolte nello statement;
+    \item un \texttt{TypeDomain} che è un \texttt{ValueDomain} non-relazionale (quindi costruito a partire di \texttt{Environment}) che associa ad ogni variabile l'insieme dei possibili tipi a run-time delle variabili. Questa può essere usata durante l'analisi per generare espressioni simboliche specifiche a seconda dei tipi delle variabili coinvolte nello statement;
 \end{itemize}
 
 L'\texttt{AbstractState} principlamente fa quindi da coordinatore tra l'\texttt{HeapDomain} e il \texttt{ValueDoamin}, passando all'ultimo le espressioni tradotte e gli identificatori trasformati dal primo quando i due mondi devono comunicare e invece compartizzando e separando i due domini quando le espressioni riguardano solo su uno dei due.
 
 \subsection{Calcolo del fix-point in LiSA}\label{sec:fix-pointLiSA}
-Abbiamo visto nel capitolo [??] che fare interpretazione astratta (sezione [??]) non significa altro che trovare una soluzione ad un sistema di equazioni costruito a partire dal CFG del programma. Tutte le soluzioni del sistema sono per definizione suoi fix-point e quindi cercare la soluzione significa cercarne un fix-point (possibilmente il più preciso, ovvero il least fix-point). Come viene mostrato nell'articolo di Cousot [??] qualsiasi metodo caotico di risoluzione ci permette di ottenere una soluzione del sistema (non necessariamente la minima). Tra tutti questi metodi ci conviene usarne uno efficiente e che sfrutti la struttura del CFG in modo da velocizzare la convergenza verso un fix-point. L'algoritmo che viene utilizzato in LiSA per la risoluzione del sistema di equazioni è quello classico basato su working-set e prima delle mie modifiche seguiva la definizione in pseudo-codice fornita in \ref{alg:fixpointAsc}.
+Abbiamo visto nella sezione \ref{sec:abstractInt} che fare interpretazione astratta non significa altro che trovare una soluzione ad un sistema di equazioni costruito a partire dal CFG del programma. Tutte le soluzioni del sistema sono per definizione suoi fix-point e quindi cercare la soluzione significa cercarne un fix-point (possibilmente il più preciso, ovvero il least fix-point). Come viene mostrato nell'introduzione dell'articolo di Cousot \cite{Cousot-IMAG-RR88-1977} qualsiasi metodo caotico di risoluzione ci permette di ottenere una soluzione del sistema (non necessariamente la minima). Tra tutti questi metodi ci conviene usarne uno efficiente e che sfrutti la struttura del CFG in modo da velocizzare la convergenza verso un fix-point. L'algoritmo che viene utilizzato in LiSA per la risoluzione del sistema di equazioni è quello classico basato su working-set e prima delle mie modifiche seguiva la definizione in pseudo-codice fornita in \ref{alg:fixpointAsc}.
 
 \begin{algorithm}
 	\caption{Algoritmo per il calcolo del fix-point con working-set list con solo fase ascendente}
@@ -303,7 +303,7 @@ Bisogna inanzitutto configurare l'analisi attraverso un oggetto della classe \te
 \end{figure}
 \\
 
-Fino'ora abbiamo introdotto tutte le nozioni matematiche e teoriche necessarie per capire come funzioni l'analisi statica tramite interpretazione astratta (nel capitolo []) ed abbiamo visto come questi concetti vengono applicati all'interno di LiSA (nella sezione [] di questo capitolo). Da questo punto in poi verrà spiegato il contributo che io ho dato per espandere la libreria, guardando nel dettaglio ogni implementazione. 
+Fino'ora abbiamo introdotto tutte le nozioni matematiche e teoriche necessarie per capire come funzioni l'analisi statica tramite interpretazione astratta (nel capitolo \hyperref[chapter:background]{Backgrounf}) ed abbiamo visto come questi concetti vengono applicati all'interno di LiSA (nella sezione \hyperref[sec:LiSA]{LiSA} di questo capitolo). Da questo punto in poi verrà spiegato il contributo che io ho dato per espandere la libreria, guardando nel dettaglio ogni implementazione. Partiremo dal dominio dei sottoinsiemi non ridondanti di un reticolo, poi passeremo alla fase discendente per poi finire col decoupling delle fasi.
 
 \section{Dominio dell'insieme delle parti finite e non ridondanti in LiSA}
 
@@ -373,7 +373,7 @@ La classe astratta \texttt{NonRedundantPowerset<C,T,E,I>} è parametrica a quatt
     \item \texttt{E} è il tipo delle \texttt{SymbolicExpression} su cui questo dominio, e quindi quello sottostante \texttt{T}, riesce a ragionare semanticamente;
     \item \texttt{I} è il tipo di \texttt{Identifiers} che questo dominio,  e quindi quello sottostante \texttt{T}, sa manipolare;
 \end{itemize}\ 
-La classe, poi, invece di implementare \texttt{Lattice<C>} estende \texttt{SetLattice<C,T>}, che definisce la struttura reticolare che ci serve in questo caso e che viene mostrata formalmente nel capitolo \hyperref[chapter:background]{Background} all'esempio \ref{ex:setLattice}. Sintetizzando molto la classe astratta \texttt{SetLattice} è cosi definita in LiSA:
+La classe, poi, invece di implementare \texttt{BaseLattice<C>} estende \texttt{SetLattice<C,T>}, che definisce la struttura reticolare che ci serve in questo caso e che viene mostrata formalmente nel capitolo \hyperref[chapter:background]{Background} all'esempio \ref{ex:setLattice}. Sintetizzando molto la classe astratta \texttt{SetLattice} è cosi definita in LiSA:
 \begin{lstlisting}[belowskip=-1.1 \baselineskip]
 public abstract class SetLattice<S extends SetLattice<S,T>,T> 
     implements BaseLattice<S>, Iterable<T> {
@@ -890,7 +890,7 @@ Nella figura \ref{fig:risultatoAscPowerset} è mostrato il risultato dell'analis
 	\label{fig:risultatoAscPowerset}
 \end{figure}
 
-\section{La fase discendente in LiSA}
+\section{La fase discendente in LiSA}\label{sec:descendingLiSA}
 In questa sezione vedremo come è stata aggiunta in LiSA la possibilità di calcolare anche la fase discendente. Prima però di parlare delle modifiche apportate bisogna mostrare come effettivamente (quali classi e metodi sono utilizziati) è implementato il calcolo del fix-point di un programma in LiSA. Il flow che segue il calcolo è mostrato in figura \ref{fig:flowFixpoint}. 
 \begin{figure}[ht]
 	\centering
@@ -1056,7 +1056,7 @@ Se invece non si vuole che venga calcolata la fase discendente basta non settare
 	\label{fig:risultatoDOTDesc}
 \end{figure}
 
-\section{Decoupling della fase ascendente e discendente in LiSA}
+\section{Decoupling della fase ascendente e discendente in LiSA}\label{sec:lisaDecoupling}
 In questa sezione vedremo come è stato possibile modificare LiSA per permettere il decoupling della fase ascendente e discendente come mostrato nel capitolo \ref{chapter:decoupling}. Bisogna però dire che l'implementazione non è stata fatta per essere inserita ufficialmente dentro LiSA, ma come prova sperimentale per vedere realizzato in pratica il concetto e per fare qualche test. Anche per questo motivo non verrà data una spiegazione approfondita con estratti di codice come fatto in precedenza, ma solo una spiegazione generale del funzionamento e dell'architettura. Nella figura \ref{fig:flowDecoupling} viene mostrato un sequence diagram che schematizza le chiamate e i passaggi che avvengono in LiSA durante una analisi con decoupling delle fasi. 
 \begin{figure}[ht]
 	\centering
