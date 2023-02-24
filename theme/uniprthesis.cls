@@ -159,46 +159,48 @@
 			{\vspace*{3mm}{\large \it \@degree} \par}
 			\vfill
 			{ \LARGE {\bfseries \uppercase {\@title}} \par}
-			\ifdef{\subTitle}%
+			%\ifdef{\subTitle}%
 			{\vspace*{3mm}\Large {\itshape {\subTitle}} \par}%
 			{}%
 		\end{center}
 			\vfill
 		{\large \textsc{Candidato:}} \hfill 
 		%\ifempty{\@advisorSecond}
-		\ifdef{\advisorSecond}%
-			{{\large \raggedleft \textsc{Relatori:} \par}}%
+		%\ifdef{\advisorSecond}%
+			%{{\large \raggedleft \textsc{Relatori:} \par}}%
 			{{\large \raggedleft \textsc{Relatore:} \par}}%
 		{\large {\nameStyle{\@author}} \hfill {\nameStyle{\@advisor}} \par}
-		\ifdef{\advisorSecond}%
-			{{\large \raggedleft {\nameStyle{\advisorSecond}} \par}
-				\ifdef{\advisorThird}%
-					{{\large \raggedleft {\nameStyle{\advisorThird}} \par}
-					\ifdef{\advisorFourth}%
-						{{\large \raggedleft {\nameStyle{\advisorFourth}} \par}}%
-						{}
-					}%
-					{}%
-			}%
-			{}%
+		%\ifdef{\advisorSecond}%
+			%{{\large \raggedleft {\nameStyle{\advisorSecond}} \par}
+				%\ifdef{\advisorThird}%
+					%{{\large \raggedleft {\nameStyle{\advisorThird}} \par}
+					%\ifdef{\advisorFourth}%
+						%{{\large \raggedleft {\nameStyle{\advisorFourth}} \par}}%
+						%{}
+					%}%
+					%{}%
+			%}%
+			%{}%
 		\vspace*{1.0em}
-		\ifdef{\coadvisor}{%
-			\ifdef{\coadvisorSecond}%
-			{{\large \raggedleft \textsc{Correlatori:} \par}}%
-			{{\large \raggedleft \textsc{Correlatore:} \par}}%
-			{\large \raggedleft {\nameStyle{\coadvisor}} \par}
-			\ifdef{\coadvisorSecond}%
-			{{\large \raggedleft {\nameStyle{\coadvisorSecond}} \par}
-				\ifdef{\coadvisorThird}%
-				{{\large \raggedleft {\nameStyle{\coadvisorThird}} \par}
-					\ifdef{\coadvisorFourth}%
-					{{\large \raggedleft {\nameStyle{\coadvisorFourth}} \par}}%
-					{}
-				}%
-				{}%
-			}%
-			{}%
-			}%
+
+		%\ifdef{\coadvisor}{%
+			%\ifdef{\coadvisorSecond}%
+			%{{\large \raggedleft \textsc{Correlatori:} \par}}%
+			%{{\large \raggedleft \textsc{Correlatore:} \par}}%
+			%{\large \raggedleft {\nameStyle{\coadvisor}} \par}
+			%\ifdef{\coadvisorSecond}%
+			%{{\large \raggedleft {\nameStyle{\coadvisorSecond}} \par}
+				%\ifdef{\coadvisorThird}%
+				%{{\large \raggedleft {\nameStyle{\coadvisorThird}} \par}
+					%\ifdef{\coadvisorFourth}%
+					%{{\large \raggedleft {\nameStyle{\coadvisorFourth}} \par}}%
+					%{}
+				%}%
+				%{}%
+			%}%
+			%{}%
+			%}%
+
 			{}
 		\vfill
 		{\noindent\rule{\textwidth}{0.4pt}\par}
