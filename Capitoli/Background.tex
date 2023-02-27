@@ -73,7 +73,7 @@ Dato un poset \(\simplePoset{S}\) e due elementi \(s_1, s_2 \in S\) diciamo che 
 \end{definition}
 
 \begin{example} 
-Se prendiamo l'insieme \(\textrm{Sign}=\{\perp, +, -, 0, 0+, 0-, \top\}\) e l'ordinamento parziale \(\preceq_{\textrm{Sign}}\) definito dal diagramma di Hasse in figura \ref{fig:signDomain} allora \(\simplePoset{\textrm{Sign}}\) è un insieme parzialmente ordinato.
+Se prendiamo l'insieme \(\textrm{Sign}=\{\perp, +, -, 0, 0+, 0-, \top\}\) e l'ordinamento parziale \(\preceq_{\textrm{Sign}}\) definito dal diagramma di Hasse in Figura \ref{fig:signDomain} allora \(\simplePoset{\textrm{Sign}}\) è un insieme parzialmente ordinato.
 
 \begin{figure}
 \begin{center}
@@ -100,7 +100,7 @@ Se prendiamo l'insieme \(\textrm{Sign}=\{\perp, +, -, 0, 0+, 0-, \top\}\) e l'or
 \end{tikzpicture}
 \end{scriptsize}
 \end{center}
-\caption{diagramma di Hasse del dominio dei segni.}
+\caption{Diagramma di Hasse del dominio dei segni.}
 \label{fig:signDomain}
 \end{figure}
 \end{example}
@@ -181,7 +181,7 @@ La relazione di ordine parziale \(\preceq\) è così definita: per ogni \([l_1, 
  
     questo significa semplicemente che dobbiamo prendere l'intersezione dei due intervalli e se l'intersezione è nulla restituiamo \(\perp\).
 \end{itemize}
-Abbiamo quindi un reticolo completo \(\langle\textrm{Int}, \preceq_{\textrm{Int}}, \sqcup, \sqcap, [-\infty, +\infty], [\ ] \rangle\). In oltre è possibile visualizzare l'ordinamento parziale sull'insieme Int attraverso il diagramma di Hasse (ovviamente incompleto) in figura \ref{fig:intervalDomain} :
+Abbiamo quindi un reticolo completo \(\langle\textrm{Int}, \preceq_{\textrm{Int}}, \sqcup, \sqcap, [-\infty, +\infty], [\ ] \rangle\). In oltre è possibile visualizzare l'ordinamento parziale sull'insieme Int attraverso il diagramma di Hasse (ovviamente incompleto) in Figura \ref{fig:intervalDomain} :
 
 \begin{figure}
 \begin{center}
@@ -287,7 +287,7 @@ Abbiamo quindi un reticolo completo \(\langle\textrm{Int}, \preceq_{\textrm{Int}
 \end{tikzpicture}
 \end{scriptsize}
 \end{center}
-\caption{rappresentazione incompleta del diagramma Hasse del dominio degli intervalli interi}
+\caption{Rappresentazione incompleta del diagramma Hasse del dominio degli intervalli interi.}
 \label{fig:intervalDomain}
 \end{figure}
 
@@ -329,7 +329,7 @@ Dato un \(\simplePoset{S}\) ed una funzione \(f:S\rightarrow S\) possiamo defini
 \end{itemize}
 \end{definition}
 
-\begin{definition}[least fix-point, greatest fix-point]
+\begin{definition}[Least fix-point, greatest fix-point]
 Dato un \(\simplePoset{S}\) ed una funzione \(f:S\rightarrow S\) il \textit{least fix-point} di \textit{f}, scritto \(\textrm{lfp}(f)\), è un fix-point di \textit{f} tale che \(\forall x\in\textrm{fp}(f):\textrm{lfp}(f)\preceq_S x\). Dualmente il \textit{greatest fix-point} di \textit{f}, \(\textrm{gfp}(f)\), è un fix-point di \textit{f} tale che \(\forall x\in\textrm{fp}(f):x\preceq_S \textrm{gfp}(f)\).
 \end{definition}
 
@@ -411,27 +411,15 @@ dove le funzioni \(\textrm{min},\textrm{max}:\wp(\mathbb{Z})\rightarrow\mathbb{Z
 Lo scopo dell'\textit{analisi statica} è quello di provare formalmente certe proprietà di un programma. Per essere definita statica una analisi deve avere la caratteristica di non eseguire il codice (in caso opposto l'analisi si dice \textit{dinamica}, un esempio è il tradizionale metodo di debug con test), o meglio di non eseguirlo nella sua forma concreta. L'\textit{interpretazione astratta} è un modello matematico che può essere utilizzato per compiere analisi statica. L'idea basilare è quella di astrarre la computazione su un dominio astratto e interpretare il codice muovendoci in uno spazio di oggetti astratti che approssimano il dominio concreto. Per fare ciò dobbiamo creare una semantica astratta, che ragiona nel mondo del dominio astratto, che sia \textit{sound} in rispetto alla semantica concreta, la quale invece ragiona su un dominio concreto. Il motivo per cui ci accontentiamo di una approssimazione è che spesso lavorare sul dominio concreto risulta impossibile a causa dei limiti della computazione o è estremamente costoso in termini di tempo. Ci basta perciò una soluzione approssimata, ma corretta, da cui si spera sia possibile verificare certe proprietà del programma analizzato. L'idea di intepretazione astratta è nata negli anni '70, dove viene esposta in modo formale e sistematico negli articoli di Patrick e Radhia Cousot \cite{DBLP:conf/popl/CousotC77} e \cite{DBLP:conf/popl/CousotC79}. 
 
 \subsection{Interpretazione astratta}
-Un linguaggio \(\mathbb{L}\) mette a disposizione una semantica, ovvero una descrizione formale e matematica del comportamento di un programma \(\rho\) scritto in \(\mathbb{L}\) partendo da uno stato iniziale (che può rappresentare la collezione di elementi di input di \(\rho\)). Da tale semantica si possono ottenere diverse \textit{semantiche concrete}, ovvero funzioni \(\textbf{S}:Program_\mathbb{L}\rightarrow \mathbb{C}\),  che prendono un programma \(\rho\) in \(\mathbb{L}\) e restituiscono un oggetto dell'insieme \(\mathbb{C}\), detto \textit{dominio semantico concreto}, che ci dice qualcosa sul comportamento di \(\rho\) e attraverso cui è pssibile verificarne certe proprietà. Una caratteristica necessaria di un dominio concreto è che deve essere parte di un reticolo completo, per semplicità scriveremo \(\simplePoset{\mathbb{C}}\). Due esempi di semantiche concrete sono:
+Un linguaggio \(\mathbb{L}\) mette a disposizione una semantica, ovvero una descrizione formale e matematica del comportamento di un programma \(\rho\) scritto in \(\mathbb{L}\) partendo da uno stato iniziale (che può rappresentare la collezione di elementi di input di \(\rho\)). Da tale semantica si possono ottenere diverse \textit{semantiche concrete}, ovvero funzioni \(\textbf{S}:Program_\mathbb{L}\rightarrow \mathbb{C}\),  che prendono un programma \(\rho\) in \(\mathbb{L}\) e restituiscono un oggetto dell'insieme \(\mathbb{C}\), detto \textit{dominio semantico concreto}, che ci dice qualcosa sul comportamento di \(\rho\) e attraverso cui è possibile verificarne certe proprietà. Una caratteristica necessaria di un dominio concreto è che deve essere parte di un reticolo completo, per semplicità scriveremo \(\simplePoset{\mathbb{C}}\). Due esempi di semantiche concrete sono:
 \begin{itemize}
-    \item \textit{trace semantics}: il dominio concreto \(\mathbb{C}\) di questa semantica è l'insieme delle parti di tutte le tracce di esecuzione possibili (anche quelle infinite) per ogni possibile programma scritto in \(\mathbb{L}\) per ogni possibile input di tale programma. Per traccia intendiamo una sequenza di stati e per stato intendiamo una coppia che comprende un punto di programma e uno stato della memoria (quindi lo stato rappresenta una fotografia della memoria in un dato istante). La trace semantics prenderò come input un porgramma \(\rho\) in \(\mathbb{L}\) e restituirà l'insieme comprendente tutte le tracce di esecuzione possibili per quel programma partendo dal set di tutti i possibili input. Questa semantica quindi vede il comportamento di un programma come un insieme di tracce. Avendo a disposizione questa semantica possiamo verificare numerose proprietà di un programma tra cui la liveness, la reachability ma anche la terminazione, basterebbe infatti mostrare che l'insieme di tracce possibili comprenda solo tracce finite. Dal famoso problema della terminazione formulato da Turing sappiamo però che tale verifica è impossibile.
-    \item \textit{collecting semantics}: un'altra, ma meno precisa, semantica concreta è la collecting semantics. Il dominio \(\mathbb{C}\) di questa semantica è l'insieme di tutte le funzioni che mappano ogni punto di programma possibile a un insieme di stati della memoria (si noti che il concetto di stato della memoria può essere semplificato al concetto di environment, ovvero una mappa che associa ad ogni variabile del programma un valore). La collecting semantics è una funzione che associa ad ogni programma \(\rho\) in \(\mathbb{L}\) una funzione che mappa ogni punto di programma di \(\rho\) all'insieme di tutti gli stati della memoria atraversabili in quel punto (o nella visione semplificata è una funzione che associa ad ogni punto di programma tutti gli environment che possono passare per quel punto). In pratica la collecting semantics ci dice tutti gli stati possibili durante l'esecuzione del programma ignorando l'ordine temporale che li lega (per questo la trace semantics contiene più informazione, essa infatti non ignora la sequenzialità tra gli stati). Anche questa semantica risulta impossibile da calcolare, sia per motivi legati alla terminazione che per l'impossibilità di rappresentare certi elementi di \(\mathbb{C}\) su una macchina (si pensi ad esempio ad un programma con un ciclo infinito che possiede un punto di programma attraverso cui passano infiniti environemnt diversi). 
+    \item \textit{trace semantics}: il dominio concreto \(\mathbb{C}\) di questa semantica è l'insieme delle parti di tutte le tracce di esecuzione possibili (anche quelle infinite) per ogni possibile programma scritto in \(\mathbb{L}\) per ogni possibile input di tale programma. Per traccia intendiamo una sequenza di stati e per stato intendiamo una coppia che comprende un punto di programma e uno stato della memoria (quindi lo stato rappresenta una fotografia della memoria in un dato istante). La trace semantics prenderà come input un programma \(\rho\) in \(\mathbb{L}\) e restituirà l'insieme comprendente tutte le tracce di esecuzione possibili per quel programma partendo dall'insieme di tutti i possibili input. Questa semantica quindi vede il comportamento di un programma come un insieme di tracce. Avendo a disposizione questa semantica possiamo verificare numerose proprietà di un programma tra cui la \textit{liveness}, la \textit{reachability} ma anche la terminazione, basterebbe infatti mostrare che l'insieme di tracce possibili comprenda solo tracce finite. Dal famoso problema della terminazione formulato da Alan Turing esposto nell'articolo \cite{DBLP:journals/x/Turing37} sappiamo però che tale verifica è indecidibile.
+    \item \textit{collecting semantics}: un'altra, ma meno precisa, semantica concreta è la collecting semantics. Il dominio \(\mathbb{C}\) di questa semantica è l'insieme di tutte le funzioni che mappano ogni punto di programma possibile a un insieme di stati della memoria (si noti che il concetto di stato della memoria può essere semplificato al concetto di \textit{environment}, ovvero una mappa che associa ad ogni variabile del programma un valore). La collecting semantics è una funzione che associa ad ogni programma \(\rho\) in \(\mathbb{L}\) una funzione che mappa ogni punto di programma di \(\rho\) all'insieme di tutti gli stati della memoria atraversabili in quel punto (o nella visione semplificata è una funzione che associa ad ogni punto di programma tutti gli environment che possono passare per quel punto). In pratica la collecting semantics ci dice tutti gli stati possibili durante l'esecuzione del programma ignorando l'ordine temporale che li lega (per questo la trace semantics contiene più informazione, essa infatti non ignora la sequenzialità tra gli stati). Anche questa semantica risulta impossibile da calcolare, sia per motivi legati alla terminazione che per l'impossibilità di rappresentare certi elementi di \(\mathbb{C}\) su una macchina (si pensi ad esempio ad un programma con un ciclo infinito che possiede un punto di programma attraverso cui passano infiniti environemnt diversi). 
 \end{itemize}
 
-Tramite l'interpretazione astratta (abbreaviato in inglese \textit{AI}) vogliamo sopperire a tutti i problemi legati alla calcolabilità delle semantiche concrete. Per essere efficiace una \textit{AI} deve comprendere due cose: un \textit{dominio semantico astratto}, \(\simplePoset{\mathbb{A}}\) (anch'esso parte di un reticolo completo), e una \textit{semantica astratta}, ovvero una funzione \(\textbf{S}_{\mathbb{A}}:Program_\mathbb{L}\rightarrow \mathbb{A}\). Bisogna poi mostrare due ralaioni tra mondo concreto e mondo astratto: per primo un collegamento tra il dominino concreto e quello astratto tramite una connessione di Galois \(\GaloisConnection{\mathbb{C}}{\mathbb{A}}\) e poi una relazione di soundness tra le due funzioni semantiche, ovvero bisognerà dimostrare che per ogni \(\rho\in Program_{\mathbb{L}}\) vale che \(\alpha(\textbf{S}[\rho])\preceq_{\mathbb{A}}\textbf{S}_{\mathbb{A}}[\rho]\). Questo significa che il risultato dell'\textit{AI} di un programma deve almeno contenere tutte le proprietà vere del programma, ovvero deve essere una corretta approssimazione dell'analisi concreta. Lo scambio che andiamo a fare è quello di cedere precisione sull'analisi (con la clausola di rimanese sound) in cambio della possibilità di compiere l'analisi su una macchina in tempo finito. 
+Tramite l'interpretazione astratta (abbreaviato in inglese \textit{AI}) vogliamo sopperire a tutti i problemi legati alla calcolabilità delle semantiche concrete. Per essere efficiace una \textit{AI} deve comprendere due cose: un \textit{dominio semantico astratto}, \(\simplePoset{\mathbb{A}}\) (anch'esso parte di un reticolo completo), e una \textit{semantica astratta}, ovvero una funzione \(\textbf{S}_{\mathbb{A}}:Program_\mathbb{L}\rightarrow \mathbb{A}\). Bisogna poi mostrare due ralazioni tra mondo concreto e mondo astratto: per primo un collegamento tra il dominino concreto e quello astratto tramite una connessione di Galois \(\GaloisConnection{\mathbb{C}}{\mathbb{A}}\) e poi una relazione di soundness tra le due funzioni semantiche, ovvero bisognerà dimostrare che per ogni \(\rho\in Program_{\mathbb{L}}\) vale che \(\alpha(\textbf{S}[\rho])\preceq_{\mathbb{A}}\textbf{S}_{\mathbb{A}}[\rho]\). Questo significa che il risultato dell'\textit{AI} di un programma deve almeno contenere tutte le proprietà vere del programma, ovvero deve essere una corretta approssimazione dell'analisi concreta. Lo scambio che andiamo a fare è quello di cedere precisione sull'analisi (con la clausola di rimanese sound) in cambio della possibilità di compiere l'analisi su una macchina in tempo finito. 
 
 Il motivo per cui abbiamo introdotto molte nozioni legate al mondo degli insiemi parzialmente ordinati, reticoli e fix-point è che le funzioni semantiche, sia concreta che astratta, possono essere costruite in termini della ricerca del least fix-point di un operatore monotono. Ovvero avremo \(\mathbf{S}[\rho]=\textrm{lfp}(T_{\mathbb{C}})\) e \(\mathbf{S}_{\mathbb{A}}[\rho]=\textrm{lfp}(T_{\mathbb{A}})\) dove \(T_{\mathbb{C}}:\mathbb{C}\rightarrow \mathbb{C}\) e \(T_{\mathbb{A}}:\mathbb{A}\rightarrow \mathbb{A}\) sono operatori monotoni rispettivamente sul dominino concreto e su quello astratto. In questo caso la relazione di soundness tra le due semantica si appoggia sulla relazione di soundness tra i due operatori sottostanti seguendo la definizione seguente:
-
-\iffalse
-Dato un linguaggio \(\mathbb{L}\) ed un programma \(\rho\) scritto in \(\mathbb{L}\), la \textit{semantica} di \(\rho\) descrive l'insieme di tutti i possibili comportamenti di \(\rho\) quando eseguito per tutti i possibili valori di input. Dai risultati della semantica di \(\rho\) ne sarebbe possibile verificare molte proprietà riguardanti il suo comportamento run-time (come la terminazione o non-terminazione, l'impossibilità/possibilità o certezza di raggiungere certi stati e così via).
-
-Generalmente partendo dal linguaggio \(\mathbb{L}\) è possibile creare una funzione semantica \(\textbf{S}:Program_\mathbb{L}\rightarrow \mathbb{C}\), detta \textit{semantica concreta}, che dato un programma scritto in \(\mathbb{L}\) ci restituisce un oggetto in \(\mathbb{C}\) rappresentabile proprio tutti i possibili comportamenti per tutti i possibili input di tale programma. L'insieme \(\mathbb{C}\), detto \textit{dominio semantico concreto} (e parte di un reticolo completo \(\CompleteLattice{\mathbb{C}}\)) è quindi l'insieme di tutti i possibili comportanti di tutti i possibili programmi in \(\mathbb{L}\). Il problema della semantica concreta è che spesso non è computabile, per problemi legati alla terminazione, o i suoi risultati non sono rappresentabili in una macchina, essendo il dominio concreto potenzialmento formato da elementi infiniti (si pensi a una traccia di esecuzione non terminante formata da una infinita sequenza di stati). E' comune il caso in cui la funzione semantica si basi sul calcolo del least fix-point di un operatore monotono \(T_{\mathbb{C}}:\mathbb{C}\rightarrow \mathbb{C}\), e quindi dato un programma \(\rho\) in \(\mathbb{L}\) si avrebbe \(\textbf{S}[\rho]=\textrm{lfp}(T_{\mathbb{C}})\).
-
-Una interpretazione astratta deve essere dotata di due cose: un \textit{dominio semantico astratto} \(\mathbb{A}\) (anch'esso parte di un reticolo completo, \(\CompleteLattice{\mathbb{A}}\)) ed una funzione \textit{semantica astratta}, \(\textbf{S}_{\mathbb{A}}:Program_\mathbb{L}\rightarrow \mathbb{A}\) (o nel caso si tratti di una semantica concreta basata su calcolo del least fix-point serve una versione astratta dell'operatore monotono \(T_{\mathbb{C}}\), ovvero \(T_{\mathbb{A}}:\mathbb{A}\rightarrow \mathbb{A}\)).
-Bisogna poi dimostrare il collegamento tra i due domini \(\mathbb{A}\) e \(\mathbb{C}\). Questo lo si fa tramite una connessione di Galois, ovvero trovando una coppia di funzioni monotone \(\alpha:\mathbb{C}\rightarrow \mathbb{A}\) e \(\gamma:\mathbb{A}\rightarrow \mathbb{C}\) con le proprietà precedentemente descritte che mostri che \(\mathbb{A}\) sia una corretta approssimazione di \(\mathbb{C}\). Infine affinchè l'interpretazione astratta sia corretta bisigna dimostrare la relazione di soundness tra la semantica concreta \(\textbf{S}\) e la semantica astratta \(\textbf{S}_{\mathbb{A}}\), ovvero bisogna mostrare che per ogni \(\rho\in Program_{\mathbb{L}}\) vale che \(\alpha(\textbf{S}[\rho])\preceq_{\mathbb{A}}\textbf{S}_{\mathbb{A}}[\rho]\). Se si sta invece lavorando su semantiche basate sul calcolo del least fix-point per dimostare la relazione di soundness basta verificare la seguente condizione sugli operatori monotoni sottostanti: \(\alpha\circ T_{\mathbb{C}}\preceq_{\mathbb{A}} T_{\mathbb{A}}\circ\alpha\), ovvero scritto in un altro modo bisogna mostrare che \(\forall c\in\mathbb{C}:\alpha(T_{\mathbb{C}}(c))\preceq_{\mathbb{A}}T_{\mathbb{A}}(\alpha(c))\).
-
-
-Proviamo a darne una definizione più formale. Solitamente un linguaggio di programmazione imperativo L ci mette a disposizione una semantica operazionale che ci permette di eseguire un flusso computazionale di un programma \(p\) scritto in L. Da questa semantica e dal programma \(p\) si può ottenere una funzione \(f:\mathbb{C}\rightarrow\mathbb{C}\) che lavora su un dominio semantico concreto \(\langle\mathbb{C}, \preceq_{\mathbb{C}}\rangle\), dotato di un ordinamento parziale, i cui oggetti rappresentano certe proprietà di \(p\). Il limite o least fixed-point o risultato di \(f\) sarà un insieme di proprietà vere per \(p\). Come abbiamo già detto lavorare in questo universo di oggetti è di solito impossibile, infatti gli elementi di \(\mathbb{C}\) spesso rappresentano insiemi infiniti che non possono essere rappresentati su una macchina o sono il risultato di una computazione non terminante. Per questo ci spostiamo su un dominio astratto \(\langle\mathbb{A}, \preceq_{\mathbb{A}}\rangle\). Dalla stessa semantica operazionale e dallo stesso programma \(p\) si può ottenere un'altra funzione \(f^{\star}:\mathbb{A}\rightarrow\mathbb{A}\) che lavora sul dominio astratto e il cui limite o least fixed-point o risultato è una approssimazione corretta di \(f\), \(i.e.\), c'è una relazione di soundness tra \(f\) e \(f^{\star}\). Ovviamente il dominio astratto \(\mathbb{A}\) e la funzione \(f^{\star}\) vanno costruiti in modo tale da essere rappresentabili e calcolabili da un computer. Il limite di questo approccio è che ciò che è in grado di dirci \(f^{\star}\) su \(p\) potrebbe essere non è abbastanza preciso e raffinato per verificarne certe proprietà.
-\fi
 
 \begin{definition}[Soundness]
 Prendiamo in considerazione due poset \(\simplePoset{C}, \simplePoset{A}\) che siano connessi tramite \(\simplePoset{C}\galois{\alpha}{\gamma}\simplePoset{A}\) e due funzioni \(f:C\rightarrow C\) e \(f^{\natural}:A\rightarrow A\) diremo che \(f^{\natural}\) è una approssimazione \textit{sound} di \(f\) se vale la seguente condizione:
@@ -443,7 +431,7 @@ Inoltre date tutte le approssimazioni di \(f\) esistenti vorremmo sapere quale �
 \end{definition}
 
 \subsection{Calcolo del fix-point}
-Come già abbiamo detto spesso la semantica (sia astratta che concreta) viene espressa in termini di ricerca del least fix-point di un'altra funzione. Risulta molto utile, se non necessario, dare qualche definizione e teorema che ci permette di trasferire il calcolo del lfp di una funzione concreta \(f\) su una funzione astratta \(f^{\natural}\).
+Come già abbiamo detto spesso la semantica (sia astratta che concreta) viene espressa in termini di ricerca del least fix-point di un'altra funzione. Risulta molto utile, se non necessario, dare qualche definizione e teorema che ci permette di trasferire il calcolo del least-fix-point di una funzione concreta \(f\) su una funzione astratta \(f^{\natural}\).
 
 \begin{definition}[Fix-point soundness]
 Data una connessione di Galois \(\GaloisConnection{C}{A}\), una funzione concreta \(f:C\rightarrow C\) ed una funzione astratta \(f^{\natural}:A\rightarrow A\) diciamo che \(f^{\natural}\) è \textit{fix-point sound} se \(\alpha(\textrm{lfp}(f))\preceq_A \textrm{lfp}(f^{\natural})\).
@@ -454,14 +442,14 @@ Presi \(\GaloisConnection{C}{A}\), una funzione concreta \(f:C\rightarrow C\) ed
 \end{theorem}
 
 \subsection{Interpretazione astratta di un Control Flow Graph}
-Per approfondire i concetti si semantica concreta, semantica stratta e inetrpretazione astratta in questa sezioni li vedremo applicati a programmi scritti in un linguaggio di programmazione, il linguaggio CFG. Un Control Flow Graph (CFG) è una rappresentazione di un programma tramite una coppia \(\cfg\) dove \(N\) è un insieme di nodi, questi rappresentano blocchi di codice basilari del programma (ad esempio gli statement), e \(E\subset N\times N\) è l'insieme di archi che collegano i nodi in \(N\), questi rappresentano il flusso di informazione tra i blocchi. Gli archi possono essere sequenziali (l'informazione passa dal nodo di partenza a quello di arrivo sempre senza modifiche), veri (l'informazione passa solo se la condizione nel nodo di partenza è vera) o falsi (opposti agli archi veri). In questo modo possiamo rappresentare anche l'if statement all'interno del linguaggio CFG. Per rappresentare i loop statement basta creare dei cicli all'interno del CFG.
+Per approfondire i concetti di semantica concreta, semantica stratta e inetrpretazione astratta in questa sezioni li vedremo applicati a programmi scritti in una rapprsentazione del codice specifica, i CFG. Un Control Flow Graph (CFG) è una rappresentazione di un programma tramite una coppia \(\cfg\) dove \(N\) è un insieme finito di nodi, questi rappresentano blocchi di codice basilari del programma (ad esempio gli statement), e \(E\subset N\times N\) è l'insieme di archi che collegano i nodi in \(N\), questi rappresentano il flusso di informazione tra i blocchi. Gli archi possono essere sequenziali (l'informazione passa dal nodo di partenza a quello di arrivo sempre senza modifiche), veri (l'informazione passa solo se la condizione nel nodo di partenza è vera) o falsi (opposti agli archi veri). In questo modo possiamo rappresentare anche il comando condizionale all'interno del linguaggio CFG. Per rappresentare il comando while basta creare dei cicli all'interno del CFG.
 
 Dato un programma in CFG \(\cfg\) certe semantiche concrete possono essere espresse come il least fix-point del sistema di equazioni \(F:\mathbb{C}^{|N|}\rightarrow\mathbb{C}^{|N|}\) dove:
 \[F = \{x_i = f_i(x_1, x_2, \cdots, x_{|N|})\ |\ i=1, 2,\cdots, |N|\}\]
-in cui i vari \(f_i:\mathbb{C}^{|N|}\rightarrow\mathbb{C}\) sono funzioni trasformatrici concrete. Queste simulano il comportamento del blocco di codice del nodo a cui sono associate trasformando le informazioni provenienti dai nodi a cui sono collegati. La soluzione del sistema \(F\) sarà il least fix-point di \(F\), che come abbiamo visto nel teorema \ref{teo:kleeneFixPoint} si può trovare  facendo il least upper bound tra tutti gli step della iterazione di Kleene sul dominio concreto \(\mathbb{C}^{|N|}\) di \(F\) partendo dall'elemento bottom (in questo caso \(\perp_{\mathbb{C}}^{|N|}\)).
+in cui i vari \(f_i:\mathbb{C}^{|N|}\rightarrow\mathbb{C}\) sono funzioni trasformatrici concrete. Queste simulano il comportamento del blocco di codice del nodo a cui sono associate trasformando le informazioni provenienti dai nodi a cui sono collegati. La soluzione del sistema \(F\) sarà il least fix-point di \(F\), che come abbiamo visto nel Teorema \ref{teo:kleeneFixPoint} si può trovare  facendo il least upper bound tra tutti gli step della iterazione di Kleene sul dominio concreto \(\mathbb{C}^{|N|}\) di \(F\) partendo dall'elemento bottom (in questo caso \(\perp_{\mathbb{C}}^{|N|}\)).
 
 \begin{example}\label{ex:easyCode}
-Nella figura \ref{fig:codiceEsempio1} si vede la traduzione di un semplice pezzo di codice scritto in Python in un CFG. 
+Nella Figura \ref{fig:codiceEsempio1} si vede la traduzione di un semplice frammento di codice scritto in Python in un CFG. 
 
 \begin{figure}
 \begin{minipage}{2cm}
@@ -504,7 +492,7 @@ return x;
 \end{tikzpicture}
 \end{center}
 \end{minipage}
-\caption{}
+\caption{Programma senza cicli in Python e la sua Rappresentazione come CFG.}
 \label{fig:codiceEsempio1}
 \end{figure}
 
@@ -522,7 +510,7 @@ F =
 
 dove la funzione \(\textrm{if}_{[st]}:\wp(\mathbb{Z})\rightarrow\wp(\mathbb{Z})\) filtra i valori passati in input lasciando passare solo quelli che soddisfano la candizione in \(st\) (\(\textrm{else}_{[st]}:\wp(\mathbb{Z})\rightarrow\wp(\mathbb{Z})\) è simile ma fa passare solo quelli che non soddisfano la condizione \(st\)) e la funzione \(+:\wp(\mathbb{Z})\times\wp(\mathbb{Z})\rightarrow\wp(\mathbb{Z})\) somma elemento per elemento i valori dei due insiemi di interi passati come input. 
 
-La collecting semantics sarà pari al least fix-point del sistema di equazioni \(F\), che è uguale al least upper bound tra tutti gli step della iterazione di Kleene (mostrata nel teorema \ref{teo:kleeneFixPoint}) di \(F\) su \(\wp(\mathbb{Z})^{|N|}\) partendo dal valore bottom di \(\wp(\mathbb{Z})\), ovvero \(\emptyset\), per ogni nodo.  
+La collecting semantics sarà pari al least fix-point del sistema di equazioni \(F\), che è uguale al least upper bound tra tutti gli step della iterazione di Kleene (mostrata nel Teorema \ref{teo:kleeneFixPoint}) di \(F\) su \(\wp(\mathbb{Z})^{|N|}\) partendo dal valore bottom di \(\wp(\mathbb{Z})\), ovvero \(\emptyset\), per ogni nodo.  
 
 Per questo semplice esempio possiamo facilmente trovare il least fix-point. Partiamo da un vettore con tutti valori bottom:
 
@@ -530,7 +518,7 @@ Per questo semplice esempio possiamo facilmente trovare il least fix-point. Part
     \centering
 \[
 \arraycolsep=1.1pt
-\begin{array}{ccccccccccc}
+\begin{array}{ccccccccc}
     \begin{tabular}{l}
     $
     t_0
@@ -590,7 +578,7 @@ Per questo semplice esempio possiamo facilmente trovare il least fix-point. Part
     \Longrightarrow
     &
     \begin{tabular}{l}
-    $t_4$ \\
+    $t_4^{\textrm{fix-point}}$ \\
     $
     \begin{bmatrix}
        \top \\
@@ -600,13 +588,9 @@ Per questo semplice esempio possiamo facilmente trovare il least fix-point. Part
     \end{bmatrix}
     $
     \end{tabular}
-    &
-    \Longrightarrow
-    &
-    \cdots
 \end{array}
 \]
-    \caption{Progressione della soluzione attraverso l'applicazione del sistema di equazioni \(F\)}
+    \caption{Progressione della soluzione attraverso l'applicazione del sistema di equazioni \(F\).}
     \label{fig:progression}
 \end{figure}
 
@@ -617,7 +601,7 @@ A questo punto una interpretazione astratta sarà a sua volta un sistema di equa
 \[F^{\natural} = \{x_i = f_i^{\natural}(x_1, x_2, \cdots, x_{|N|})\ |\ i=1, 2,\cdots, |N|\}\]
 in cui sostituiamo le funzioni trasformatrici concrete con delle \textit{funzioni trasformatrici astratte} \(f_i^{\natural}:\mathbb{A}^{|N|}\rightarrow\mathbb{A}\) che approssimano correttamente quelle concrete e che ragionano su un dominio semantico astratto \(\mathbb{A}\) collegato tramite una connessione di Galois a quello concreto \(\mathbb{C}\). Per dimostrare la soundness dell'interpetazione astratta bisogna dimostrare la soundness di ogni funzione trasformatrice astratta in rispetto a quella concreta. 
 
-Riprendendo l'esempio \ref{ex:easyCode} e sostituendo il dominio concreto con il dominio astrtatto degli intervalli di interi \(\langle\textrm{Int}, \preceq_{\textrm{Int}}, \sqcup, \sqcap, [-\infty, +\infty], \perp_{\textrm{Int}} \rangle\) il sistema di equazioni diventa: 
+Riprendendo l'Esempio \ref{ex:easyCode} e sostituendo il dominio concreto con il dominio astrtatto degli intervalli di interi \(\langle\textrm{Int}, \preceq_{\textrm{Int}}, \sqcup, \sqcap, [-\infty, +\infty], \perp_{\textrm{Int}} \rangle\) il sistema di equazioni diventa: 
 
 \[
 F^{\natural} = 
@@ -634,7 +618,7 @@ La sequenza di iterazioni di Kleene partendo da bottom di \(F^{\natural}\) diven
     \centering
 \[
 \arraycolsep=1.1pt
-\begin{array}{ccccccccccc}
+\begin{array}{ccccccccc}
     \begin{tabular}{l}
     $
     t_0
@@ -694,7 +678,7 @@ La sequenza di iterazioni di Kleene partendo da bottom di \(F^{\natural}\) diven
     \Longrightarrow
     &
     \begin{tabular}{l}
-    $t_4$ \\
+    $t_4^{\textrm{fix-point}}$ \\
     $
     \begin{bmatrix}
        \top_{\textrm{Int}} \\
@@ -704,13 +688,10 @@ La sequenza di iterazioni di Kleene partendo da bottom di \(F^{\natural}\) diven
     \end{bmatrix}
     $
     \end{tabular}
-    &
-    \Longrightarrow
-    &
-    \cdots
+
 \end{array}
 \]
-    \caption{Progressione della soluzione attraverso l'applicazione del sistema di equazioni \(F^{\natural}\)}
+    \caption{Progressione della soluzione attraverso l'applicazione del sistema di equazioni \(F^{\natural}\).}
     \label{fig:progression_abstr}
 \end{figure}
 
@@ -810,7 +791,7 @@ ed un narrowing \(\Delta:\textrm{Int}\times\textrm{Int}\rightarrow\textrm{Int}\)
 \end{example}
 
 Riassumendo il concetto: nella prima fase (ascendente) utilizzeremo, per raggiungere un post-fix-point di \(F^{\natural}\), una versione del sistema di equazione che fa il join tra gli step della iterazione utilizzando il lub od il widening (con una logica in grado di decidere quando usare l'uno o l'altro), questo passaggio lo chiamiamo \(F^{\nabla}\). Nella fase discendente invece, partendo dal risultato calcolato da quella prima, modificheremo il sistema di equazioni in modo da fare il meet tra gli step utlizzando o il glb o il narrowing, questo passaggio lo chiamiamo \(F^{\Delta}\). 
-In figura \ref{fig:phasesFig} è mostrata una rappresentazione grafica della fase ascendente e discendente su un dominio \(\mathbb{S}\).
+In Figura \ref{fig:phasesFig} è mostrata una rappresentazione grafica della fase ascendente e discendente su un dominio \(\mathbb{S}\).
 
 \begin{figure}[H]
 \begin{tikzpicture}
@@ -840,7 +821,7 @@ In figura \ref{fig:phasesFig} è mostrata una rappresentazione grafica della fas
     \draw[->, line width=0.5mm] (widPost.center) to [out=320, in=110] (narrPost);
 \end{tikzpicture}
     \centering
-    \caption{Fase ascendente e discendente su un dominio \(\mathbb{S}\)}
+    \caption{Fase ascendente e discendente su un dominio \(\mathbb{S}\).}
     \label{fig:phasesFig}
 \end{figure}
 
@@ -893,7 +874,7 @@ return x;
 \end{tikzpicture}
 \end{center}
 \end{minipage}
-\caption{}
+\caption{Programma con cicli e comandi condizionali in Python e la sua rappresentazione come CFG.}
 \label{fig:codiceEsempio2}
 \end{figure}
 
@@ -909,7 +890,7 @@ f^{*}(d) =
 dove \(d\) è il punto di partenza, quindi \(\perp\) per la fase ascendente e il post-fix-point calcolata da essa per la fase discendente, e \(\oplus\) rappresenta l'operatore da usare, e quindi lub/widening o glb/narrowing. Come abbiamo detto però, ciò che si ottiene non è assicurato essere il least fix-point di \(f\), ovvero \(\textrm{lfp}(f^{*})\in\textrm{postfp}(f)\) e quindi \(\textrm{lfp}(f)\preceq \textrm{lfp}(f^{*})\). Nell'esempio che segue useremo questo metodo applicato alle funzioni semantiche costruite come sistemi di equazioni. 
 
 \begin{example}\label{ex:esempio2}
-Nell'esempio che mostreremo ora analizzeremo il codice in \ref{fig:codiceEsempio2} cercando una approssimazione della collecting semantics tramite interpretazione astratta usando il dominio degli intervalli interi. Il sistema di equzioni astratte legate al CFG è questo:
+Nell'esempio che mostreremo ora analizzeremo il codice nella Figura \ref{fig:codiceEsempio2} cercando una approssimazione della collecting semantics tramite interpretazione astratta usando il dominio degli intervalli interi. Il sistema di equzioni astratte legate al CFG è questo:
 \[
 F^{\natural}=
 \begin{cases}
@@ -921,7 +902,7 @@ F^{\natural}=
     x_6 = \textrm{else}_{[x<100]}(x_2) \\
 \end{cases}
 \]  
-A differenza dell'esempio \ref{ex:easyCode} risoleveremo il sistema di equazioni in modo diverso, infatti adesso calcoleremo entrambe le fasi (ascendente e discendente) utilizzando gli operatori di widening e narrowing per velocizzare la convergenza del calcolo, in questo modo: 
+A differenza dell'Esempio \ref{ex:easyCode} risoleveremo il sistema di equazioni in modo diverso, infatti adesso calcoleremo entrambe le fasi (ascendente e discendente) utilizzando gli operatori di widening e narrowing per velocizzare la convergenza del calcolo, in questo modo: 
 \[
 F^{\nabla} = 
 \begin{cases}
@@ -940,7 +921,7 @@ F^{\Delta} =
 per la fase discendente.
 
 Per WP intendiamo i \textit{widening points}, ovvero i punti del CFG in cui viene applicato il widening. Si può mostrare che per ogni ciclo del grafo si può etichettare un nodo al suo interno come WP e il calcolo del fix-point convergerà comunque (questo ci permette di essere più selettivi nell'uso del widening e quindi migliorare la precisione dell'approssimazione). Per questo esempio abbiamo \(x_3\) come unico WP.
-I risultati dell'analisi sono mostrati nella tabelle della figura \ref{fig:ris}. 
+I risultati dell'analisi sono mostrati nella tabelle della Figura \ref{fig:ris}. 
 \begin{table}
 \begin{minipage}{\textwidth}
     \centering
@@ -982,7 +963,7 @@ I risultati dell'analisi sono mostrati nella tabelle della figura \ref{fig:ris}.
         \end{tabular}
         \]
     \end{minipage}
-    \caption{Tabella dei risultati dell'analisi di fase ascendente e discendente sul programma \ref{fig:codiceEsempio2}.}
+    \caption{Tabella dei risultati dell'analisi di fase ascendente e discendente sul programma mostrato in Figura \ref{fig:codiceEsempio2}.}
     \label{fig:ris}
 \end{table}
 \end{example}
@@ -1006,7 +987,7 @@ La \textit{funzione di riduzione} \(\Omega_{S}^{\preceq} : \wp_{\textrm{f}}(S)\r
 \[\Omega_{S}^{\preceq}(D) \triangleq D \backslash \lbrace d \in D     \ \vert\ d= \perp \vee\ \exists d'\in D . d\prec d' \rbrace\]
 \end{definition}
 
-\begin{definition}[dominio delle parti dell'insieme finite e non ridondanti]\label{def:powersetDomain}
+\begin{definition}[Dominio delle parti dell'insieme finite e non ridondanti]\label{def:powersetDomain}
 Dato un reticolo \(\completeLattice{S}\) il dominio delle parti dell'insieme finite su \(S\) è il reticolo:
 \[\hat{S}_P = \langle \wp_{\textrm{fn}}(S, \preceq),\preceq_P, \sqcup_P, \sqcap_P, \perp_P, \top_P \rangle\]
 dove:
@@ -1019,27 +1000,27 @@ dove:
 \end{itemize}
 \end{definition}
 
-Abbiamo quindi costruito un dominio che è inerentemente più preciso di quello sottostanze, a partire dal quale viene costruito. Pensiamo ad esempio al dominio degli intervalli interi mostrato in esempio \ref{ex:intervalDomain} e costruiamone la versione mostrata sopra nella definizione \ref{def:powersetDomain}, cioè \(\hat{\textrm{Int}}_P\). In \(\hat{\textrm{Int}}_P\) possiamo rappresentare elementi come \(\{[0, 10], [20, 30]\}\), ovvero possiamo rappresentare dei gap tra gli intervalli raggiungendo una precisione più alta rispetto al sottostante Int, dove il massimo che si potrebbe fare per rappresentare l'insieme di intervalli appena mostrato, e rimanendo sound, è \([0, 30]\).
+Abbiamo quindi costruito un dominio che è inerentemente più preciso di quello sottostanze, a partire dal quale viene costruito. Pensiamo ad esempio al dominio degli intervalli interi mostrato nell'Esempio \ref{ex:intervalDomain} e costruiamone la versione mostrata sopra nella Definizione \ref{def:powersetDomain}, cioè \(\hat{\textrm{Int}}_P\). In \(\hat{\textrm{Int}}_P\) possiamo rappresentare elementi come \(\{[0, 10], [20, 30]\}\), ovvero possiamo rappresentare dei gap tra gli intervalli raggiungendo una precisione più alta rispetto al sottostante Int, dove il massimo che si potrebbe fare per rappresentare l'insieme di intervalli appena mostrato, e rimanendo sound, è \([0, 30]\).
 
-Il nuovo dominio così creato però eredita tutti i problemi di quello su cui è basato, quindi come nel caso degli intervalli, si può ottenere un reticolo che non rispetta la condizione di catena ascendente. In questi casi diventa necessario cercare un operatore di widening per il nuovo dominio capace di garantire la convergenza del calcolo del fix-point durante l'analisi. Nell'articolo \cite{DBLP:journals/sttt/BagnaraHZ07} vengono mostrati tre metodi costruttivi per ottenere un widening per il dominio delle parti dell'insieme finite e non ridondanti partendo da quello del dominio sottostante. Nel seguito daremo alcune definizioni di operatori che ci serveranno per la costruzione di tale widening (mostreremo uno solo dei tre metodi mostrati, che è poi quello implementato in LiSA per tali domini, come vedremo nel capitolo \ref{chapter:lisa}).
+Il nuovo dominio così creato però eredita tutti i problemi di quello su cui è basato, quindi come nel caso degli intervalli, si può ottenere un reticolo che non rispetta la condizione di catena ascendente. In questi casi diventa necessario cercare un operatore di widening per il nuovo dominio capace di garantire la convergenza del calcolo del fix-point durante l'analisi. Nell'articolo \cite{DBLP:journals/sttt/BagnaraHZ07} vengono mostrati tre metodi costruttivi per ottenere un widening per il dominio delle parti dell'insieme finite e non ridondanti partendo da quello del dominio sottostante. Nel seguito daremo alcune definizioni di operatori che ci serveranno per la costruzione di tale widening (mostreremo uno solo dei tre metodi mostrati, che è poi quello implementato in LiSA per tali domini, come vedremo nel Capitolo \ref{chapter:lisa}).
 
-\begin{definition} [relazione di ordine parziale di Egli-Milner]\label{def:EgliMilnerRelation}
+\begin{definition} [Relazione di ordine parziale di Egli-Milner]\label{def:EgliMilnerRelation}
 \'E possibile costruire una relazione di ordine parziale Egli-Milner tale che, dati \(S_1, S_2\in\wp_{\textrm{fn}}(S, \preceq)\) allora \(S_1 \preceq_{\textrm{EM}} S_2 \textrm{ se e solo se o:} \)
 \[S_1=\perp_P\textrm{ oppure,}\]
 \[S_1\preceq_P S_2 \wedge \forall s_2\in S_2 : \exists s_1\in S_1: s_1\preceq s_2\]
 \end{definition}
 
-\begin{definition}[connettore di Egli-Milner]\label{def:connettoreEgliMilner}
+\begin{definition}[Connettore di Egli-Milner]\label{def:connettoreEgliMilner}
 Un connettore di Egli-Milner per \(\hat{S}_P = \langle \wp_{\textrm{fn}}(S, \preceq),\preceq_P, \perp_P ,\vee_P\rangle\), denotato con \(\boxplus_{\textrm{EM}}\), è un qualunque operatore di upper bound per l'ordinamento di Egli-Milner su \(\wp_{\textrm{fn}}(S, \preceq)\), definito precedentemente. Anche se una operazione di least-upper bound non può essere sempre definita, un connettore di Egli-Milner si, ad esempio possiamo sempre usare: \(S_1\boxplus_{\textrm{EM}} S_2 = \bigsqcup\{ S_1 \cup S_2\}\).
 \end{definition}
 
-\begin{definition}[ordinamento parziale indotto da widening] 
+\begin{definition}[Ordinamento parziale indotto da widening] 
 Ogni operatore di widening \(\nabla\) su un join semilattice \(\langle S,\preceq, \perp ,\vee\rangle\) induce un corrispondente ordinamento parziale \(\preceq_{\nabla}\) sul dominio \emph{S}, che è definito come la chiusura transitiva e riflessiva della relazione:
 \[\lbrace(s_1, s)\in S\times S\ \vert\ \exists s_2\in S.\ s_1\prec s_2 \wedge s = s_1\nabla s_2\rbrace\]
 Inoltre la relazione \(\preceq_{\nabla}\) rispetta la ascending chain condition.
 \end{definition}
 
-\begin{definition}[estrapolatore euristico]
+\begin{definition}[Estrapolatore euristico]
 Un operatore parziale \(h_{P}^{\nabla} : \wp_{\textrm{fn}}(S, \preceq)^2\rightarrow\wp_{\textrm{fn}}(S, \preceq)\) è un estrapolatore euristico per \(\hat{S}_P = \langle \wp_{\textrm{fn}}(S, \preceq),\preceq_P, \perp_P ,\vee_P\rangle\) se \(\forall S_1, S_2\in\wp_{\textrm{fn}}(S, \preceq)\) tale che \(S_1 \prec S_2\), \(h_{P}^{\nabla}(S_1, S_2)\) è definito e soddisfa le seguenti condizioni:
 \begin{itemize}
 	\item \(S_2 \preceq_{\textrm{EM}}h_{P}^{\nabla}(S_1, S_2)\), e
@@ -1047,7 +1028,7 @@ Un operatore parziale \(h_{P}^{\nabla} : \wp_{\textrm{fn}}(S, \preceq)^2\rightar
 \end{itemize}
 \end{definition}
 
-\begin{definition}[estrapolatore euristico \(\nabla\)-connesso]\label{def:estrapolatoreEuristicoWideningConnesso}
+\begin{definition}[Estrapolatore euristico \(\nabla\)-connesso]\label{def:estrapolatoreEuristicoWideningConnesso}
 Un estrapolatore euristico \(h_{P}^{\nabla}\)
 è detto \(\nabla\)-connesso se per ogni \(S_1, S_2\in\wp_{\textrm{fn}}(S, \preceq)\) dove \(S_1\prec_P S_2\) abbiamo che:
 \[\forall d \in h_{P}^{\nabla}(S_1, S_2)\cap S_2:((\exists s_1\in S_1.\ s_1\prec d)\Rightarrow (\exists s'_1\in S_1.\ s'_1 \prec_{\nabla} d))\]

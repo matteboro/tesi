@@ -44,6 +44,7 @@
 \renewcommand{\lstlistingname}{Codice}
 
 \renewcommand{\listalgorithmname}{Elenco degli algoritmi}
+%\renewcommand{\listfigurename}{Elenco degli algoritmi}
 
 % Blank page after title
 \let\origdoublepage\cleardoublepage

@@ -6,7 +6,7 @@ LiSA (\textbf{Li}brary for \textbf{S}tatic \textbf{A}nalysis) è un framework ge
 
 LiSA mette a disposizione: (i) un linguaggio interno basato su control-flow graph estensibile e abbastanza generico da supportare i costrutti semantici di molti linguaggi di programmazione, (ii) una vasta gamma di front-end per la traduzione di programmi in LiSA CFGs, (iii) una base comune per lo sviluppo di nuovi domini astratti da usare nelle analisi (sia relazionali che non, più alcuni domini built-in) ed infine (iv) un algoritmo per il calcolo del fix-point dei LiSA CFGs con metodo di risoluzione basato su working-set list.
 
-Durante la mia tesi ho lavorato soprattutto sulle componenti (iii) e (iv). Per prima cosa ho esteso l'algoritmo per il calcolo del fix-point affinchè fosse in grado di eseguire anche la fase discendente partendo da un post-fix-point precedentemente calcolato, ho aggiunto classi generiche come base per l'implementazione del dominio astratto degli insiemi non ridondanti di un altro dominio astratto (nonchè una implementazione concreta di ciò per gli intervalli) ed infine, per scopo sperimentale, una rudimentale versione del decoupling capace di usare domini diversi per salire e scendere nell'analisi.
+In questa tesi verrano esposte le modifiche fatte soprattutto sulle componenti (iii) e (iv). Per prima cosa è stato esteso l'algoritmo per il calcolo del fix-point affinchè fosse in grado di eseguire anche la fase discendente partendo da un post-fix-point precedentemente calcolato, sono state aggiunte classi generiche come base per l'implementazione del dominio astratto degli insiemi non ridondanti di un altro dominio astratto di partenza(nonchè una implementazione concreta di ciò per gli intervalli) ed infine, per scopo sperimentale, una rudimentale versione del decoupling capace di usare domini diversi per salire e scendere nell'analisi.
 
 \begin{figure}
     \centering
@@ -98,12 +98,12 @@ errors
 
 
 \end{tikzpicture}
-    \caption{Schema del flow dell'analisi in LiSA}
+    \caption{Schema del flow dell'analisi in LiSA.}
     \label{fig:lisaAnalysisFlow}
 \end{figure}
 
 \section{LiSA}\label{sec:LiSA}
-In questa sezione faremo una overview della archutettura di LiSA focalizzandoci sulla struttura della rappresentazione interna dei programmi, sulle interfacce attraverso cui è possibile definire nuovi domini astratti e sull'organizzazione della vera e propria analisi statica (andando a guardarne le componenti e gli algoritmi).
+In questa sezione faremo una overview della architettura di LiSA focalizzandoci sulla struttura della rappresentazione interna dei programmi, sulle interfacce attraverso cui è possibile definire nuovi domini astratti e sull'organizzazione della vera e propria analisi statica (andando a guardarne le componenti e gli algoritmi).
 
 \subsection{I CFG di LiSA}
 La struttura dei CFG in LiSA è progettata per essere il più flessibile possibile così da essere in grado di rappresentare il maggior numero di costrutti semantici provenienti da più linguaggi di programmazione. Un LiSA CFG ha gli \texttt{Statement} come nodi (ognuno con il proprio significato semantico) e gli \texttt{Edge} come archi (i quali modellano il flusso di dati durante l'esecuzione del programma). 
@@ -114,7 +114,7 @@ Uno \texttt{Statement} rappresenta un costrutto semantico base di un linguaggio 
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.9\textwidth]{Immagini/gerarchiaStatement.png}
-	\caption{Gerarchia della classe \texttt{statement}}
+	\caption{Gerarchia della classe \texttt{Statement}.}
 	\label{fig:gerarchiaStatement}
 \end{figure}
 
@@ -127,7 +127,7 @@ La classe \texttt{Edge} collega tra di loro due nodi. Esistono tre tipi di \text
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.9\textwidth]{Immagini/gerarchiaSymbolicExpression.png}
-	\caption{Gerarchia della classe \texttt{statement}}
+	\caption{Gerarchia della classe \texttt{SymbolicExpression}.}
 	\label{fig:gerarchiaSymbolic}
 \end{figure}
 
@@ -204,7 +204,7 @@ Vediamo ora come LiSA organizza lo stato dell'analisi. Lo stato dell'analisi è 
 % Text Node
 \draw (45.4,193.4) node [anchor=north west][inner sep=0.75pt]   [align=left] {{\scriptsize Expr stack}};
 \end{tikzpicture}
-    \caption{Architettura dello stato dell'analisi in LiSA}
+    \caption{Architettura dello stato dell'analisi in LiSA.}
     \label{fig:analysisState}
 \end{figure}
 
@@ -224,7 +224,7 @@ L'\texttt{AbstractState} principlamente fa quindi da coordinatore tra l'\texttt{
 Abbiamo visto nella sezione \ref{sec:abstractInt} che fare interpretazione astratta non significa altro che trovare una soluzione ad un sistema di equazioni costruito a partire dal CFG del programma. Tutte le soluzioni del sistema sono per definizione suoi fix-point e quindi cercare la soluzione significa cercarne un fix-point (possibilmente il più preciso, ovvero il least fix-point). Come viene mostrato nell'introduzione dell'articolo di Cousot \cite{Cousot-IMAG-RR88-1977} qualsiasi metodo caotico di risoluzione ci permette di ottenere una soluzione del sistema (non necessariamente la minima). Tra tutti questi metodi ci conviene usarne uno efficiente e che sfrutti la struttura del CFG in modo da velocizzare la convergenza verso un fix-point. L'algoritmo che viene utilizzato in LiSA per la risoluzione del sistema di equazioni è quello classico basato su working-set e prima delle mie modifiche seguiva la definizione in pseudo-codice fornita in \ref{alg:fixpointAsc}.
 
 \begin{algorithm}
-	\caption{Algoritmo per il calcolo del fix-point con working-set list con solo fase ascendente}
+	\caption{Algoritmo per il calcolo del fix-point con working-set list con solo fase ascendente.}
 	\label{alg:fixpointAsc}
 	\begin{algorithmic}[1]
 		\Statex
@@ -298,7 +298,7 @@ Bisogna inanzitutto configurare l'analisi attraverso un oggetto della classe \te
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.8\textwidth]{Immagini/graphviz.png}
-	\caption{Risultato in formato DOT dell'analisi con solo fase ascendente del codice in \ref{fig:codiceEsempio2}}
+	\caption{Risultato in formato DOT dell'analisi con solo fase ascendente del codice nella Figura \ref{fig:codiceEsempio2}.}
 	\label{fig:risultatoDOTAsc}
 \end{figure}
 \\
@@ -311,7 +311,7 @@ Come abbiamo detto nella piccola introduzione al concetto di \texttt{ValueDomain
 
 \subsection{Il caso generale}
 
-Nella sezione \ref{sec:abstractDomainLiSA} abbiamo mostrato le caratteristiche che deve avere un dominio astratto in LiSA (sottoforma delle interfacce che deve implementare). In \ref{code:nonRedundantPowerset} è mostrata la definizione (non completa) della classe che implementa la versione più generale del concetto di dominio dei sottinsiemi finiti e non ridondanti di un altro dominio.
+Nella Sezione \ref{sec:abstractDomainLiSA} abbiamo mostrato le caratteristiche che deve avere un dominio astratto in LiSA (sottoforma delle interfacce che deve implementare). In \ref{code:nonRedundantPowerset} è mostrata la definizione (non completa) della classe che implementa la versione più generale del concetto di dominio dei sottinsiemi finiti e non ridondanti di un altro dominio.
 %(a partire dalla quale si possono sviluppare sia domini relazionali che non).
 \begin{algorithm}
 \lstset{frame=none}
@@ -362,7 +362,7 @@ public abstract class NonRedundantPowerset<
                                     ProgramPoint pp) {...}
 }
 \end{lstlisting}
-\caption{La classe \texttt{NonRedundantPowerset}}
+\caption{La classe \texttt{NonRedundantPowerset}.}
 \label{code:nonRedundantPowerset}
 \end{algorithm}
 La classe astratta \texttt{NonRedundantPowerset<C,T,E,I>} è parametrica a quattro classi:
@@ -387,7 +387,7 @@ Dove \texttt{elements} è l'insieme contenente oggetti di tipo \texttt{T}, il ca
 
 Il campo \texttt{public final T valueDomain} introdotto da \texttt{NonRedundantPowerset} è un elemento qualsiasi del dominio sottostante e serve in alcune operazioni riguardanti la struttura reticolare del dominio per ottenere i valori \texttt{top} e \texttt{bottom}. Il metodo \texttt{public C mk ( Set <T > set )} viene ereditato da \texttt{SetLattice} e serve a costruire una istanza concreta del dominio a partire dagli oggeti contenuti in \texttt{set}. In \texttt{NonRedundantPowerset} è difinita in modo tale da richiamare \texttt{mkAux(...)}, ovvero la versione estesa di \texttt{mk} fatta per comprendere \texttt{ValueDomain} e \texttt{isTop}, il quale deve essere definito nelle classi concrete che estendono \texttt{NonRedundantPowerset} (infatti \texttt{mkAux} è dichiarato come metodo astratto).
 
-Un altro metodo molto importante è \texttt{removeRedundancy}. Non è altro che la funzione di riduzione mostrata nella definizione \ref{def:funzioneRiduzione}. Serve a rimuovere la ridondanza dall'insieme. \'E necessaria perchè alcune operazioni sugli elementi del dominio potrebbero togliergli questa proprietà, che quindi deve essere ripristinata. La definizione del metodo è la seguente:
+Un altro metodo molto importante è \texttt{removeRedundancy}. Non è altro che la funzione di riduzione mostrata nella Definizione \ref{def:funzioneRiduzione}. Serve a rimuovere la ridondanza dall'insieme. \'E necessaria perchè alcune operazioni sugli elementi del dominio potrebbero togliergli questa proprietà, che quindi deve essere ripristinata. La definizione del metodo è la seguente:
 \begin{lstlisting}[belowskip=-1.1 \baselineskip]
 protected C removeRedundancy(){
     Set<T> newElementsSet = new HashSet<T>();
@@ -407,7 +407,7 @@ protected C removeRedundancy(){
 \end{lstlisting}
 
 \subsubsection{Le operazioni reticolari in \texttt{NonRedundantPowerset}}
-Passiamo ora a dare la definizione dei metodi delle operazioni riguardanti la struttura reticolare del dominio. Partiamo dal metodo che definisce l'ordine parziale che segue la definizione in \ref{def:powersetDomain}.
+Passiamo ora a dare la definizione dei metodi delle operazioni riguardanti la struttura reticolare del dominio. Partiamo dal metodo che definisce l'ordine parziale che segue la Definizione in \ref{def:powersetDomain}.
 \begin{lstlisting}[belowskip=-1.1 \baselineskip]
 @Override
 public boolean lessOrEqualAux(C other) throws SemanticException {
@@ -425,7 +425,7 @@ public boolean lessOrEqualAux(C other) throws SemanticException {
     return true;
 }
 \end{lstlisting}
-Proseguiamo con le operazioni di least upper bound e greatest lower bound che seguono le definizioni date in \ref{def:powersetDomain}.
+Proseguiamo con le operazioni di least upper bound e greatest lower bound che seguono le Definizioni date in \ref{def:powersetDomain}.
 \begin{lstlisting}[belowskip=-1.1 \baselineskip]
 @Override
 public C lubAux(C other) {
@@ -444,7 +444,7 @@ public C glbAux(C other)
     return mk(glbSet).removeRedundancy();
 }
 \end{lstlisting}
-Abbiamo poi la relazione di ordine parziale di Egli-Milner che segue la definizione in \ref{def:EgliMilnerRelation}.
+Abbiamo poi la relazione di ordine parziale di Egli-Milner che segue la Definizione in \ref{def:EgliMilnerRelation}.
 \begin{lstlisting}[belowskip=-1.1 \baselineskip]
 public boolean lessOrEqualEgliMilner(C other){
     if (lessOrEqual(other)) {
@@ -466,7 +466,7 @@ public boolean lessOrEqualEgliMilner(C other){
     return true;
 }
 \end{lstlisting}
-Dichiariamo poi un metodo che fa da connettore di Egli-Milner (\ref{def:connettoreEgliMilner}) tra due elementi e ne diamo una implementazione di default, che anche se corretta per ogni dominio è grossolana ed imprecisa (nell'esempio specifico degli \texttt{Interval}, nel caso dei domini non-relazionali, ne vedremo una ridefinizione più "intelligente" che ci permette di preservare precisione nell'analisi).
+Dichiariamo poi un metodo che fa da connettore di Egli-Milner (descritto nella Definizione \ref{def:connettoreEgliMilner}) tra due elementi e ne diamo una implementazione di default, che anche se corretta per ogni dominio è grossolana ed imprecisa (nell'esempio specifico degli \texttt{Interval}, nel caso dei domini non-relazionali, ne vedremo una ridefinizione più "intelligente" che ci permette di preservare precisione nell'analisi).
 \begin{lstlisting}[belowskip=-1.1 \baselineskip]
 protected C EgliMilnerConnector(C other) {
     Set<T> unionSet = new HashSet<T>(this.elements);
@@ -485,7 +485,7 @@ protected C EgliMilnerConnector(C other) {
 \end{lstlisting}
 L'implementazione base semplicemente crea un nuovo insieme singoletto con il least upper bound di tutti gli elementi dei due insieme uniti. 
 
-\noindent Il widening implementato per i \texttt{NonRedundantPowerset} utilizza un estrapolatore euristico \(\nabla\)-connesso. Per questo seguendo la definizione \ref{def:estrapolatoreEuristicoWideningConnesso} e la proposizione \ref{prop:estrapolatoreEuristicoWideningConnesso} lo implementiamo così: 
+\noindent Il widening implementato per i \texttt{NonRedundantPowerset} utilizza un estrapolatore euristico \(\nabla\)-connesso. Per questo seguendo la Definizione \ref{def:estrapolatoreEuristicoWideningConnesso} e la Proposizione \ref{prop:estrapolatoreEuristicoWideningConnesso} lo implementiamo così: 
 \begin{lstlisting}[belowskip=-1.1 \baselineskip]
 protected C extrapolationHeuristic(C other){
     Set<T> extrapolatedSet = new HashSet<T>();
@@ -567,7 +567,7 @@ public abstract class Environment<
     extends FunctionalLattice<M, Identifier, T> 
     implements SemanticDomain<M, E, Identifier>
 \end{lstlisting}
-Un \texttt{Environment} è una \texttt{FunctionalLattice} (visto nell'esempio \ref{ex:functionalLattice}) che mappa \texttt{Identifier} a valori del dominio \texttt{T}. \texttt{T} dovrà per forza essere un \texttt{NonRelationalElement}, chè è l'interfaccia vera e propria dalla quale si parte per sviluppare domini non-relazionali, ad esempio viene implementata da \texttt{Interval} e \texttt{Sign} in LiSA. \texttt{Environment} implementa poi l'interfaccia \texttt{SemanticDomain}. Esiste una versione specifica di \texttt{Environment} per i domini che tracciano il valore delle variabili, ovvero \texttt{ValueEnvironment}.
+Un \texttt{Environment} è una \texttt{FunctionalLattice} (visto nell'Esempio \ref{ex:functionalLattice}) che mappa \texttt{Identifier} a valori del dominio \texttt{T}. \texttt{T} dovrà per forza essere un \texttt{NonRelationalElement}, chè è l'interfaccia vera e propria dalla quale si parte per sviluppare domini non-relazionali, ad esempio viene implementata da \texttt{Interval} e \texttt{Sign} in LiSA. \texttt{Environment} implementa poi l'interfaccia \texttt{SemanticDomain}. Esiste una versione specifica di \texttt{Environment} per i domini che tracciano il valore delle variabili, ovvero \texttt{ValueEnvironment}.
 
 \begin{lstlisting}[belowskip=-1.1 \baselineskip]
 public class ValueEnvironment<
@@ -717,7 +717,7 @@ public interface BaseNonRelationalValueDomain<
 }
 \end{lstlisting}
 
-Possiamo dare finalmente la definizione della classe base per lo sviluppo del dominio dei sottoinsiemi finiti e non ridondanti di un dominio non-relazionale. La classe si chiama \texttt{NonRedundantPowersetOfBaseNonRelationalValueDomain} e la definizione si può vedere in \ref{code:nonRedundantPowersetNonRelational}. 
+Possiamo dare finalmente la definizione della classe base per lo sviluppo del dominio dei sottoinsiemi finiti e non ridondanti di un dominio non-relazionale. La classe si chiama \texttt{NonRedundantPowersetOfBaseNonRelationalValueDomain} e la definizione si può vedere nella Figura \ref{code:nonRedundantPowersetNonRelational}. 
 
 \begin{algorithm}
 \lstset{frame=none}
@@ -759,13 +759,13 @@ public abstract class NonRedundantPowersetOfBaseNonRelationalValueDomain<
     ...
 }
 \end{lstlisting}
-\caption{La classe \\ \texttt{NonRedundantPowersetOfBaseNonRelationalValueDomain}}
+\caption{La classe \\ \texttt{NonRedundantPowersetOfBaseNonRelationalValueDomain}.}
 \label{code:nonRedundantPowersetNonRelational}
 \end{algorithm}
 
-\'E parametrica all'istanza concreta del dominio e ad un \texttt{BaseNonRelationalValueDomain}, che è il dominio non-relazionale sottostante di cui creaiamo insiemi non ridondanti (per esmpio \texttt{Interval} o \texttt{Sign}). I campi \texttt{elementsSet} e \texttt{valueDomain} hanno lo stesso significato che nella definizione del caso generale. Anche i metodi legati alle operazioni reticolari sono definiti equivalentemente al caso generale (mostrato in \ref{code:nonRedundantPowerset}). In più in questo caso abbiamo il metodo \texttt{removeOverlapping} che, come suggerisce il nome, serve a rimuovere la sovrapposizione tra gli elementi dell'insieme. Anche se questa proprietà non è necesseria affinchè il widening costruito con il connettore di Egli-Milner visto nella sezione \ref{sec:EgliMilnerWidening} funzioni correttamente, sicuramente diminuisce il rumore dei risultati aumentandone la leggibilità oltre che a fargli occupare meno spazio in memoria (ad esempio un insieme non ridondante di intervalli interi come \(\{[0, 10], [5, 20], [15, 25]\}\) può essere rappresentato senza perdita di precisione da un insieme senza sovrapposizioni come \(\{[0, 25]\}\)). \texttt{removeOverlappingBetweenElements} è un metodo ausiliario utilizzato da \texttt{removeOverlapping} per ottenere un elemento equivalente ai due sovrapposti passati come argomenti. Di default questo metodo applica l'operatore di least upper bound tra i due.
+\'E parametrica all'istanza concreta del dominio e ad un \texttt{BaseNonRelationalValueDomain}, che è il dominio non-relazionale sottostante di cui creaiamo insiemi non ridondanti (per esmpio \texttt{Interval} o \texttt{Sign}). I campi \texttt{elementsSet} e \texttt{valueDomain} hanno lo stesso significato che nella definizione del caso generale. Anche i metodi legati alle operazioni reticolari sono definiti equivalentemente al caso generale (mostrato nel Codice \ref{code:nonRedundantPowerset}). In più in questo caso abbiamo il metodo \texttt{removeOverlapping} che, come suggerisce il nome, serve a rimuovere la sovrapposizione tra gli elementi dell'insieme. Anche se questa proprietà non è necesseria affinchè il widening costruito con il connettore di Egli-Milner visto nella Sezione \ref{sec:EgliMilnerWidening} funzioni correttamente, sicuramente diminuisce il rumore dei risultati aumentandone la leggibilità oltre che a fargli occupare meno spazio in memoria (ad esempio un insieme non ridondante di intervalli interi come \(\{[0, 10], [5, 20], [15, 25]\}\) può essere rappresentato senza perdita di precisione da un insieme senza sovrapposizioni come \(\{[0, 25]\}\)). \texttt{removeOverlappingBetweenElements} è un metodo ausiliario utilizzato da \texttt{removeOverlapping} per ottenere un elemento equivalente ai due sovrapposti passati come argomenti. Di default questo metodo applica l'operatore di least upper bound tra i due.
 
-Per i sotto-metodi di eval la definizione segue la struttura di \texttt{evalBinaryExpression} riportata di seguito, che è simile a quella data per i metodi di \texttt{SemanticDomain} (tranne \texttt{satisfies}) mostrata nell'esempio di \hyperref[code:smallStepSemanticsPowersetGeneral]{\texttt{smallStepSemantics}} del caso generale.
+Per i sotto-metodi di eval la definizione segue la struttura di \texttt{evalBinaryExpression} riportata di seguito, che è simile a quella data per i metodi di \texttt{SemanticDomain} (tranne \texttt{satisfies}) mostrata nell'Esempio di \hyperref[code:smallStepSemanticsPowersetGeneral]{\texttt{smallStepSemantics}} del caso generale.
 \begin{lstlisting}[belowskip=-1.1 \baselineskip]
 @Override
 public C evalBinaryExpression(BinaryOperator operator, C left, C right, ProgramPoint pp){
@@ -782,7 +782,7 @@ public C evalBinaryExpression(BinaryOperator operator, C left, C right, ProgramP
 \end{lstlisting}
 I passagi informalmente sono i seguenti: (i) viene creato un insieme vuoto, (ii) si cicla sull'insieme degli operandi (in questo caso un doppio ciclo annidato perchè gli operandi sono due) estrando i valori singoli del tipo del dominio sottostante, (iii) viene valutata l'espressione sui valori correnti del ciclo (in questo caso \texttt{current\_left} e \texttt{current\_right}), (iv) il valore calcolato viene inserito nel nuovo insieme ed infine, concluso il ciclo, (v) viene creato un nuovo elemento a partire dall'insieme ottenuto a cui viene rimossa la ridondanza e l'overlapping.
 
-Anche i sotto-metodi di \texttt{satisfies} sono strutturalmente equivalenti al caso generale mostrato nella definizione di \hyperref[code:satisfiesPowersetGeneral]{\texttt{satisfies} per \texttt{NonRedundantPowerset}}. Per esempio \texttt{satisfiesBinaryExpression} è così definita:  
+Anche i sotto-metodi di \texttt{satisfies} sono strutturalmente equivalenti al caso generale mostrato nella Definizione di \hyperref[code:satisfiesPowersetGeneral]{\texttt{satisfies} per \texttt{NonRedundantPowerset}}. Per esempio \texttt{satisfiesBinaryExpression} è così definita:  
 \begin{lstlisting}[belowskip=-1.1 \baselineskip]
 @Override
 public Satisfiability satisfiesBinaryExpression(
@@ -821,11 +821,9 @@ Non è possibile dare una definizione generale per i sotto-metodi di \texttt{ass
 
 \subsection{\texttt{NonRedundantPowersetOfInterval}}
 
-
-
-Una volta vista come è stata costruita la base infrastrutturale attraverso cui è possibile sviluppare a partire da un dominio astratto il dominio dei suoi sottoinsiemi finiti e non ridondanti in LiSA, vediamo un esempio di come è stata utilizzata in un caso concreto. Vedremo la definizione, secondo la sintassi della sezione \ref{sec:EgliMilnerWidening}, di:
+Una volta vista come è stata costruita la base infrastrutturale attraverso cui è possibile sviluppare a partire da un dominio astratto il dominio dei suoi sottoinsiemi finiti e non ridondanti in LiSA, vediamo un esempio di come è stata utilizzata in un caso concreto. Vedremo la definizione, secondo la sintassi della Sezione \ref{sec:EgliMilnerWidening}, di:
 \[\widehat{\textrm{Int}} = \langle \wp_{\textrm{fn}}(\textrm{Int}, \preceq_\textrm{Int}),\widehat{\preceq_{\textrm{Int}}}, \widehat{\sqcup_{\textrm{Int}}}, \widehat{\sqcap_{\textrm{Int}}}, \emptyset, \widehat{\top_{\textrm{Int}}} \rangle\]
-ovvero del dominio dell'insieme delle parti finite e non ridondanti del dominio degli intervalli interi. In \ref{code:nonRedundantPowersetOfInterval} è mostrata la definizione di questo dominio astratto in LiSA. 
+ovvero del dominio dell'insieme delle parti finite e non ridondanti del dominio degli intervalli interi. Nel Codice \ref{code:nonRedundantPowersetOfInterval} è mostrata la definizione di questo dominio astratto in LiSA. 
 \begin{algorithm}
 \lstset{frame=none}
 \begin{lstlisting}[belowskip=-1.1 \baselineskip, escapechar=|]
@@ -852,7 +850,7 @@ public class NonRedundantPowersetOfInterval
     {...}
 }
 \end{lstlisting}
-\caption{La classe \\ \texttt{NonRedundantPowersetOfInterval}}
+\caption{La classe \\ \texttt{NonRedundantPowersetOfInterval}.}
 \label{code:nonRedundantPowersetOfInterval}
 \end{algorithm}
 Innanzitutto notiamo che essendo \texttt{Interval} un dominio non-relazionale dobbbiamo utilizzare \texttt{NonRedundantPowersetOfBaseNonRelationalValueDomain} come classe base da estendere, e non \texttt{NonRedundantPowerset}. Poi vediamo come tutti i metodi legati ad \texttt{eval} e a \texttt{satisfies} non sono ridefiniti, percheè di questi se ne prende carico la classe base sottostante. L'unico metodo delle operazioni reticolari qua ridefinito è il connettore di Egli-Milner. Abbiamo detto in precedenza che la sua definizione di default era poco precisa (semplicemente faceva il lub tra tutti gli elementi dei due insiemi restituendolo in un insieme singoletto), e che ogni caso concreto avrebbe potuto trovarne una versione migliore. Nel caso degli \texttt{Interval} ho seguito questa definizione: dati \(I_1, I_2\in\wp_{\textrm{fn}}(\textrm{Int})\): 
@@ -860,9 +858,9 @@ Innanzitutto notiamo che essendo \texttt{Interval} un dominio non-relazionale do
  I_1 \boxplus_{\textrm{EM}} I_2 = &\{ y \in I_2\ |\ \exists x \in I_1 : x \preceq_{\textrm{Int}} y \}\ \cup \\
  &\{ x' \sqcup_{\textrm{Int}} y\ |\ x' \in I_1, y \in I_2, \nexists x \in I_1 : x \preceq_{\textrm{Int}} y \}
 \end{align*}
-La scelta di \(x'\) può essere casuale, ma ovviamente conviene avere una logica che sfrutta la struttura degli elementi per preservare precisione. In \texttt{NonRedundantPowersetOfInterval} scelgo come \(x'\) l'intervallo più vicino a \(y\) in termini di punto medio. Infatti nella classe si può notare il metodo \texttt{middlePoint(Interval iterval)} che appunto calcola il punto medio dell'\texttt{Interval} passato. Lo pseudocodice dell'algoritmo usato in \texttt{EgliMilnerConnector} per \texttt{NonRedundantPowersetOfInterval} è mostrato in \ref{alg:EgliMilnerConnectorInterval}.
+La scelta di \(x'\) può essere casuale, ma ovviamente conviene avere una logica che sfrutta la struttura degli elementi per preservare precisione. In \texttt{NonRedundantPowersetOfInterval} scelgo come \(x'\) l'intervallo più vicino a \(y\) in termini di punto medio. Infatti nella classe si può notare il metodo \texttt{middlePoint(Interval iterval)} che appunto calcola il punto medio dell'\texttt{Interval} passato. Lo pseudocodice dell'algoritmo usato in \texttt{EgliMilnerConnector} per \texttt{NonRedundantPowersetOfInterval} è mostrato nell'Algoritmo \ref{alg:EgliMilnerConnectorInterval}.
 \begin{algorithm}
-	\caption{Algoritmo usato per la definizione del connettore di Egli-Milner per la classe \texttt{NonRedundantPowersetOfInterval}}
+	\caption{Algoritmo usato per la definizione del connettore di Egli-Milner per la classe \texttt{NonRedundantPowersetOfInterval}.}
 	\label{alg:EgliMilnerConnectorInterval}
 	\begin{algorithmic}[1]
 	\Function{EgliMilnerConnector}{Interval $I_1$, Interval $I_2$}
@@ -882,11 +880,11 @@ La scelta di \(x'\) può essere casuale, ma ovviamente conviene avere una logica
 
 \noindent L'unico sotto-metodo di \texttt{assume} definito per \texttt{Interval} è \texttt{assumeBinaryExpression} e quindi è stata l'unico metodo da implementare in \texttt{NonRedundantPowersetOfInterval}.
 
-Nella figura \ref{fig:risultatoAscPowerset} è mostrato il risultato dell'analisi con le configurazioni identiche a \ref{code:simpleAnalysisAsc} ma con il dominio \texttt{NonRedundantPowersetOfInterval} al posto di \texttt{Interval}.
+Nella Figura \ref{fig:risultatoAscPowerset} è mostrato il risultato dell'analisi con le configurazioni identiche all'Esempio \ref{code:simpleAnalysisAsc} ma con il dominio \texttt{NonRedundantPowersetOfInterval} al posto di \texttt{Interval}.
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.7\textwidth]{Immagini/graphvizAscPowerset.png}
-	\caption{Risultato in formato DOT dell'analisi del programma \ref{fig:codiceEsempio2} con il dominio non relazionale dei sottoinsiemi non ridondanti di \texttt{Interval}}
+	\caption{Risultato in formato DOT dell'analisi del programma nella Figura \ref{fig:codiceEsempio2} con il dominio non relazionale dei sottoinsiemi non ridondanti di \texttt{Interval}.}
 	\label{fig:risultatoAscPowerset}
 \end{figure}
 
@@ -895,12 +893,12 @@ In questa sezione vedremo come è stata aggiunta in LiSA la possibilità di calc
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=\textwidth]{Immagini/flowFixpoint.png}
-	\caption{Sequence diagram del calcolo del fixpoint}
+	\caption{Sequence diagram del calcolo del fixpoint.}
 	\label{fig:flowFixpoint}
 \end{figure}
 
 \subsection{Il metodo \texttt{fixpoint} nelle diverse classi di LiSA}
-Innanzitutto per ogni analisi bisogna scegliere una \texttt{InterproceduralAnalysys} che ha la visione completa del programma e delle sue unità (e quindi dei CFGs). L'interfaccia \texttt{InterproceduralAnalysys} ha un metodo \texttt{fixpoint} che quando viene chiamato deve calcolare il fix-point del programma (e quindi di ciascun CFG). Essendo il programma sotto analisi una collezione di CFG quello che effettivamente fa è iterare sull'insieme di CFG e uno a uno calcolare il suo fix-point. In LiSA i CFG sono oggetti della classe \texttt{CFG} che al suo interno definisce un metodo \texttt{fixpoint}, che appunto calcola il fix-point del CFG su cui viene chiamato (ed è il metodo chiamato dall'\texttt{InterproceduralAnalysis}). \texttt{CFG.fixpoint} non implementa però direttamente l'algoritmo visto in \ref{alg:fixpointAsc}. Questo infatti viene implementatato in \texttt{Fixpoint.fixpoint} che in pratica è un blue-print per l'algoritmo del calcolo del fix-point tramite working-set list. Qui di seguito è mostrata la sua implementazione (leggermente semplificata) prima delle modifiche per includere la fase discendente. 
+Innanzitutto per ogni analisi bisogna scegliere una \texttt{InterproceduralAnalysys} che ha la visione completa del programma e delle sue unità (e quindi dei CFGs). L'interfaccia \texttt{InterproceduralAnalysys} ha un metodo \texttt{fixpoint} che quando viene chiamato deve calcolare il fix-point del programma (e quindi di ciascun CFG). Essendo il programma sotto analisi una collezione di CFG quello che effettivamente fa è iterare sull'insieme di CFG e uno a uno calcolare il suo fix-point. In LiSA i CFG sono oggetti della classe \texttt{CFG} che al suo interno definisce un metodo \texttt{fixpoint}, che appunto calcola il fix-point del CFG su cui viene chiamato (ed è il metodo chiamato dall'\texttt{InterproceduralAnalysis}). \texttt{CFG.fixpoint} non implementa però direttamente l'Algoritmo visto in \ref{alg:fixpointAsc}. Questo infatti viene implementatato in \texttt{Fixpoint.fixpoint} che in pratica è un blue-print per l'algoritmo del calcolo del fix-point tramite working-set list. Qui di seguito è mostrata la sua implementazione (leggermente semplificata) prima delle modifiche per includere la fase discendente. 
 \begin{lstlisting}[belowskip=-1.1 \baselineskip, escapechar=|]
 public Map<N, T> fixpoint(
         Map<N, T> startingPoints,
@@ -981,7 +979,7 @@ public Map<N, T> fixpoint(
     ...
 }
 \end{lstlisting}
-A questo punto in \texttt{CFG.fixpoint} il metodo verrà chiamato due volte, la prima (fase ascendente) con una mappa di risultati vuota, la seconda (fase ascendente) coi risultati della prima come mostrato nel piccolo schema in \ref{fig:flowFaseDisc}.
+A questo punto in \texttt{CFG.fixpoint} il metodo verrà chiamato due volte, la prima (fase ascendente) con una mappa di risultati vuota, la seconda (fase ascendente) coi risultati della prima come mostrato nel piccolo schema della Figura \ref{fig:flowFaseDisc}.
 
 Per gli altri due problemi (join/meet e metodo \texttt{equality}) è stato necessario avere un modo per tenere traccia di quale fase stessimo calcolando all'interno del \texttt{CFGFixpointImplmentation}. Ovvero un modo che ci dicesse che se siamo nella fase ascendente utilizziamo \texttt{join} con lub/widening ed \texttt{equality} con minore-uguale, se invece siamo nella fase discendente utilizziano \texttt{meet} con glb/narrowing ed \texttt{equality} con maggiore-uguale. Per correttezza sintattica inoltre ho dovuto cambiare la dichiarazione dell'interfaccia \texttt{FixpointImplementation} modificando il metodo \texttt{join} nel metodo \texttt{operation}. Sarà poi dentro la implementazione concreta di \texttt{operation} che il calcolo verrà smistato a \texttt{join} o \texttt{meet} a seconda della fase in cui ci si trova. Per tenere traccia della fase che sta calcolando ho aggiunto a \texttt{CFGFixpointImplementation} un parametro di configurazione di tipo \texttt{DescendingPhaseType}, che è così definito tramite un enum:  
 \begin{lstlisting}[belowskip=-1.1 \baselineskip, escapechar=|]
@@ -994,12 +992,12 @@ public static enum DescendingPhaseType {
     NARROWING;
 }
 \end{lstlisting}
-Se a \texttt{CFGFixpointImplementation} viene passato \texttt{DescendingPhaseType.NONE} supporrà di essere nella fase ascendente, se invece riceve \texttt{DescendingPhaseType.GLB} o \texttt{DescendingPhaseType.NARROWING} supporrà di essere in quella discendente. I tipi \texttt{GLB} e \texttt{NARROWING} indicano entrambi la fase discendente, ma con una diversa logica di scelta tra glb e narrowing durante l'esecuzione dell'operazione di meet (che dopo vedremo più nel dettaglio). A questo punto i metodi \texttt{equality} e \texttt{operation}, quando chiamati, controlleranno in quale fase si trovano e smisteranno il calcolo al metodo appropriato. Nella figura \ref{fig:flowFaseDisc} è schematizzata la sequenza di chiamate di \texttt{CFG} a \texttt{Fixpoint}.
+Se a \texttt{CFGFixpointImplementation} viene passato \texttt{DescendingPhaseType.NONE} supporrà di essere nella fase ascendente, se invece riceve \texttt{DescendingPhaseType.GLB} o \texttt{DescendingPhaseType.NARROWING} supporrà di essere in quella discendente. I tipi \texttt{GLB} e \texttt{NARROWING} indicano entrambi la fase discendente, ma con una diversa logica di scelta tra glb e narrowing durante l'esecuzione dell'operazione di meet (che dopo vedremo più nel dettaglio). A questo punto i metodi \texttt{equality} e \texttt{operation}, quando chiamati, controlleranno in quale fase si trovano e smisteranno il calcolo al metodo appropriato. Nella Figura \ref{fig:flowFaseDisc} è schematizzata la sequenza di chiamate di \texttt{CFG} a \texttt{Fixpoint}.
 
 \begin{figure}
 	\centering
 	\includegraphics[width=0.9\textwidth]{Immagini/flowFaseDisc.png}
-	\caption{Sequence diagram delle chiamata da \texttt{CFG} a \texttt{Fixpoint} dopo l'implementazione della fase discendente}
+	\caption{Sequence diagram delle chiamata da \texttt{CFG} a \texttt{Fixpoint} dopo l'implementazione della fase discendente.}
 	\label{fig:flowFaseDisc}
 \end{figure}
 
@@ -1027,10 +1025,10 @@ Sostanzialmente esistono due tipi di meet (o logiche per la scelta tra glb e nar
 \begin{itemize}
 \itemsep0pt
     \item \texttt{GLB}: utilizza un valore threshold passato come parametro di configurazione. In questa fase discendente viene utilizzato il glb come operatore di meet sempre fino a che non si passa per un nodo threshold volte, dopodichè non verrà fatta nessuna operazione e si ritornerà il valore della vecchia approssimazione. Così facendo siamo sicuri che dopo un numero finito di step si raggiunge un punto stazionario (e quindi la convergenza del calcolo);
-    \item \texttt{NARROWING} : in questo caso come operatore viene sempre usato il narrowing. Anche in questo caso la convergenza è garantita se il narrowing dello stato astratto è definito con le caratteristiche mostrate in \ref{def:narrowing};
+    \item \texttt{NARROWING} : in questo caso come operatore viene sempre usato il narrowing. Anche in questo caso la convergenza è garantita se il narrowing dello stato astratto è definito con le caratteristiche mostrate nella Definizione \ref{def:narrowing};
 \end{itemize}
 
-A questo punto se vogliamo aggiungere il calcolo della fase discendente all'analisi mostrata in \ref{code:simpleAnalysisAsc} basterà aggiungere alla configurazione il tipo di fase discendente voluta ed i suoi eventuali parametri, come mostrato nell'esempio qui di seguito. 
+A questo punto se vogliamo aggiungere il calcolo della fase discendente all'analisi mostrata nell'Esempio \ref{code:simpleAnalysisAsc} basterà aggiungere alla configurazione il tipo di fase discendente voluta ed i suoi eventuali parametri, come mostrato nell'esempio qui di seguito. 
 \label{code:analisiDescending}
 \begin{lstlisting}[belowskip=-1.1 \baselineskip]
 LiSAConfiguration conf = new LiSAConfiguration();
@@ -1048,20 +1046,20 @@ Program program = Frontend.processFile(programFilePath);
 LiSA lisa = new LiSA(configuration);
 lisa.run(program);
 \end{lstlisting}
-Se invece non si vuole che venga calcolata la fase discendente basta non settare il campo \texttt{descendingPhaseType} di \texttt{LiSAConfiguration}, che come default ha il valore \texttt{NONE}. Questo valore verrà passato duarante il flow del metodo \texttt{fixpoint} fino alla classe \texttt{CFG} che eviterà di fare la seconda chiamata a \texttt{Fixpoint.fixpoint} restituendo direttamente i risultati ottenuti dalla sola fase ascendente. Nella figura \ref{fig:risultatoDOTDesc} è mostrato il risultato dell'analisi con anche la fase discendente del programma in \ref{fig:codiceEsempio2} e le configurazioni mostrate sopra.
+Se invece non si vuole che venga calcolata la fase discendente basta non settare il campo \texttt{descendingPhaseType} di \texttt{LiSAConfiguration}, che come default ha il valore \texttt{NONE}. Questo valore verrà passato duarante il flow del metodo \texttt{fixpoint} fino alla classe \texttt{CFG} che eviterà di fare la seconda chiamata a \texttt{Fixpoint.fixpoint} restituendo direttamente i risultati ottenuti dalla sola fase ascendente. Nella Figura \ref{fig:risultatoDOTDesc} è mostrato il risultato dell'analisi con anche la fase discendente del programma della Figura \ref{fig:codiceEsempio2} e le configurazioni mostrate sopra.
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.8\textwidth]{Immagini/graphvizDesc.png}
-	\caption{Risultato in formato DOT dell'analisi del programma \ref{fig:codiceEsempio2} con anche fase discendente}
+	\caption{Risultato in formato DOT dell'analisi del programma \ref{fig:codiceEsempio2} con anche fase discendente.}
 	\label{fig:risultatoDOTDesc}
 \end{figure}
 
 \section{Decoupling della fase ascendente e discendente in LiSA}\label{sec:lisaDecoupling}
-In questa sezione vedremo come è stato possibile modificare LiSA per permettere il decoupling della fase ascendente e discendente come mostrato nel capitolo \ref{chapter:decoupling}. Bisogna però dire che l'implementazione non è stata fatta per essere inserita ufficialmente dentro LiSA, ma come prova sperimentale per vedere realizzato in pratica il concetto e per fare qualche test. Anche per questo motivo non verrà data una spiegazione approfondita con estratti di codice come fatto in precedenza, ma solo una spiegazione generale del funzionamento e dell'architettura. Nella figura \ref{fig:flowDecoupling} viene mostrato un sequence diagram che schematizza le chiamate e i passaggi che avvengono in LiSA durante una analisi con decoupling delle fasi. 
+In questa sezione vedremo come è stato possibile modificare LiSA per permettere il decoupling della fase ascendente e discendente come mostrato nel Capitolo \ref{chapter:decoupling}. Bisogna però dire che l'implementazione non è stata fatta per essere inserita ufficialmente dentro LiSA, ma come prova sperimentale per vedere realizzato in pratica il concetto e per fare qualche test. Anche per questo motivo non verrà data una spiegazione approfondita con estratti di codice come fatto in precedenza, ma solo una spiegazione generale del funzionamento e dell'architettura. Nella Figura \ref{fig:flowDecoupling} viene mostrato un sequence diagram che schematizza le chiamate e i passaggi che avvengono in LiSA durante una analisi con decoupling delle fasi. 
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=\textwidth]{Immagini/decouplingFlow.png}
-	\caption{Flow dell'analisi con decoupling delle fasi in LiSA}
+	\caption{Flow dell'analisi con decoupling delle fasi in LiSA.}
 	\label{fig:flowDecoupling}
 \end{figure}
 
@@ -1080,7 +1078,7 @@ La sequenza di operazioni è la seguente:
     \item i risultati della fase ascendente vengono tradotti dal \texttt{Decoupler} nel dominio astratto discendente, così da poter essere usati come punto di partenza per la fase discendente;
     \item \texttt{DecouplingInterproceduralAnalysis<A, D>} chiama \texttt{descendingPhase} sulla \texttt{InterproceduralAnalysis<D>} passando il tipo di fase discendente e il risultato della fase ascendente tradotto;
 \end{enumerate}
-Il seguente pezzo di codice descrive quello che deve essere aggiunto a quello mostrato prima in \ref{code:analisiDescending} per applicare il decoupling delle fasi all'analisi. Più precisamente per usare il dominio \texttt{Sign} nella fase ascendente e \texttt{Interval} in quella discendente. 
+Il seguente frammento di codice descrive quello che deve essere aggiunto a quello mostrato prima nell'Esempio \ref{code:analisiDescending} per applicare il decoupling delle fasi all'analisi. Più precisamente per usare il dominio \texttt{Sign} nella fase ascendente e \texttt{Interval} in quella discendente. 
 \begin{lstlisting}[belowskip=-1.1 \baselineskip]
 LiSAConfiguration conf = new LiSAConfiguration();
 
@@ -1103,11 +1101,11 @@ conf.interproceduralAnalysis = interproc;
 //.....
 lisa.run(program);
 \end{lstlisting}
-I risultati dell'analisi sono mostrati in \ref{fig:risultatoDecoup}.
+I risultati dell'analisi sono mostrati in Figura \ref{fig:risultatoDecoup}.
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.7\textwidth]{Immagini/graphvizDecoup.png}
-	\caption{Risultato in formato DOT dell'analisi del programma \ref{fig:codiceEsempio2} con anche fase discendente disaccoppiata da quella ascendente}
+	\caption{Risultato in formato DOT dell'analisi del programma \ref{fig:codiceEsempio2} con anche fase discendente disaccoppiata da quella ascendente.}
 	\label{fig:risultatoDecoup}
 \end{figure}
 
