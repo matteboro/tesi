@@ -19,9 +19,9 @@ La \textit{cardinalità} di un insieme \(X\) è il numero di elementi al suo int
 \begin{definition}[Operazioni sugli insiemi]
 Esistono numerose operazioni applicabili agli insiemi, le principali sono:
 \begin{itemize}
-    \item \textit{unione}: l'unione di due insiemi \(A, B\) si scrive \(A\cup B\) e deonota l'insieme contenente tutti gli elementi di \(A\) o di \(B\) o di entrambi;
-    \item \textit{intersezione}: l'intersezione di due insiemi \(A, B\) si scrive \(A\cap B\) e deonota l'insieme contenente tutti gli elementi presenti sia in \(A\) che in \(B\);
-    \item \textit{differenza}: la differenza tra un insieme \(A\) ed un insieme \(B\) si scrive \(A\setminus B\) e deonota l'insieme contenente tutti gli elementi di \(A\) non presenti in \(B\);
+    \item \textit{unione}: l'unione di due insiemi \(A, B\) si scrive \(A\cup B\) e denota l'insieme contenente tutti gli elementi di \(A\) o di \(B\) o di entrambi;
+    \item \textit{intersezione}: l'intersezione di due insiemi \(A, B\) si scrive \(A\cap B\) e denota l'insieme contenente tutti gli elementi presenti sia in \(A\) che in \(B\);
+    \item \textit{differenza}: la differenza tra un insieme \(A\) ed un insieme \(B\) si scrive \(A\setminus B\) e denota l'insieme contenente tutti gli elementi di \(A\) non presenti in \(B\);
 \end{itemize}
 \end{definition}
 
@@ -35,7 +35,7 @@ Si dice che \(B\) è \textit{sottoinsieme} di \(A\) se \(A\) contiene tutti gli 
 \end{definition}
 
 \begin{definition}[Insieme delle parti]
-Dato un qualisasi insieme \(A\) si definisce \textit{insieme delle parti} l'insieme che contiene tutti e soli i sottoinsiemi di \(A\), lo denotiamo con \(\wp(A)=\{B\ |\ B\subseteq A\}\).
+Dato un qualsiasi insieme \(A\) si definisce \textit{insieme delle parti} l'insieme che contiene tutti e soli i sottoinsiemi di \(A\), lo denotiamo con \(\wp(A)=\{B\ |\ B\subseteq A\}\).
 \end{definition}
 
 \begin{definition}[Prodotto cartesiano]
@@ -50,7 +50,7 @@ Una \textit{relazione} R tra gli insiemi \(X_1,X_2,\cdots,X_n\) è un sottoinsie
 Una relazione binaria \(\preceq\) sull'insieme \(S\) è una \textit{relazione di ordine parziale} se possiede queste tre proprietà:
 \begin{itemize}
 \item Riflessività: \(\forall s\in S. s\preceq s\);
-\item Antisimmetrica: \(\forall s_1, s_2\in S. s_1\preceq s_2 \wedge s_2\preceq s_1 \Rightarrow s_1=s_2\);
+\item Antisimmetria: \(\forall s_1, s_2\in S. s_1\preceq s_2 \wedge s_2\preceq s_1 \Rightarrow s_1=s_2\);
 \item Transitività: \(\forall s_1, s_2, s_3 \in S. s_1\preceq s_2 \wedge s_2\preceq s_3 \Rightarrow s_1\preceq s_3\);
 \end{itemize}
 \end{definition}
@@ -69,7 +69,7 @@ Dato un poset \(\simplePoset{S}\) e due elementi \(s_1, s_2 \in S\) diciamo che 
 \end{definition}
 
 \begin{definition}[Diagramma di Hasse]
-\'E possibile visualizzare un insieme parzialmente ordinato \(\simplePoset{S}\) attraverso un \textit{diagramma di Hasse}. Un diagramma di Hasse è un grafo i cui nodi sono gli elementi dell'isnsieme \(S\) del poset e un arco viene disegnato tra due elementi \(s_1, s_2 \in S\) solo se \(s_1\) copre \(s_2\).
+\'E possibile visualizzare un insieme parzialmente ordinato \(\simplePoset{S}\) attraverso un \textit{diagramma di Hasse}. Un diagramma di Hasse è un grafo i cui nodi sono gli elementi dell'insieme \(S\) del poset e un arco viene disegnato tra due elementi \(s_1, s_2 \in S\) solo se \(s_1\) copre \(s_2\).
 \end{definition}
 
 \begin{example} 
@@ -105,12 +105,12 @@ Se prendiamo l'insieme \(\textrm{Sign}=\{\perp, +, -, 0, 0+, 0-, \top\}\) e l'or
 \end{figure}
 \end{example}
 
-\begin{definition}[Condizione di catena ascendnente]
-Un poset \(\simplePoset{S}\) soddisfa la \textit{condizione di catena ascendnente} (ACC) se e solo se ogni sequenza infinita \(\emph{s}_0\preceq\emph{s}_1\preceq\cdots\preceq\emph{s}_k\preceq\cdots\) di elementi di \emph{S} se: \(\exists\emph{n}\in\mathbb{N}.\ \emph{s}_m=\emph{s}_n\forall\emph{m}\geq\emph{n}\).
+\begin{definition}[Condizione di catena ascendente]
+Un poset \(\simplePoset{S}\) soddisfa la \textit{condizione di catena ascendente} (ACC) se e solo se ogni sequenza infinita \(\emph{s}_0\preceq\emph{s}_1\preceq\cdots\preceq\emph{s}_k\preceq\cdots\) di elementi di \emph{S} se: \(\exists\emph{n}\in\mathbb{N}.\ \emph{s}_m=\emph{s}_n\forall\emph{m}\geq\emph{n}\).
 \end{definition}
 
-\begin{definition}[Condizione di catena discendnente]
-Un poset \(\simplePoset{S}\) soddisfa la \textit{condizione di catena discendnente} (DCC) se e solo se ogni sequenza infinita \(\emph{s}_0\succeq\emph{s}_1\succeq\cdots\succeq\emph{s}_k\succeq\cdots\) di elementi di \emph{S} se: \(\exists\emph{n}\in\mathbb{N}.\ \emph{s}_m=\emph{s}_n\forall\emph{m}\geq\emph{n}\).
+\begin{definition}[Condizione di catena discendente]
+Un poset \(\simplePoset{S}\) soddisfa la \textit{condizione di catena discendente} (DCC) se e solo se ogni sequenza infinita \(\emph{s}_0\succeq\emph{s}_1\succeq\cdots\succeq\emph{s}_k\succeq\cdots\) di elementi di \emph{S} se: \(\exists\emph{n}\in\mathbb{N}.\ \emph{s}_m=\emph{s}_n\forall\emph{m}\geq\emph{n}\).
 \end{definition}
 
 \begin{definition}[Upper bound e lub]
@@ -150,7 +150,7 @@ Dato un insieme \(A\) non vuoto qualsiasi \(\langle\wp(A), \subseteq, \cup, \cap
 \end{example}
 
 \begin{example}\label{ex:functionalLattice}
-Dato un insieme \(A\) non vuoto, un reticolo \(\completeLattice{L}\) l'insieme delle funzioni total \(A\rightarrow L\) (dove se \(f:A\rightarrow L\) non è definita per certi valori di \(A\) questi li mappa all'elemento \(\perp\))  allora anche \(\langle A\rightarrow L, \dot{\preceq}, \dot{\sqcup}, \dot{\sqcap}, \dot{\top}, \dot{\perp}\rangle\) è un reticolo, dove:
+Dato un insieme \(A\) non vuoto, un reticolo \(\completeLattice{L}\) l'insieme delle funzioni totali \(A\rightarrow L\) (dove se \(f:A\rightarrow L\) non è definita per certi valori di \(A\) questi li mappa all'elemento \(\perp\))  allora anche \(\langle A\rightarrow L, \dot{\preceq}, \dot{\sqcup}, \dot{\sqcap}, \dot{\top}, \dot{\perp}\rangle\) è un reticolo, dove:
 \begin{itemize}
     \item \(\dot{\top}\) è la funzione che mappa ogni elemento di \(A\) all'elemento \(\top\); 
     \item \(\dot{\perp}\) è la funzione che mappa ogni elemento di \(A\) all'elemento \(\perp\); 
@@ -295,7 +295,7 @@ Si può osservare come questo ordinamento non rispetta ne la condizione di caten
 \end{example}
 
 \begin{definition}[Funzione parziale]
-Una \textit{funzione parziale} \(f\) da \(A\) a \(B\), denotata \(f:A\rightharpoonup B\), è un sottoinsieme del prodotto cartesiano \(A\times B\) che associa ogni un elemento di \(A\) ad al massimo un elemento di \(B\). Scriviamo \(f(x)=y\) se la coppia \(\langle x, y\rangle\in f\). Definiamo il \textit{dominio} di una funzione parziale \(f:A\rightharpoonup B\) così: \(\textrm{dom}(f)=\{x\in A\ |\ \exists y\in B:f(x)=y\}\). L'insieme di tutte le funzioni parziali da \(A\) a \(B\) si scrive \(A\rightharpoonup B\).
+Una \textit{funzione parziale} \(f\) da \(A\) a \(B\), denotata \(f:A\rightharpoonup B\), è un sottoinsieme del prodotto cartesiano \(A\times B\) che associa ogni elemento di \(A\) ad al massimo un elemento di \(B\). Scriviamo \(f(x)=y\) se la coppia \(\langle x, y\rangle\in f\). Definiamo il \textit{dominio} di una funzione parziale \(f:A\rightharpoonup B\) così: \(\textrm{dom}(f)=\{x\in A\ |\ \exists y\in B:f(x)=y\}\). L'insieme di tutte le funzioni parziali da \(A\) a \(B\) si scrive \(A\rightharpoonup B\).
 \end{definition}
 
 \begin{definition}[Funzione totale]
@@ -414,10 +414,10 @@ Lo scopo dell'\textit{analisi statica} è quello di provare formalmente certe pr
 Un linguaggio \(\mathbb{L}\) mette a disposizione una semantica, ovvero una descrizione formale e matematica del comportamento di un programma \(\rho\) scritto in \(\mathbb{L}\) partendo da uno stato iniziale (che può rappresentare la collezione di elementi di input di \(\rho\)). Da tale semantica si possono ottenere diverse \textit{semantiche concrete}, ovvero funzioni \(\textbf{S}:Program_\mathbb{L}\rightarrow \mathbb{C}\),  che prendono un programma \(\rho\) in \(\mathbb{L}\) e restituiscono un oggetto dell'insieme \(\mathbb{C}\), detto \textit{dominio semantico concreto}, che ci dice qualcosa sul comportamento di \(\rho\) e attraverso cui è possibile verificarne certe proprietà. Una caratteristica necessaria di un dominio concreto è che deve essere parte di un reticolo completo, per semplicità scriveremo \(\simplePoset{\mathbb{C}}\). Due esempi di semantiche concrete sono:
 \begin{itemize}
     \item \textit{trace semantics}: il dominio concreto \(\mathbb{C}\) di questa semantica è l'insieme delle parti di tutte le tracce di esecuzione possibili (anche quelle infinite) per ogni possibile programma scritto in \(\mathbb{L}\) per ogni possibile input di tale programma. Per traccia intendiamo una sequenza di stati e per stato intendiamo una coppia che comprende un punto di programma e uno stato della memoria (quindi lo stato rappresenta una fotografia della memoria in un dato istante). La trace semantics prenderà come input un programma \(\rho\) in \(\mathbb{L}\) e restituirà l'insieme comprendente tutte le tracce di esecuzione possibili per quel programma partendo dall'insieme di tutti i possibili input. Questa semantica quindi vede il comportamento di un programma come un insieme di tracce. Avendo a disposizione questa semantica possiamo verificare numerose proprietà di un programma tra cui la \textit{liveness}, la \textit{reachability} ma anche la terminazione, basterebbe infatti mostrare che l'insieme di tracce possibili comprenda solo tracce finite. Dal famoso problema della terminazione formulato da Alan Turing esposto nell'articolo \cite{DBLP:journals/x/Turing37} sappiamo però che tale verifica è indecidibile.
-    \item \textit{collecting semantics}: un'altra, ma meno precisa, semantica concreta è la collecting semantics. Il dominio \(\mathbb{C}\) di questa semantica è l'insieme di tutte le funzioni che mappano ogni punto di programma possibile a un insieme di stati della memoria (si noti che il concetto di stato della memoria può essere semplificato al concetto di \textit{environment}, ovvero una mappa che associa ad ogni variabile del programma un valore). La collecting semantics è una funzione che associa ad ogni programma \(\rho\) in \(\mathbb{L}\) una funzione che mappa ogni punto di programma di \(\rho\) all'insieme di tutti gli stati della memoria atraversabili in quel punto (o nella visione semplificata è una funzione che associa ad ogni punto di programma tutti gli environment che possono passare per quel punto). In pratica la collecting semantics ci dice tutti gli stati possibili durante l'esecuzione del programma ignorando l'ordine temporale che li lega (per questo la trace semantics contiene più informazione, essa infatti non ignora la sequenzialità tra gli stati). Anche questa semantica risulta impossibile da calcolare, sia per motivi legati alla terminazione che per l'impossibilità di rappresentare certi elementi di \(\mathbb{C}\) su una macchina (si pensi ad esempio ad un programma con un ciclo infinito che possiede un punto di programma attraverso cui passano infiniti environemnt diversi). 
+    \item \textit{collecting semantics}: un'altra, ma meno precisa, semantica concreta è la collecting semantics. Il dominio \(\mathbb{C}\) di questa semantica è l'insieme di tutte le funzioni che mappano ogni punto di programma possibile a un insieme di stati della memoria (si noti che il concetto di stato della memoria può essere semplificato al concetto di \textit{environment}, ovvero una mappa che associa ad ogni variabile del programma un valore). La collecting semantics è una funzione che associa ad ogni programma \(\rho\) in \(\mathbb{L}\) una funzione che mappa ogni punto di programma di \(\rho\) all'insieme di tutti gli stati della memoria atraversabili in quel punto (o nella visione semplificata è una funzione che associa ad ogni punto di programma tutti gli environment che possono passare per quel punto). In pratica la collecting semantics ci dice tutti gli stati possibili durante l'esecuzione del programma ignorando l'ordine temporale che li lega (per questo la trace semantics contiene più informazione, essa infatti non ignora la sequenzialità degli stati). Anche questa semantica risulta impossibile da calcolare, sia per motivi legati alla terminazione che per l'impossibilità di rappresentare certi elementi di \(\mathbb{C}\) su una macchina (si pensi ad esempio ad un programma con un ciclo infinito che possiede un punto di programma attraverso cui passano infiniti environemnt diversi). 
 \end{itemize}
 
-Tramite l'interpretazione astratta (abbreaviato in inglese \textit{AI}) vogliamo sopperire a tutti i problemi legati alla calcolabilità delle semantiche concrete. Per essere efficiace una \textit{AI} deve comprendere due cose: un \textit{dominio semantico astratto}, \(\simplePoset{\mathbb{A}}\) (anch'esso parte di un reticolo completo), e una \textit{semantica astratta}, ovvero una funzione \(\textbf{S}_{\mathbb{A}}:Program_\mathbb{L}\rightarrow \mathbb{A}\). Bisogna poi mostrare due ralazioni tra mondo concreto e mondo astratto: per primo un collegamento tra il dominino concreto e quello astratto tramite una connessione di Galois \(\GaloisConnection{\mathbb{C}}{\mathbb{A}}\) e poi una relazione di soundness tra le due funzioni semantiche, ovvero bisognerà dimostrare che per ogni \(\rho\in Program_{\mathbb{L}}\) vale che \(\alpha(\textbf{S}[\rho])\preceq_{\mathbb{A}}\textbf{S}_{\mathbb{A}}[\rho]\). Questo significa che il risultato dell'\textit{AI} di un programma deve almeno contenere tutte le proprietà vere del programma, ovvero deve essere una corretta approssimazione dell'analisi concreta. Lo scambio che andiamo a fare è quello di cedere precisione sull'analisi (con la clausola di rimanese sound) in cambio della possibilità di compiere l'analisi su una macchina in tempo finito. 
+Tramite l'interpretazione astratta (abbreaviato in inglese \textit{AI}) vogliamo sopperire a tutti i problemi legati alla calcolabilità delle semantiche concrete. Per essere efficiace una \textit{AI} deve comprendere due cose: un \textit{dominio semantico astratto}, \(\simplePoset{\mathbb{A}}\) (anch'esso parte di un reticolo completo), e una \textit{semantica astratta}, ovvero una funzione \(\textbf{S}_{\mathbb{A}}:Program_\mathbb{L}\rightarrow \mathbb{A}\). Bisogna poi mostrare due ralazioni tra mondo concreto e mondo astratto: per primo un collegamento tra il dominio concreto e quello astratto tramite una connessione di Galois \(\GaloisConnection{\mathbb{C}}{\mathbb{A}}\) e poi una relazione di soundness tra le due funzioni semantiche, ovvero bisognerà dimostrare che per ogni \(\rho\in Program_{\mathbb{L}}\) vale che \(\alpha(\textbf{S}_{\mathbb{C}}[\rho])\preceq_{\mathbb{A}}\textbf{S}_{\mathbb{A}}[\rho]\). Questo significa che il risultato dell'\textit{AI} di un programma deve almeno contenere tutte le proprietà vere del programma, ovvero deve essere una corretta approssimazione dell'analisi concreta. Lo scambio che andiamo a fare è quello di cedere precisione sull'analisi (con la clausola di rimanere sound) in cambio della possibilità di compiere l'analisi su una macchina in tempo finito. 
 
 Il motivo per cui abbiamo introdotto molte nozioni legate al mondo degli insiemi parzialmente ordinati, reticoli e fix-point è che le funzioni semantiche, sia concreta che astratta, possono essere costruite in termini della ricerca del least fix-point di un operatore monotono. Ovvero avremo \(\mathbf{S}[\rho]=\textrm{lfp}(T_{\mathbb{C}})\) e \(\mathbf{S}_{\mathbb{A}}[\rho]=\textrm{lfp}(T_{\mathbb{A}})\) dove \(T_{\mathbb{C}}:\mathbb{C}\rightarrow \mathbb{C}\) e \(T_{\mathbb{A}}:\mathbb{A}\rightarrow \mathbb{A}\) sono operatori monotoni rispettivamente sul dominino concreto e su quello astratto. In questo caso la relazione di soundness tra le due semantica si appoggia sulla relazione di soundness tra i due operatori sottostanti seguendo la definizione seguente:
 
@@ -431,7 +431,7 @@ Inoltre date tutte le approssimazioni di \(f\) esistenti vorremmo sapere quale �
 \end{definition}
 
 \subsection{Calcolo del fix-point}
-Come già abbiamo detto spesso la semantica (sia astratta che concreta) viene espressa in termini di ricerca del least fix-point di un'altra funzione. Risulta molto utile, se non necessario, dare qualche definizione e teorema che ci permette di trasferire il calcolo del least-fix-point di una funzione concreta \(f\) su una funzione astratta \(f^{\natural}\).
+Come già abbiamo detto spesso la semantica (sia astratta che concreta) viene espressa in termini di ricerca del least fix-point di un'altra funzione. Risulta molto utile, se non necessario, dare qualche definizione e teorema che ci permette di trasferire il calcolo del least-fix-point di una funzione concreta \(f\) su una funzione astratta \(f^{\natural}\). La seguente Definizione e Teorema sono presi dall'articolo di Patrick Cousot \cite{DBLP:journals/tcs/Cousot02}, dove viene esposta anche la prova del Teorema mostrato (li chiamato Kleene's Fixpoint Approximation Theorem).
 
 \begin{definition}[Fix-point soundness]
 Data una connessione di Galois \(\GaloisConnection{C}{A}\), una funzione concreta \(f:C\rightarrow C\) ed una funzione astratta \(f^{\natural}:A\rightarrow A\) diciamo che \(f^{\natural}\) è \textit{fix-point sound} se \(\alpha(\textrm{lfp}(f))\preceq_A \textrm{lfp}(f^{\natural})\).
@@ -442,11 +442,11 @@ Presi \(\GaloisConnection{C}{A}\), una funzione concreta \(f:C\rightarrow C\) ed
 \end{theorem}
 
 \subsection{Interpretazione astratta di un Control Flow Graph}
-Per approfondire i concetti di semantica concreta, semantica stratta e inetrpretazione astratta in questa sezioni li vedremo applicati a programmi scritti in una rapprsentazione del codice specifica, i CFG. Un Control Flow Graph (CFG) è una rappresentazione di un programma tramite una coppia \(\cfg\) dove \(N\) è un insieme finito di nodi, questi rappresentano blocchi di codice basilari del programma (ad esempio gli statement), e \(E\subset N\times N\) è l'insieme di archi che collegano i nodi in \(N\), questi rappresentano il flusso di informazione tra i blocchi. Gli archi possono essere sequenziali (l'informazione passa dal nodo di partenza a quello di arrivo sempre senza modifiche), veri (l'informazione passa solo se la condizione nel nodo di partenza è vera) o falsi (opposti agli archi veri). In questo modo possiamo rappresentare anche il comando condizionale all'interno del linguaggio CFG. Per rappresentare il comando while basta creare dei cicli all'interno del CFG.
+Per approfondire i concetti di semantica concreta, semantica astratta e interpretazione astratta in questa sezioni li vedremo applicati a programmi scritti in una rappresentazione del codice specifica, i CFG. Un Control Flow Graph (CFG) è una rappresentazione di un programma tramite una coppia \(\cfg\) dove \(N\) è un insieme finito di nodi, questi rappresentano blocchi di codice basilari del programma (ad esempio gli statement), e \(E\subset N\times N\) è l'insieme di archi che collegano i nodi in \(N\), questi rappresentano il flusso di informazione tra i blocchi. Gli archi possono essere sequenziali (l'informazione passa dal nodo di partenza a quello di arrivo sempre senza modifiche), veri (l'informazione passa solo se la condizione nel nodo di partenza è vera) o falsi (opposti agli archi veri). In questo modo possiamo rappresentare anche il comando condizionale all'interno del linguaggio CFG. Per rappresentare il comando while basta creare dei cicli all'interno del CFG.
 
 Dato un programma in CFG \(\cfg\) certe semantiche concrete possono essere espresse come il least fix-point del sistema di equazioni \(F:\mathbb{C}^{|N|}\rightarrow\mathbb{C}^{|N|}\) dove:
 \[F = \{x_i = f_i(x_1, x_2, \cdots, x_{|N|})\ |\ i=1, 2,\cdots, |N|\}\]
-in cui i vari \(f_i:\mathbb{C}^{|N|}\rightarrow\mathbb{C}\) sono funzioni trasformatrici concrete. Queste simulano il comportamento del blocco di codice del nodo a cui sono associate trasformando le informazioni provenienti dai nodi a cui sono collegati. La soluzione del sistema \(F\) sarà il least fix-point di \(F\), che come abbiamo visto nel Teorema \ref{teo:kleeneFixPoint} si può trovare  facendo il least upper bound tra tutti gli step della iterazione di Kleene sul dominio concreto \(\mathbb{C}^{|N|}\) di \(F\) partendo dall'elemento bottom (in questo caso \(\perp_{\mathbb{C}}^{|N|}\)).
+in cui i vari \(f_i:\mathbb{C}^{|N|}\rightarrow\mathbb{C}\) sono funzioni trasformatrici concrete. Queste simulano il comportamento del blocco di codice del nodo a cui sono associate trasformando le informazioni provenienti dai nodi di cui sono successori. La soluzione del sistema \(F\) sarà il least fix-point di \(F\), che come abbiamo visto nel Teorema \ref{teo:kleeneFixPoint} si può trovare  facendo il least upper bound tra tutti gli step della iterazione di Kleene sul dominio concreto \(\mathbb{C}^{|N|}\) di \(F\) partendo dall'elemento bottom (in questo caso \(\perp_{\mathbb{C}}^{|N|}\)).
 
 \begin{example}\label{ex:easyCode}
 Nella Figura \ref{fig:codiceEsempio1} si vede la traduzione di un semplice frammento di codice scritto in Python in un CFG. 
@@ -508,7 +508,7 @@ F =
 \end{cases}
 \]
 
-dove la funzione \(\textrm{if}_{[st]}:\wp(\mathbb{Z})\rightarrow\wp(\mathbb{Z})\) filtra i valori passati in input lasciando passare solo quelli che soddisfano la candizione in \(st\) (\(\textrm{else}_{[st]}:\wp(\mathbb{Z})\rightarrow\wp(\mathbb{Z})\) è simile ma fa passare solo quelli che non soddisfano la condizione \(st\)) e la funzione \(+:\wp(\mathbb{Z})\times\wp(\mathbb{Z})\rightarrow\wp(\mathbb{Z})\) somma elemento per elemento i valori dei due insiemi di interi passati come input. 
+dove la funzione \(\textrm{if}_{[st]}:\wp(\mathbb{Z})\rightarrow\wp(\mathbb{Z})\) filtra i valori passati in input lasciando passare solo quelli che soddisfano la condizione in \(st\) (\(\textrm{else}_{[st]}:\wp(\mathbb{Z})\rightarrow\wp(\mathbb{Z})\) è simile ma fa passare solo quelli che non soddisfano la condizione \(st\)) e la funzione \(+:\wp(\mathbb{Z})\times\wp(\mathbb{Z})\rightarrow\wp(\mathbb{Z})\) somma elemento per elemento i valori dei due insiemi di interi passati come input. 
 
 La collecting semantics sarà pari al least fix-point del sistema di equazioni \(F\), che è uguale al least upper bound tra tutti gli step della iterazione di Kleene (mostrata nel Teorema \ref{teo:kleeneFixPoint}) di \(F\) su \(\wp(\mathbb{Z})^{|N|}\) partendo dal valore bottom di \(\wp(\mathbb{Z})\), ovvero \(\emptyset\), per ogni nodo.  
 
@@ -599,9 +599,9 @@ Ad ogni step applichiamo il sistema di equazioni \(F\). La serie è stazionaria 
 
 A questo punto una interpretazione astratta sarà a sua volta un sistema di equazioni:
 \[F^{\natural} = \{x_i = f_i^{\natural}(x_1, x_2, \cdots, x_{|N|})\ |\ i=1, 2,\cdots, |N|\}\]
-in cui sostituiamo le funzioni trasformatrici concrete con delle \textit{funzioni trasformatrici astratte} \(f_i^{\natural}:\mathbb{A}^{|N|}\rightarrow\mathbb{A}\) che approssimano correttamente quelle concrete e che ragionano su un dominio semantico astratto \(\mathbb{A}\) collegato tramite una connessione di Galois a quello concreto \(\mathbb{C}\). Per dimostrare la soundness dell'interpetazione astratta bisogna dimostrare la soundness di ogni funzione trasformatrice astratta in rispetto a quella concreta. 
+in cui sostituiamo le funzioni trasformatrici concrete con delle \textit{funzioni trasformatrici astratte} \(f_i^{\natural}:\mathbb{A}^{|N|}\rightarrow\mathbb{A}\) che approssimano correttamente quelle concrete e che ragionano su un dominio semantico astratto \(\mathbb{A}\) collegato tramite una connessione di Galois a quello concreto \(\mathbb{C}\). Per dimostrare la soundness dell'interpretazione astratta bisogna dimostrare la soundness di ogni funzione trasformatrice astratta in rispetto a quella concreta. 
 
-Riprendendo l'Esempio \ref{ex:easyCode} e sostituendo il dominio concreto con il dominio astrtatto degli intervalli di interi \(\langle\textrm{Int}, \preceq_{\textrm{Int}}, \sqcup, \sqcap, [-\infty, +\infty], \perp_{\textrm{Int}} \rangle\) il sistema di equazioni diventa: 
+Riprendendo l'Esempio \ref{ex:easyCode} e sostituendo il dominio concreto con il dominio astratto degli intervalli di interi \(\langle\textrm{Int}, \preceq_{\textrm{Int}}, \sqcup, \sqcap, [-\infty, +\infty], \perp_{\textrm{Int}} \rangle\) il sistema di equazioni diventa: 
 
 \[
 F^{\natural} = 
@@ -697,7 +697,7 @@ La sequenza di iterazioni di Kleene partendo da bottom di \(F^{\natural}\) diven
 
 Anche in questo caso dopo il terzo step la catena diventa stazionaria e facendo il lub di tutti gli step, quindi \(\bigsqcup_{i\geq0}t_i\), otteniamo il lfp di \(F^{\natural}\) che è pari a \(t_3\) ed a tutti gli step dopo.
 
-In questo caso l'interpretazione astratta ci restituisce lo stesso risulato della analisi concreta in un tempo finito. Non saremo però sempre così fortunati, infatti anche nella computazione astratta possono formarsi catene crescenti infinite o troppo lunghe per essere calcolate in un tempo ragionevole. Abbiamo quindi bisogno di un estrapolatore in grado di far convergere il calcolo della approssimazione nel caso questa diverga o ci impieghi troppo tempo. Per questo motivo introduciamo gli operatori definiti nella sezione seguente.
+In questo caso l'interpretazione astratta ci restituisce lo stesso risultato della analisi concreta in un tempo finito. Non saremo però sempre così fortunati, infatti anche nella computazione astratta possono formarsi catene crescenti infinite o troppo lunghe per essere calcolate in un tempo ragionevole. Abbiamo quindi bisogno di un estrapolatore in grado di far convergere il calcolo della approssimazione nel caso questa diverga o ci impieghi troppo tempo. Per questo motivo introduciamo gli operatori definiti nella sezione seguente.
 
 \subsection{Widening e Narrowing}
 Solo nel caso in cui il dominio astratto è finito o rispetta la condizione di catena crescente saremo sicuri che la computazione del fix-point finisce in un tempo finito. In tutti gli altri casi avremo bisogno di un operatore in grado di aiutarci a ristabilire la convergenza del calcolo.
@@ -714,7 +714,7 @@ Dato un poset \(\simplePoset{S}\), la funzione \(\nabla:S\times S\rightarrow S\)
 	è stazionaria, ovvero \(\exists k\ge 0:\forall t\geq k: y_t = y_k\)
 \end{itemize}
 \end{definition}
-Il widening è quindi una over-approsimazione del lub. 
+Il widening è quindi una over-approssimazione del least-upper bound. 
 
 \begin{definition}[Iterazione ascendente con widening]
 Dati un poset \(\simplePoset{S}\), una funzione \(f:S\rightarrow S\) ed un widening \(\nabla : S\times S\rightarrow S\), la sequenza di iterazione con \(\nabla\) su \textit{S}, partendo dall'elemento \(\perp\in S\) è definito ricorsivamente nel seguente modo, \(\forall \ n \in \mathbb{N}\):
@@ -790,7 +790,7 @@ ed un narrowing \(\Delta:\textrm{Int}\times\textrm{Int}\rightarrow\textrm{Int}\)
 \]
 \end{example}
 
-Riassumendo il concetto: nella prima fase (ascendente) utilizzeremo, per raggiungere un post-fix-point di \(F^{\natural}\), una versione del sistema di equazione che fa il join tra gli step della iterazione utilizzando il lub od il widening (con una logica in grado di decidere quando usare l'uno o l'altro), questo passaggio lo chiamiamo \(F^{\nabla}\). Nella fase discendente invece, partendo dal risultato calcolato da quella prima, modificheremo il sistema di equazioni in modo da fare il meet tra gli step utlizzando o il glb o il narrowing, questo passaggio lo chiamiamo \(F^{\Delta}\). 
+Riassumendo il concetto: nella prima fase (ascendente) utilizzeremo, per raggiungere un post-fix-point di \(F^{\natural}\), una versione del sistema di equazione che fa il join tra gli step della iterazione utilizzando il lub od il widening (con una logica in grado di decidere quando usare l'uno o l'altro), questo passaggio lo chiamiamo \(F^{\nabla}\). Nella fase discendente invece, partendo dal risultato calcolato da quella prima, modificheremo il sistema di equazioni in modo da fare il meet tra gli step utilizzando o il glb o il narrowing, questo passaggio lo chiamiamo \(F^{\Delta}\). 
 In Figura \ref{fig:phasesFig} è mostrata una rappresentazione grafica della fase ascendente e discendente su un dominio \(\mathbb{S}\).
 
 \begin{figure}[H]
@@ -921,7 +921,7 @@ F^{\Delta} =
 per la fase discendente.
 
 Per WP intendiamo i \textit{widening points}, ovvero i punti del CFG in cui viene applicato il widening. Si può mostrare che per ogni ciclo del grafo si può etichettare un nodo al suo interno come WP e il calcolo del fix-point convergerà comunque (questo ci permette di essere più selettivi nell'uso del widening e quindi migliorare la precisione dell'approssimazione). Per questo esempio abbiamo \(x_3\) come unico WP.
-I risultati dell'analisi sono mostrati nella tabelle della Figura \ref{fig:ris}. 
+I risultati dell'analisi sono mostrati nella Tabella \ref{fig:ris}. 
 \begin{table}
 \begin{minipage}{\textwidth}
     \centering
@@ -971,16 +971,49 @@ I risultati dell'analisi sono mostrati nella tabelle della Figura \ref{fig:ris}.
 \section{Dominio delle parti dell'insieme finite e non ridondanti}\label{sec:EgliMilnerWidening}
 In questa sezione parleremo di un particolare dominio che si può costruire a partire da un qualsiasi reticolo, ovvero il dominio delle parti dell'insieme finite e non ridondanti di un reticolo. Mostreremo inoltre una possibile definizione di widening per questo dominio seguendo l'articolo \cite{DBLP:journals/sttt/BagnaraHZ07}.
 
+\iffalse
+\noindent Dato un reticolo \(\langle S, \preceq \rangle\) un insieme \(D\in\wp_{\textrm{f}} (S)\) è \textit{non ridondante} se e solo se:
+\[\forall d_1, d_2 \in D.\ d_1\preceq d_2\Rightarrow d_1=d_2\]
+se \(D\) è ridondante lo possiamo trasformare nella sua versione equivalente e non ridondante con la \textit{funzione di riduzione} così definita:
+\[\Omega \triangleq D \backslash \lbrace d \in D     \ \vert\ d= \perp \vee\ \exists d'\in D . d\prec d' \rbrace\]
+L'insieme dei sottoinsiemi non ridonanti di \(\langle S, \preceq \rangle\) è denominato con \(\wp_{\textrm{fn}}(S, \preceq)\).
+
+\[\hat{S}_P = \langle \wp_{\textrm{fn}}(S, \preceq),\preceq_P, \sqcup_P, \sqcap_P, \perp_P, \top_P \rangle\]
+dove dati \(S_1, S_2\in\wp_{\textrm{fn}}(S, \preceq)\) abbiamo:
+\begin{itemize}
+	\item \(S_1 \preceq_P S_2\) sse \(\forall s_1 \in S_1 : \exists s_2 \in S_2.\ s_1\preceq s_2\);
+	\item \(S_1 \sqcup_P S_2 = \Omega(S_1 \cup S_2)\);
+	\item \(S_1 \sqcap_P S_2 = \Omega(\{s_1 \sqcap s_2\ |\ s_1\in S_1, s_2\in S_2\})\);
+	\item \(\perp_P=\{\}\);
+	\item \(\top_P=\{\top\}\);
+\end{itemize}
+
+
+\[S_1 \nabla_P S_2 = S'_2\sqcup_P\Omega(\{ s_1\nabla s_2 \in S\ \vert\ s_1\in S_1, s_2\in S'_2, s_1\prec s_2 \})\]
+dove:
+	\begin{align*}
+	S'_2 &=  \begin{cases}
+				S_2 &\textrm{se } S_1\prec_{\textrm{EM}} S_2 \\
+				S_1\boxplus_{\textrm{EM}} S_2 &\textrm{altrimenti}
+				\end{cases}
+	\end{align*}
+
+\noindent La \textit{relazione di ordine parziale di Egli-Milner} è definita dati \(S_1, S_2\in\wp_{\textrm{fn}}(S, \preceq)\) allora \(S_1 \preceq_{\textrm{EM}} S_2 \textrm{ sse:} \)
+\[S_1=\perp_P\textrm{ oppure,}\]
+\[S_1\preceq_P S_2 \wedge \forall s_2\in S_2 : \exists s_1\in S_1: s_1\preceq s_2\]
+\noindent Un \textit{connettore di Egli-Milner} per \(\hat{S}_P\), denotato con \(\boxplus_{\textrm{EM}}\), è un qualunque operatore di upper bound per l'ordinamento di Egli-Milner su \(\wp_{\textrm{fn}}(S, \preceq)\).
+\fi
+
 \begin{definition}[Non ridondanza]
-Dato un reticolo \ un insieme \(D\in\wp_{\textrm{f}} (S)\) è \textit{non ridondante} se e solo se:
+Dato un reticolo \(\langle S, \preceq \rangle \) un insieme \(D\in\wp_{\textrm{f}} (S)\) è \textit{non ridondante} se e solo se:
 \begin{itemize}
 	\item \(\perp\notin D\);
 	\item \(\forall d_1, d_2 \in D.\ d_1\preceq d_2\Rightarrow d_1=d_2\);
 \end{itemize}
-L'insieme dei sottoinsiemi non ridonanti si \(S\) rispetto a \(\preceq\) è denominato con \(\wp_{\textrm{fn}}(S, \preceq)\).
+Dove \(\wp_{\textrm{f}}(S)\) è l'insieme dei sottoinsiemi finiti di \(S\). L'insieme dei sottoinsiemi non ridondanti di \(S\) rispetto a \(\preceq\) è denominato con \(\wp_{\textrm{fn}}(S, \preceq)\).
 \end{definition}
 
-\'E importante notare che ogni sottoinsieme finito di un insieme con ordinamento parziale ha una corrispettivo equivalente non ridondante che si può ottenere tramite una funzione di riduzione che definiamo di seguito.
+\'E importante notare che ogni sottoinsieme finito di un insieme con ordinamento parziale ha una corrispettivo equivalente non ridondante che si può ottenere tramite una funzione di riduzione che definiamo come di seguito:
 
 \begin{definition}[Funzione di riduzione]\label{def:funzioneRiduzione}
 La \textit{funzione di riduzione} \(\Omega_{S}^{\preceq} : \wp_{\textrm{f}}(S)\rightarrow\wp_{\textrm{fn}}(S, \preceq)\) che trasforma ogni sottoinsieme finito di \(S\) nel suo omonimo non ridondante in rispetto a \(\preceq\) è cosi definita per ogni \(D\in\wp_{\textrm{f}}(S)\):
@@ -988,7 +1021,7 @@ La \textit{funzione di riduzione} \(\Omega_{S}^{\preceq} : \wp_{\textrm{f}}(S)\r
 \end{definition}
 
 \begin{definition}[Dominio delle parti dell'insieme finite e non ridondanti]\label{def:powersetDomain}
-Dato un reticolo \(\completeLattice{S}\) il dominio delle parti dell'insieme finite su \(S\) è il reticolo:
+Dato un reticolo \(\completeLattice{S}\) il \textit{dominio delle parti dell'insieme finite e non ridondanti} su \(S\) è il reticolo:
 \[\hat{S}_P = \langle \wp_{\textrm{fn}}(S, \preceq),\preceq_P, \sqcup_P, \sqcap_P, \perp_P, \top_P \rangle\]
 dove:
 \begin{itemize}
@@ -1000,9 +1033,9 @@ dove:
 \end{itemize}
 \end{definition}
 
-Abbiamo quindi costruito un dominio che è inerentemente più preciso di quello sottostanze, a partire dal quale viene costruito. Pensiamo ad esempio al dominio degli intervalli interi mostrato nell'Esempio \ref{ex:intervalDomain} e costruiamone la versione mostrata sopra nella Definizione \ref{def:powersetDomain}, cioè \(\hat{\textrm{Int}}_P\). In \(\hat{\textrm{Int}}_P\) possiamo rappresentare elementi come \(\{[0, 10], [20, 30]\}\), ovvero possiamo rappresentare dei gap tra gli intervalli raggiungendo una precisione più alta rispetto al sottostante Int, dove il massimo che si potrebbe fare per rappresentare l'insieme di intervalli appena mostrato, e rimanendo sound, è \([0, 30]\).
+Abbiamo quindi costruito un dominio che è inerentemente più preciso di quello sottostante, a partire dal quale viene costruito. Pensiamo ad esempio al dominio degli intervalli interi mostrato nell'Esempio \ref{ex:intervalDomain} e costruiamone la versione mostrata sopra nella Definizione \ref{def:powersetDomain}, cioè \(\hat{\textrm{Int}}_P\). In \(\hat{\textrm{Int}}_P\) possiamo rappresentare elementi come \(\{[0, 10], [20, 30]\}\), ovvero possiamo rappresentare dei gap tra gli intervalli raggiungendo una precisione più alta rispetto al sottostante Int, dove il massimo che si potrebbe fare per rappresentare l'insieme di intervalli appena mostrato, e rimanendo sound, è \([0, 30]\).
 
-Il nuovo dominio così creato però eredita tutti i problemi di quello su cui è basato, quindi come nel caso degli intervalli, si può ottenere un reticolo che non rispetta la condizione di catena ascendente. In questi casi diventa necessario cercare un operatore di widening per il nuovo dominio capace di garantire la convergenza del calcolo del fix-point durante l'analisi. Nell'articolo \cite{DBLP:journals/sttt/BagnaraHZ07} vengono mostrati tre metodi costruttivi per ottenere un widening per il dominio delle parti dell'insieme finite e non ridondanti partendo da quello del dominio sottostante. Nel seguito daremo alcune definizioni di operatori che ci serveranno per la costruzione di tale widening (mostreremo uno solo dei tre metodi mostrati, che è poi quello implementato in LiSA per tali domini, come vedremo nel Capitolo \ref{chapter:lisa}).
+Il nuovo dominio così creato però eredita tutti i problemi di quello su cui è basato, quindi come nel caso degli intervalli, si può ottenere un reticolo che non rispetta la condizione di catena ascendente. In questi casi diventa necessario cercare un operatore di widening per il nuovo dominio capace di garantire la convergenza del calcolo del fix-point durante l'analisi. Nell'articolo \cite{DBLP:journals/sttt/BagnaraHZ07} vengono mostrati tre metodi costruttivi per ottenere un widening per il dominio delle parti dell'insieme finite e non ridondanti partendo da quello del dominio sottostante. Nel seguito daremo alcune definizioni di operatori che ci serviranno per la costruzione di tale widening (mostreremo uno solo dei tre metodi mostrati, che è poi quello implementato in LiSA per tali domini, come vedremo nel Capitolo \ref{chapter:lisa}).
 
 \begin{definition} [Relazione di ordine parziale di Egli-Milner]\label{def:EgliMilnerRelation}
 \'E possibile costruire una relazione di ordine parziale Egli-Milner tale che, dati \(S_1, S_2\in\wp_{\textrm{fn}}(S, \preceq)\) allora \(S_1 \preceq_{\textrm{EM}} S_2 \textrm{ se e solo se o:} \)
@@ -1011,13 +1044,13 @@ Il nuovo dominio così creato però eredita tutti i problemi di quello su cui è
 \end{definition}
 
 \begin{definition}[Connettore di Egli-Milner]\label{def:connettoreEgliMilner}
-Un connettore di Egli-Milner per \(\hat{S}_P = \langle \wp_{\textrm{fn}}(S, \preceq),\preceq_P, \perp_P ,\vee_P\rangle\), denotato con \(\boxplus_{\textrm{EM}}\), è un qualunque operatore di upper bound per l'ordinamento di Egli-Milner su \(\wp_{\textrm{fn}}(S, \preceq)\), definito precedentemente. Anche se una operazione di least-upper bound non può essere sempre definita, un connettore di Egli-Milner si, ad esempio possiamo sempre usare: \(S_1\boxplus_{\textrm{EM}} S_2 = \bigsqcup\{ S_1 \cup S_2\}\).
+Un connettore di Egli-Milner per \(\hat{S}_P = \langle \wp_{\textrm{fn}}(S, \preceq),\preceq_P, \perp_P ,\sqcup_P\rangle\), denotato con \(\boxplus_{\textrm{EM}}\), è un qualunque operatore di upper bound per l'ordinamento di Egli-Milner su \(\wp_{\textrm{fn}}(S, \preceq)\), definito precedentemente. Anche se una operazione di least-upper bound non può essere sempre definita, un connettore di Egli-Milner si, ad esempio possiamo sempre usare: \(S_1\boxplus_{\textrm{EM}} S_2 = \bigsqcup\{ S_1 \cup S_2\}\).
 \end{definition}
 
 \begin{definition}[Ordinamento parziale indotto da widening] 
 Ogni operatore di widening \(\nabla\) su un join semilattice \(\langle S,\preceq, \perp ,\vee\rangle\) induce un corrispondente ordinamento parziale \(\preceq_{\nabla}\) sul dominio \emph{S}, che è definito come la chiusura transitiva e riflessiva della relazione:
 \[\lbrace(s_1, s)\in S\times S\ \vert\ \exists s_2\in S.\ s_1\prec s_2 \wedge s = s_1\nabla s_2\rbrace\]
-Inoltre la relazione \(\preceq_{\nabla}\) rispetta la ascending chain condition.
+Inoltre la relazione \(\preceq_{\nabla}\) rispetta la condizione di catena ascendente.
 \end{definition}
 
 \begin{definition}[Estrapolatore euristico]
@@ -1035,13 +1068,13 @@ Un estrapolatore euristico \(h_{P}^{\nabla}\)
 \end{definition}
 
 \begin{proposition}\label{prop:estrapolatoreEuristicoWideningConnesso}
-Dato \(\hat{S}_P = \langle \wp_{\textrm{fn}}(S, \preceq),\preceq_P, \perp_P ,\vee_P\rangle\). per ogni \(S_1, S_2\in\wp_{\textrm{fn}}(S, \preceq)\) tale che \(S_1\preceq_P S_2\) sia
+Dato \(\hat{S}_P = \langle \wp_{\textrm{fn}}(S, \preceq),\preceq_P, \perp_P ,\sqcup_P\rangle\). per ogni \(S_1, S_2\in\wp_{\textrm{fn}}(S, \preceq)\) tale che \(S_1\preceq_P S_2\) sia
 \[h_{P}^{\nabla}(S_1, S_2) = S_2\vee_P\Omega_{S}^{\preceq}(\lbrace s_1\nabla s_2 \in S\ \vert\ s_1\in S_1, s_2\in S_2, s_1\prec s_2 \rbrace)\]
 allora \(h_{P}^{\nabla}\) è un estrapolatore euristico \(\nabla\)-connesso per per \(\hat{S}_P\).
 \end{proposition}
 
 \begin{definition}[il \(_{\textrm{EM}}\nabla_P\)widening]\label{def:wideningPowersetDomain}
-Dato \(\hat{S}_P = \langle \wp_{\textrm{fn}}(S, \preceq),\preceq_P, \perp_P ,\vee_P\rangle\), sia \(h_{P}^{\nabla}\) un estrapolatore euristico \(\nabla\)-connesso e \(\boxplus_{\textrm{EM}}\) un connettore per \(\hat{S}_P\). Siano poi \(S_1, S_2\in\wp_{\textrm{fn}}(S, \preceq)\), dove \(S_1\prec_P S_2\). Allora \(S_1\ _{\textrm{EM}}\nabla_P S_2 = h_{P}^{\nabla}(S_1, S'_2)\) dove:
+Dato \(\hat{S}_P = \langle \wp_{\textrm{fn}}(S, \preceq),\preceq_P, \perp_P ,\sqcup_P\rangle\), sia \(h_{P}^{\nabla}\) un estrapolatore euristico \(\nabla\)-connesso e \(\boxplus_{\textrm{EM}}\) un connettore per \(\hat{S}_P\). Siano poi \(S_1, S_2\in\wp_{\textrm{fn}}(S, \preceq)\), dove \(S_1\prec_P S_2\). Allora \(S_1\ _{\textrm{EM}}\nabla_P S_2 = h_{P}^{\nabla}(S_1, S'_2)\) dove:
 	\begin{align*}
 	S'_2 &=  \begin{cases}
 				S_2 &\textrm{se} S_1\prec_{\textrm{EM}} S_2 \\

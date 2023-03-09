@@ -1,12 +1,12 @@
 \chapter{Implementazioni in LiSA}\label{chapter:lisa}
 
 
-
-LiSA (\textbf{Li}brary for \textbf{S}tatic \textbf{A}nalysis) è un framework generico sviluppato come libreria open-source in Java che permette in modo facile, diretto e completo l'analisi statica tramite interpretazione astratta di semplici programmi multi linguaggio. Una basilare rappresentazione del flow dell'analisi in LiSA può essere vista in figura \ref{fig:lisaAnalysisFlow} e lo possiamo riassumere così: (1) un programma scritto in un linguaggio L viene passato al front-end appropriato che lo trascrive nel linguaggio intermedio compreso da LiSA basato su Control Flow Graph (generalmente un LiSA CFG per funzione), (2) LiSA poi analizza i CFGs creati con un algoritmo di ricerca del fix-point seguendo le linee guida passate da utente tramite la configurazione (ad esempio: domini da usare, parametri per l'algorito del fix-point, tipo di analisi interprocedurale), (3) infine LiSA esegue i semantics checks, anch'essi passati da utente, ed eventualmente genera warnings ed errori se l'analisi non ne rispetta i vincoli. 
+\hypersetup{colorlinks=true, linkcolor=blue}
+LiSA (\textbf{Li}brary for \textbf{S}tatic \textbf{A}nalysis, \href{https://github.com/lisa-analyzer/lisa}{github/LiSA} ) è un framework generico sviluppato come libreria open-source in Java che permette in modo facile, diretto e completo l'analisi statica tramite interpretazione astratta di semplici programmi multi linguaggio. Una basilare rappresentazione del flow dell'analisi in LiSA può essere vista in figura \ref{fig:lisaAnalysisFlow} e lo possiamo riassumere così: (1) un programma scritto in un linguaggio L viene passato al front-end appropriato che lo trascrive nel linguaggio intermedio compreso da LiSA basato su Control Flow Graph (generalmente un LiSA CFG per funzione), (2) LiSA poi analizza i CFGs creati con un algoritmo di ricerca del fix-point seguendo le linee guida passate da utente tramite la configurazione (ad esempio: domini da usare, parametri per l'algoritmo del fix-point, tipo di analisi interprocedurale), (3) infine LiSA esegue i semantics checks, anch'essi passati da utente, ed eventualmente genera warnings ed errori se l'analisi non ne rispetta i vincoli. 
 
 LiSA mette a disposizione: (i) un linguaggio interno basato su control-flow graph estensibile e abbastanza generico da supportare i costrutti semantici di molti linguaggi di programmazione, (ii) una vasta gamma di front-end per la traduzione di programmi in LiSA CFGs, (iii) una base comune per lo sviluppo di nuovi domini astratti da usare nelle analisi (sia relazionali che non, più alcuni domini built-in) ed infine (iv) un algoritmo per il calcolo del fix-point dei LiSA CFGs con metodo di risoluzione basato su working-set list.
 
-In questa tesi verrano esposte le modifiche fatte soprattutto sulle componenti (iii) e (iv). Per prima cosa è stato esteso l'algoritmo per il calcolo del fix-point affinchè fosse in grado di eseguire anche la fase discendente partendo da un post-fix-point precedentemente calcolato, sono state aggiunte classi generiche come base per l'implementazione del dominio astratto degli insiemi non ridondanti di un altro dominio astratto di partenza(nonchè una implementazione concreta di ciò per gli intervalli) ed infine, per scopo sperimentale, una rudimentale versione del decoupling capace di usare domini diversi per salire e scendere nell'analisi.
+In questa tesi verrano esposte le modifiche fatte soprattutto sulle componenti (iii) e (iv). Per prima cosa è stato esteso l'algoritmo per il calcolo del fix-point affinchè fosse in grado di eseguire anche la fase discendente partendo da un post-fix-point precedentemente calcolato, sono state aggiunte classi generiche come base per l'implementazione del dominio astratto dei sottoinsiemi non ridondanti di un dominio astratto di partenza (nonchè una implementazione concreta di ciò per gli intervalli) ed infine, per scopo sperimentale, una rudimentale versione del decoupling delle fasi capace di usare domini diversi per salire e scendere nell'analisi.
 
 \begin{figure}
     \centering
@@ -109,7 +109,7 @@ In questa sezione faremo una overview della architettura di LiSA focalizzandoci 
 La struttura dei CFG in LiSA è progettata per essere il più flessibile possibile così da essere in grado di rappresentare il maggior numero di costrutti semantici provenienti da più linguaggi di programmazione. Un LiSA CFG ha gli \texttt{Statement} come nodi (ognuno con il proprio significato semantico) e gli \texttt{Edge} come archi (i quali modellano il flusso di dati durante l'esecuzione del programma). 
 
 \subsubsection{\texttt{Statement}}
-Uno \texttt{Statement} rappresenta un costrutto semantico base di un linguaggio di programmazione che non modifica il flusso di esecuzione. Uno \texttt{Statement} che lascia un valore sullo stack è detto \texttt{Expression}, che è una sotto classe di \texttt{Statement}. La maggior parte delle \texttt{Expression} rappresentano operazioni base comuni a molti linguaggio (come addizione, sottrazione, e tutte le altre operazioni aritmetiche, operazioni sulle stringhe come concatenazione o lunghezza, operazioni logiche su booleani come and e or e così via). Una sotto-classe particolare di \texttt{Expression} è \texttt{Call}. Esistono molti tipi di \texttt{Call} in LiSA, ma riassumendo queste rappresentano chiamate ad altre funzioni, quindi altri CFG. Le \texttt{Call} vengono gestite tramite una classe che implementa l'interfaccia \texttt{InterproceduralAnalysis}, il compito di una di queste classi è proprio di gestire l'interproceduralità di un programma, ovvero la possibilità di avere, in una funzione, chiamate ad altre funzioni (o a se stesse, quindi chiamate ricorsive). In figura \ref{fig:gerarchiaStatement} si può vedere una sommaria e non completa gerarchia della classe \texttt{Statement}.
+Uno \texttt{Statement} rappresenta un costrutto semantico base di un linguaggio di programmazione che non modifica il flusso di esecuzione. Uno \texttt{Statement} che lascia un valore sullo stack è detto \texttt{Expression}, che è una sotto classe di \texttt{Statement}. La maggior parte delle \texttt{Expression} rappresentano operazioni base comuni a molti linguaggi (come addizione, sottrazione, e tutte le altre operazioni aritmetiche, operazioni sulle stringhe come concatenazione o lunghezza, operazioni logiche su booleani come and e or e così via). Una sotto-classe particolare di \texttt{Expression} è \texttt{Call}. Esistono molti tipi di \texttt{Call} in LiSA, ma riassumendo queste rappresentano chiamate ad altre funzioni, quindi altri CFG. Le \texttt{Call} vengono gestite tramite una classe che implementa l'interfaccia \texttt{InterproceduralAnalysis}, il compito di una di queste classi è proprio di gestire l'interproceduralità di un programma, ovvero la possibilità di avere, in una funzione, chiamate ad altre funzioni (o a se stesse, quindi chiamate ricorsive). In figura \ref{fig:gerarchiaStatement} si può vedere una sommaria e non completa gerarchia della classe \texttt{Statement}.
 
 \begin{figure}[ht]
 	\centering
@@ -122,7 +122,7 @@ Uno \texttt{Statement} rappresenta un costrutto semantico base di un linguaggio 
 La classe \texttt{Edge} collega tra di loro due nodi. Esistono tre tipi di \texttt{Edge}: \texttt{SequentialEdge}, modella un flusso senza condizione e sequenziale dal nodo di origine al nodo target, \texttt{TrueEdge}, modella un flusso condizionale se la condizione nel nodo di origine è vera, \texttt{FalseEdge}, modella un flusso condizionale se la condizione nel nodo di origine è falsa.
 \\
 
-\texttt{Edge} e \texttt{Statement} modificano le istanze del dominio astratto attraverso, rispettivamente, i metodi \texttt{traverse}, che agisce sul post-state del nodo di origine e consegna il valore trasformato al pre-state del nodo target, e \texttt{semantics}, che trasforma il pre-state di un nodo nel suo post-state. Più precisamente però non è la classe \texttt{Statement} che modifica il dominio astratto, infatti ogni \texttt{Statement} viene trascritto in una composizione di \texttt{SymbolicExpression} a run-time durante l'analisi. Ogni \texttt{SymbolicExpression} ha un significato semantico ben preciso e le istanze del dominio astratto definiscono gli effetti semantici su quest'ultime e non sugli \texttt{Statement}. Possiamo vedere gli \texttt{Statement} come la sintassi e le \texttt{SymbolicExpression} come la semantica dei CFG in LiSA. Le \texttt{SymbolicExpression} si dividono in due principali tipi di espressione, abbiamo le \texttt{HeapExpression}, ovvero le espressioni che modellano le operazioni sul'heap (come \texttt{HeapAllocation}, \texttt{AccessChild}), e le \texttt{ValueExpression}, che modellano modifiche e operazione sul valore di variabili e costanti (qui per esempio abbiamo \texttt{Addition}, \texttt{LessOrEqual}, \texttt{And}, \texttt{Modulo}, etc..). In figura \ref{fig:gerarchiaSymbolic} qua sotto si vede la non completa gerarchia delle \texttt{SymbolicExpression}.
+\texttt{Edge} e \texttt{Statement} modificano le istanze del dominio astratto attraverso, rispettivamente, i metodi \texttt{traverse}, che agisce sul post-state del nodo di origine e consegna il valore trasformato al pre-state del nodo target, e \texttt{semantics}, che trasforma il pre-state di un nodo nel suo post-state. Più precisamente però non è la classe \texttt{Statement} che modifica il dominio astratto. Ogni oggetto di tipo \texttt{Statement} infatti viene trascritto in una composizione di \texttt{SymbolicExpression} a run-time durante l'analisi. Ogni \texttt{SymbolicExpression} ha un significato semantico ben preciso e le istanze del dominio astratto definiscono gli effetti semantici su quest'ultime e non sugli \texttt{Statement}. Possiamo vedere gli \texttt{Statement} come la sintassi e le \texttt{SymbolicExpression} come la semantica dei CFG in LiSA. Le \texttt{SymbolicExpression} si dividono in due principali tipi di espressione, abbiamo le \texttt{HeapExpression}, ovvero le espressioni che modellano le operazioni sull'heap (come \texttt{HeapAllocation}, \texttt{AccessChild}), e le \texttt{ValueExpression}, che modellano modifiche e operazioni sul valore di variabili e costanti (qui per esempio abbiamo \texttt{Addition}, \texttt{LessOrEqual}, \texttt{And}, \texttt{Modulo}, etc..). In figura \ref{fig:gerarchiaSymbolic} qua sotto si vede la non completa gerarchia delle \texttt{SymbolicExpression}.
 
 \begin{figure}[ht]
 	\centering
@@ -132,7 +132,7 @@ La classe \texttt{Edge} collega tra di loro due nodi. Esistono tre tipi di \text
 \end{figure}
 
 
-Per fare un esempio prendiamo in considerazione lo statement \texttt{x = a + b} in un linguaggio non tipato (come Python), in cui non sappiamo i tipi dei valori di \texttt{a} e \texttt{b}. Questo statement in LiSA può essere tradotto in due espressioni simboliche, una per le parte sinistra, ovvero un riferimento alla variabile \texttt{x}, che può essere ulteriormente processata dal dominio astratto che modula l'heap, e una per la parte destra e modella la semantica dell'addizione \texttt{a + b}. Questa può anche controllare i tipi delle due variabili di \texttt{a} e \texttt{b} a run-time e in alcuni casi generare una \texttt{SymbolicExpression} che rappresenta l'addizione tra interi (se le due variabili possono avere valori numerici interi) e in altri casi una che rappresenta la concatenazione di stringhe (se entrambe possono contenere stringhe), o qualsiasi altro tipo di operazione modellata tramite il \texttt{+} che dipende dalle caratteristiche dei suoi operandi.
+Per fare un esempio prendiamo in considerazione lo statement \texttt{x = a + b} in un linguaggio non tipato (come Python), in cui non sappiamo i tipi dei valori di \texttt{a} e \texttt{b}. Questo statement in LiSA può essere tradotto in due espressioni simboliche, una per le parte sinistra, ovvero un riferimento alla variabile \texttt{x}, che può essere ulteriormente processata dal dominio astratto che modula l'heap, e una per la parte destra e modella la semantica dell'addizione \texttt{a + b}. Questa può anche controllare i tipi delle due variabili a run-time e in alcuni casi generare una \texttt{SymbolicExpression} che rappresenta l'addizione tra interi (se le due variabili possono avere valori numerici interi) e in altri casi una che rappresenta la concatenazione di stringhe (se entrambe possono contenere stringhe), o qualsiasi altro tipo di operazione modellata tramite il \texttt{+} che dipende dalle caratteristiche dei suoi operandi.
 Questa traduzione run-time degli \texttt{Statement} in più \texttt{SymbolicExpression} rende i CFG di LiSA dinamici e plastici, quindi capaci di rappresentare un grande numero di costrutti semantici e la possibilità di modellare le funzioni della maggior parte dei linguaggi. Il compito del front-end in LiSA sarà quello di trasformare un programma scritto in un qualsiasi linguaggio di programmazione in un insieme di CFG comprendibili a LiSA, fatti di \texttt{Statement} (anche language-specific) e \texttt{edge}, e capaci di simulare \textit{completamente} la semantica del programma originale.
 
 \subsection{Domini astratti in LiSA}\label{sec:abstractDomainLiSA}
@@ -146,8 +146,8 @@ L'interfaccia \texttt{SemanticDomain<D, E, I>} è parametrica all'istanza concre
     \item \texttt{D assume(E exp)}: restituisce una istanza del dominio in cui si assume che \texttt{exp} sia vera;
     \item \texttt{D forgetIdentifier(I id)}: restituisce una istanza del dominio in cui viene scordata qualsiasi informazione riguardante l'identificatore \texttt{id};
     \item \texttt{D forgetIdentifiers(Collection<I> ids)}: restituisce una istanza del dominio in cui viene scordata qualsiasi informazione riguardante gli identificatori \texttt{ids};
-    \item \texttt{Satisfiability satisfies(E exp)}: resituisce un valore (tra \texttt{SATISFIED}, \texttt{UNKNOWN}, \texttt{NOT\_SATISFIED} e \texttt{BOTTOM}) che indica se la espressione \texttt{exp} è soddisfatta nell'istanza del dominio su cui viene chiamat;
-    \item \texttt{D smallStepSemantics(E exp)}: resitutisce una istanza del dominio modificata dagli effetti della espressione \texttt{exp};
+    \item \texttt{Satisfiability satisfies(E exp)}: restituisce un valore (tra \texttt{SATISFIED}, \texttt{UNKNOWN}, \texttt{NOT\_SATISFIED} e \texttt{BOTTOM}) che indica se la espressione \texttt{exp} è soddisfatta nell'istanza del dominio su cui viene chiamata;
+    \item \texttt{D smallStepSemantics(E exp)}: restituisce una istanza del dominio modificata dagli effetti della espressione \texttt{exp};
 \end{itemize}
 
 \subsubsection{\texttt{Lattice}}\label{subsec:lattice}
@@ -161,8 +161,8 @@ L'interfaccia \texttt{Lattice<L>} è parametrica all'istanza concreta L. Un reti
     \item \texttt{L bottom(L other)}: restituisce l'elemento \(\perp\) del reticolo;
     \item \texttt{L widening(L other)}: definisce l'operazione di widening del reticolo e restituisce il widening tra questo oggetto e \texttt{other};
     \item \texttt{L narrowing(L other)}: definisce l'operazione di narrowing del reticolo e restituisce il narrowing tra questo oggetto e \texttt{other} (di defualt il narrowing esegue il glb);
-    \item \texttt{boolean isTop()}: restiuisce \texttt{true} se l'istanza su cui viene chiamata è l'elemento \(\top\);
-    \item \texttt{boolean isBottom()}: restiuisce \texttt{true} se l'istanza su cui viene chiamata è l'elemento \(\perp\);
+    \item \texttt{boolean isTop()}: restituisce \texttt{true} se l'istanza su cui viene chiamata è l'elemento \(\top\);
+    \item \texttt{boolean isBottom()}: restituisce \texttt{true} se l'istanza su cui viene chiamata è l'elemento \(\perp\);
 \end{itemize}
 In LiSA sono definite alcune implementazioni base di reticoli con comportamenti simili. Innanzitutto è definita l'interfaccia \texttt{BaseLattice} che estende \texttt{Lattice}, la quale definisce i casi base comuni a tutti i reticoli (ovvero le relazioni tra gli oggetti e gli elementi \(\top\) e \(\perp\)). A partire da questa sono poi implementate le classi astratte che definiscono il \texttt{SetLattice<E>} e \texttt{InverseSetLattice<E>} visti nell'esempio \ref{ex:setLattice} e il \texttt{FunctionalLattice<K,E>}, parametrico al tipo K del dominio della funzione e al tipo E del codominio nonchè dominio di un reticolo, visto nell'esempio \ref{ex:functionalLattice}. 
 
@@ -213,15 +213,15 @@ La classe che definisce lo stato dell'analisi è \texttt{AnalysisState}. \'E for
 \setlength\itemsep{0.1em}
     \item un \texttt{HeapDomain} che è responsabile di tracciare l'evoluzione dello stato della memoria dinamica durante l'esecuzione. Opera prima del \texttt{ValueDomain} e risolve gli indirizzi traducendo le espressioni simboliche e rinominando le variabili in modo tale che il \texttt{ValueDomain} possa comprenderle e si preocccupi \textit{solamente} di tracciarne le proprietà;
     
-    \item un \texttt{ValueDomain} che è responsabile di tracciare proprietà astratte (come per esempio il valore astratto) delle variabili (possibilmente pre-processate e riscritte prima dall'\texttt{HeapDomain}) del programma. In LiSA è possibile definire \texttt{ValueDomain} sia relazionali (come i Polyhedra) sia non. Per quest'ultimi è definito dentro LiSA una classe base chiamata \texttt{Environment} che estende  \texttt{FunctionalLattice<Identifier, L>} ed implementa \texttt{SemanticDomain}, capace di tracciare un valore del dominio astratto \texttt{L} (che può essere per esempio un Interval, un Sign, un Modulo) ad ogni identificatore tenuto in memoria. Va sottolineato che il dominio \texttt{L} di un \texttt{Environment} ha si la struttura reticolare, ed estende \texttt{Lattice}, e può anche ragionare semanticamente sulle \texttt{SymbolicExpression} senza però implementare \texttt{SemanticDomain}. Infatti per il caso specifico dei domini non-relazionali gestiti tramite \texttt{Environment} il dominio astratto si costruirà attraverso l'interfaccia \texttt{NonRelationalDomain} che ha solo un sottoinsieme dei metodi di \texttt{SemanticDomain}. Per capire perchè pensiamo ai metodi \texttt{assign}, \texttt{forgetIdentifier/s} in \texttt{SemanticDomain}. La definizione di questi metodi, potenzialmente, è uguale per tutti i dominio non-relazionali, ed infatti di queste se ne prende carico la classe \texttt{Environment}, lasciando alla creazione dei domini astratti non-relazionali solo la necessità di definire: (i) le operazioni riguardanti la struttura reticolare del dominio (lub, glb, lessOrEqual, \(\cdots\)), e (ii) la logica per la valutazione delle espressioni simboliche;
+    \item un \texttt{ValueDomain} che è responsabile di tracciare proprietà astratte (come per esempio il valore astratto) delle variabili (possibilmente pre-processate e riscritte prima dall'\texttt{HeapDomain}) del programma. In LiSA è possibile definire \texttt{ValueDomain} sia relazionali (come i Polyhedra) sia non. Per quest'ultimi è definita dentro LiSA una classe base chiamata \texttt{Environment} che estende  \texttt{FunctionalLattice<Identifier, L>} ed implementa \texttt{SemanticDomain}, capace di tracciare un valore del dominio astratto \texttt{L} (che può essere per esempio un Interval, un Sign, un Modulo) ad ogni identificatore tenuto in memoria. Va sottolineato che il dominio \texttt{L} di un \texttt{Environment} ha si la struttura reticolare, ed estende \texttt{Lattice}, e può anche ragionare semanticamente sulle \texttt{SymbolicExpression} senza però implementare \texttt{SemanticDomain}. Infatti per il caso specifico dei domini non-relazionali gestiti tramite \texttt{Environment} il dominio astratto si costruirà attraverso l'interfaccia \texttt{NonRelationalDomain} che ha solo un sottoinsieme dei metodi di \texttt{SemanticDomain}. Per capire perchè pensiamo ai metodi \texttt{assign}, \texttt{forgetIdentifier/s} in \texttt{SemanticDomain}. La definizione di questi metodi, potenzialmente, è uguale per tutti i domini non-relazionali, ed infatti di queste se ne prende carico la classe \texttt{Environment}, lasciando alla creazione dei domini astratti non-relazionali solo la necessità di definire: (i) le operazioni riguardanti la struttura reticolare del dominio (lub, glb, lessOrEqual, \(\cdots\)), e (ii) la logica per la valutazione delle espressioni simboliche;
     
-    \item un \texttt{TypeDomain} che è un \texttt{ValueDomain} non-relazionale (quindi costruito a partire di \texttt{Environment}) che associa ad ogni variabile l'insieme dei possibili tipi a run-time delle variabili. Questa può essere usata durante l'analisi per generare espressioni simboliche specifiche a seconda dei tipi delle variabili coinvolte nello statement;
+    \item un \texttt{TypeDomain} che è un \texttt{ValueDomain} non-relazionale (quindi costruito a partire da \texttt{Environment}) che associa ad ogni variabile l'insieme dei possibili tipi a run-time delle variabili. Questa può essere usata durante l'analisi per generare espressioni simboliche specifiche a seconda dei tipi delle variabili coinvolte nello statement;
 \end{itemize}
 
-L'\texttt{AbstractState} principlamente fa quindi da coordinatore tra l'\texttt{HeapDomain} e il \texttt{ValueDoamin}, passando all'ultimo le espressioni tradotte e gli identificatori trasformati dal primo quando i due mondi devono comunicare e invece compartizzando e separando i due domini quando le espressioni riguardano solo su uno dei due.
+L'\texttt{AbstractState} principalmente fa quindi da coordinatore tra l'\texttt{HeapDomain} e il \texttt{ValueDoamin}, passando all'ultimo le espressioni tradotte e gli identificatori trasformati dal primo quando i due mondi devono comunicare e invece compartizzando e separando i due domini quando le espressioni riguardano solo uno dei due.
 
 \subsection{Calcolo del fix-point in LiSA}\label{sec:fix-pointLiSA}
-Abbiamo visto nella sezione \ref{sec:abstractInt} che fare interpretazione astratta non significa altro che trovare una soluzione ad un sistema di equazioni costruito a partire dal CFG del programma. Tutte le soluzioni del sistema sono per definizione suoi fix-point e quindi cercare la soluzione significa cercarne un fix-point (possibilmente il più preciso, ovvero il least fix-point). Come viene mostrato nell'introduzione dell'articolo di Cousot \cite{Cousot-IMAG-RR88-1977} qualsiasi metodo caotico di risoluzione ci permette di ottenere una soluzione del sistema (non necessariamente la minima). Tra tutti questi metodi ci conviene usarne uno efficiente e che sfrutti la struttura del CFG in modo da velocizzare la convergenza verso un fix-point. L'algoritmo che viene utilizzato in LiSA per la risoluzione del sistema di equazioni è quello classico basato su working-set e prima delle mie modifiche seguiva la definizione in pseudo-codice fornita in \ref{alg:fixpointAsc}.
+Abbiamo visto nella sezione \ref{sec:abstractInt} che fare interpretazione astratta non significa altro che trovare una soluzione ad un sistema di equazioni costruito a partire dal CFG del programma. Tutte le soluzioni del sistema sono per definizione suoi fix-point e quindi cercare la soluzione significa cercarne un fix-point (possibilmente il più preciso, ovvero il least fix-point). Come viene mostrato nell'introduzione dell'articolo di Cousot \cite{Cousot-IMAG-RR88-1977} qualsiasi metodo caotico di risoluzione ci permette di ottenere una soluzione del sistema (non necessariamente la minima). Tra tutti questi metodi ci conviene usarne uno efficiente e che sfrutti la struttura del CFG in modo da velocizzare la convergenza verso un fix-point. L'algoritmo che viene utilizzato in LiSA per la risoluzione del sistema di equazioni è quello classico basato su working-set e prima dell'implementazione della fase discendente seguiva la definizione in pseudo-codice fornita in \ref{alg:fixpointAsc}.
 
 \begin{algorithm}
 	\caption{Algoritmo per il calcolo del fix-point con working-set list con solo fase ascendente.}
@@ -251,7 +251,37 @@ Abbiamo visto nella sezione \ref{sec:abstractInt} che fare interpretazione astra
 	\end{algorithmic}
 \end{algorithm}
 
-Nell'algoritmo \(result\) è una mappa che associa ogni statement del grafo ad uno stato astratto (in LiSA in sostanza è una istanza di \texttt{Map<Statement, AnalysisState>}). All'inizio la mappa è vuota (che può essere visto come il partire dall'elemento \(\perp\)). \(ws\) è la lista contente gli statement ancora da calcolare e inizialmente viene caricata con l'entry-point del CFG (ovvero \(st_0\)). Si entra poi in un ciclo while che viene ripetuto finchè nella \(ws\) sono presenti statement. I passaggi all'interno del while sono:
+\iffalse
+\begin{algorithm}
+	\caption{Algoritmo per il calcolo del fix-point con working-set list con solo fase ascendente.}
+	\label{alg:prova}
+	\begin{algorithmic}[1]
+		\Statex
+		%\Function{MST-Prim}{grafo G, funzione\_peso $\omega$, nodo\_radice r}\\
+        
+		\Let{\textit{result}}{\{\}}
+        \Let{\textit{ws}}{\(\{st_0\}\)}
+        \While{\(ws\neq \emptyset\)}
+            \Let{\textit{st}}{\(pop(ws)\)}
+            \Let{\(in_{st}\)}{\(\bigsqcup\{traverse_{prev\rightarrow st}(out_{prev})\ |\ prev \in preds(st)\}\)}
+            \Let{\(out_{st}\)}{\(semantics_{st}(in_{st})\)}
+            \If{\textbf{not }\(out_{st} \textcolor{red}{\cong} result[st]\)}
+                \If {\textcolor{red}{heuristic()}}
+                    \Let{\(result[st]\)}{\(result[st]\textcolor{red}{\otimes} out_{st}\)}
+                \Else
+                    \Let{\(result[st]\)}{\(result[st]\textcolor{red}{\oplus} out_{st}\)}
+                \EndIf
+                \Let{\(ws\)}{\(ws\cup succs(st)\)}
+            \EndIf
+        \EndWhile
+		\State \Return{\textit{result}}
+        
+		%\EndFunction
+	\end{algorithmic}
+\end{algorithm}
+\fi
+
+Nell'algoritmo \(result\) è una mappa che associa ogni statement del grafo ad uno stato astratto (in LiSA in sostanza è una istanza di \texttt{Map<Statement, AnalysisState>}). All'inizio la mappa è vuota (che può essere visto come il partire dall'elemento \(\perp\)). \(ws\) è la lista contenente gli statement ancora da calcolare e inizialmente viene caricata con l'entry-point del CFG (ovvero \(st_0\)). Si entra poi in un ciclo while che viene ripetuto finchè nella \(ws\) sono presenti statement. I passaggi all'interno del while sono:
 \begin{enumerate}
 \itemsep0em 
     \item si estrae un elemento dal \(ws\);
@@ -261,8 +291,18 @@ Nell'algoritmo \(result\) è una mappa che associa ogni statement del grafo ad u
     \item se siamo entrati nel corpo dell'if a riga 7 vuol dire che dobbiamo aggiornare \(result\). Come abbiamo visto nel capitolo sull'intepretazione astatta per raggiungere un fix-point (che sia il least fix-point o una approssimazione di esso) dobbiamo applicare un'operazione di join tra i risultati degli step della iterazione sul sistema di equazioni. Questa operazione di join deve essere un operatore di upper bound (quindi il lub o una sua approssimazione, per esempio il widening). Per scegliere se usare il widening o il lub settiamo a priori nell'analisi un valore di threshold. Una volta passati threshold volte per uno statement durante l'analisi passiamo dall'usare il lub all'usare il widening. Questa logica decisionale ci permette di garantire la finitudine dell'analisi, infatti siamo sicuri che dopo un numero finito di step si cominci ad usare il widening, il quale a sua volta, come abbiamo visto, ci garantisce la convergenza. Infine, dopo aver aggiornato \(result\), dobbiamo garantire di propagare i cambiamenti effettuati e quindi inseriamo tutti gli statement successivi al corrente nel \(ws\). 
 \end{enumerate}
 Prima o poi non ci sono più aggiornamenti da fare a \(result\) e quindi non vengono più aggiunti statement a \(ws\), che di conseguenza si svuota e rende falsa la condizione del ciclo while alla riga 3 terminando la computazione e lasciando in \(result\) un fix-point, e quindi una soluzione, del sistema di equazioni generato a partire dal CFG.
+\iffalse
 \\
 
+Dove:
+\begin{itemize}
+\itemsep0pt
+    \item \textcolor{red}{\(\cong\)} è \(\preceq\) nella fase ascendente \\ e \(\succeq\) nella fase discendente;
+    \item \textcolor{red}{\(\otimes\)} è \(\nabla\) nella fase ascendente \\ e \(\Delta\) nella fase discendente;
+    \item \textcolor{red}{\(\oplus\)} è \(\sqcup\) nella fase ascendente \\ e \(\sqcap\) nella fase discendente;
+    \item \textcolor{red}{heuristic()} è une metodo decisionale \\ che ci permette di scegliere se usare \\ \(\sqcup\) (o \(\sqcap\)) o \(\nabla\) (o \(\Delta\));
+\end{itemize}
+\fi
 \definecolor{keywordsColor}{rgb}{0.5, 0.0, 0.333}
 \lstset
     {
@@ -294,7 +334,7 @@ Program program = Frontend.processFile(programFilePath);
 LiSA lisa = new LiSA(configuration);
 lisa.run(program);
 \end{lstlisting}
-Bisogna inanzitutto configurare l'analisi attraverso un oggetto della classe \texttt{LiSAConfiguration}. Un parametro obbligatorio è lo stato astratto da utilizzare e le sue componenti. In questo caso viene utilizzato quello di default per l'\texttt{HeapDomain}, il dominio non-relazionale \texttt{Interval}, che verrà wrappato in un \texttt{ValueEnvironment}, per il \texttt{ValueDomain} e il dominio con tipi dedotti per il \texttt{TypeDomain}. Viene poi settato il tipo di output con cui vogliamo visualizzare i risultati e la cartella in cui vogliamo che venga messo l'output generato dall'analisi. Viene generato il programma (che semplificando può essere visto come iuna collezione di CFG) tramite il \texttt{Frontend}. Infine viene lanciata l'analisi tramite un oggetto   della classe \texttt{LiSA} passando configurazioni e programma da analizzare. In figura \ref{fig:risultatoDOTAsc} è mostrato l'output generato in DOT con queste configurazioni per il programma mostrato in \ref{fig:codiceEsempio2}.
+Bisogna innanzitutto configurare l'analisi attraverso un oggetto della classe \texttt{LiSAConfiguration}. Un parametro obbligatorio è lo stato astratto da utilizzare e le sue componenti. In questo caso viene utilizzato quello di default per l'\texttt{HeapDomain}, il dominio non-relazionale \texttt{Interval}, che verrà racchiuso in un \texttt{ValueEnvironment}, per il \texttt{ValueDomain} e il dominio con tipi dedotti per il \texttt{TypeDomain}. Viene poi impostato il tipo di output con cui vogliamo visualizzare i risultati e la cartella in cui vogliamo che venga messo l'output generato dall'analisi. Viene generato il programma (che semplificando può essere visto come una collezione di CFG) tramite il \texttt{Frontend}. Infine viene lanciata l'analisi tramite un oggetto   della classe \texttt{LiSA} passando configurazioni e programma da analizzare. In figura \ref{fig:risultatoDOTAsc} è mostrato l'output generato in DOT con queste configurazioni per il programma mostrato in \ref{fig:codiceEsempio2}.
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.8\textwidth]{Immagini/graphviz.png}
@@ -303,11 +343,11 @@ Bisogna inanzitutto configurare l'analisi attraverso un oggetto della classe \te
 \end{figure}
 \\
 
-Fino'ora abbiamo introdotto tutte le nozioni matematiche e teoriche necessarie per capire come funzioni l'analisi statica tramite interpretazione astratta (nel capitolo \hyperref[chapter:background]{Backgrounf}) ed abbiamo visto come questi concetti vengono applicati all'interno di LiSA (nella sezione \hyperref[sec:LiSA]{LiSA} di questo capitolo). Da questo punto in poi verrà spiegato il contributo che io ho dato per espandere la libreria, guardando nel dettaglio ogni implementazione. Partiremo dal dominio dei sottoinsiemi non ridondanti di un reticolo, poi passeremo alla fase discendente per poi finire col decoupling delle fasi.
+Fino'ora abbiamo introdotto tutte le nozioni matematiche e teoriche necessarie per capire come funzioni l'analisi statica tramite interpretazione astratta (nel capitolo \hyperref[chapter:background]{Background}) ed abbiamo visto come questi concetti vengono applicati all'interno di LiSA (nella sezione \hyperref[sec:LiSA]{LiSA} di questo capitolo). Da questo punto in poi verrà spiegato il contributo che è stato dato per espandere la libreria, guardando nel dettaglio ogni implementazione. Partiremo dal dominio dei sottoinsiemi non ridondanti di un reticolo, poi passeremo alla fase discendente per poi finire col decoupling delle fasi.
 
 \section{Dominio dell'insieme delle parti finite e non ridondanti in LiSA}
 
-Come abbiamo detto nella piccola introduzione al concetto di \texttt{ValueDomain} in LiSA è possibile sviluppare domini sia relazionali che non. Lo sviluppo nei due casi prende "percorsi" diversi, e questo perchè, abbiamo detto, molte operazioni sono comuni a tutti i domini non-relazionali e quindi aveva senso avere un strato in più che si prendesse carico di queste operazioni comuni, ovvero l'\texttt{Environment}, semplificando per l'utente l'operazione di sviluppare domini non-relazionali. Per questo motivo l'introduzione di un sistema generico per lo sviluppo del dominio dell'insieme delle parti finite e non ridondanti di un altro dominio astratto, già definito in LiSA, ha dovuto coprire entrambi casi. Partiamo dal caso generale. 
+Come abbiamo detto nella piccola introduzione al concetto di \texttt{ValueDomain} in LiSA è possibile sviluppare domini sia relazionali che non. Lo sviluppo nei due casi prende "percorsi" diversi, e questo perchè, abbiamo detto, molte operazioni sono comuni a tutti i domini non-relazionali e quindi aveva senso avere un strato in più che si prendesse carico di queste operazioni comuni, ovvero l'\texttt{Environment}, semplificando all'utente l'operazione di sviluppare domini non-relazionali. Per questo motivo l'introduzione di un sistema generico per lo sviluppo del dominio dell'insieme delle parti finite e non ridondanti di un altro dominio astratto, già definito in LiSA, ha dovuto coprire entrambi casi. Partiamo dal caso generale. 
 
 \subsection{Il caso generale}
 
@@ -385,7 +425,7 @@ public abstract class SetLattice<S extends SetLattice<S,T>,T>
 \end{lstlisting}
 Dove \texttt{elements} è l'insieme contenente oggetti di tipo \texttt{T}, il campo \texttt{isTop} traccia il fatto che l'elemento in questioni rappresenti l'elemento top, l'operazione di lub è l'unione tra insiemi \(\cup\) e la relazione di ordine parziale è il contenimento insiemistico \(\subseteq\).
 
-Il campo \texttt{public final T valueDomain} introdotto da \texttt{NonRedundantPowerset} è un elemento qualsiasi del dominio sottostante e serve in alcune operazioni riguardanti la struttura reticolare del dominio per ottenere i valori \texttt{top} e \texttt{bottom}. Il metodo \texttt{public C mk ( Set <T > set )} viene ereditato da \texttt{SetLattice} e serve a costruire una istanza concreta del dominio a partire dagli oggeti contenuti in \texttt{set}. In \texttt{NonRedundantPowerset} è difinita in modo tale da richiamare \texttt{mkAux(...)}, ovvero la versione estesa di \texttt{mk} fatta per comprendere \texttt{ValueDomain} e \texttt{isTop}, il quale deve essere definito nelle classi concrete che estendono \texttt{NonRedundantPowerset} (infatti \texttt{mkAux} è dichiarato come metodo astratto).
+Il campo \texttt{public final T valueDomain} introdotto da \texttt{NonRedundantPowerset} è un elemento qualsiasi del dominio sottostante e serve in alcune operazioni riguardanti la struttura reticolare del dominio per ottenere i valori \texttt{top} e \texttt{bottom}. Il metodo \texttt{public C mk ( Set <T > set )} viene ereditato da \texttt{SetLattice} e serve a costruire una istanza concreta del dominio a partire dagli oggeti contenuti in \texttt{set}. In \texttt{NonRedundantPowerset} è definita in modo tale da richiamare \texttt{mkAux(...)}, ovvero la versione estesa di \texttt{mk} fatta per comprendere \texttt{ValueDomain} e \texttt{isTop}, il quale deve essere definito nelle classi concrete che estendono \texttt{NonRedundantPowerset} (infatti \texttt{mkAux} è dichiarato come metodo astratto).
 
 Un altro metodo molto importante è \texttt{removeRedundancy}. Non è altro che la funzione di riduzione mostrata nella Definizione \ref{def:funzioneRiduzione}. Serve a rimuovere la ridondanza dall'insieme. \'E necessaria perchè alcune operazioni sugli elementi del dominio potrebbero togliergli questa proprietà, che quindi deve essere ripristinata. La definizione del metodo è la seguente:
 \begin{lstlisting}[belowskip=-1.1 \baselineskip]
@@ -483,7 +523,7 @@ protected C EgliMilnerConnector(C other) {
     return mk(newSet);
 }
 \end{lstlisting}
-L'implementazione base semplicemente crea un nuovo insieme singoletto con il least upper bound di tutti gli elementi dei due insieme uniti. 
+L'implementazione base semplicemente crea un nuovo insieme singoletto con il least upper bound di tutti gli elementi dei due insiemi uniti. 
 
 \noindent Il widening implementato per i \texttt{NonRedundantPowerset} utilizza un estrapolatore euristico \(\nabla\)-connesso. Per questo seguendo la Definizione \ref{def:estrapolatoreEuristicoWideningConnesso} e la Proposizione \ref{prop:estrapolatoreEuristicoWideningConnesso} lo implementiamo così: 
 \begin{lstlisting}[belowskip=-1.1 \baselineskip]
@@ -556,7 +596,7 @@ Possiamo dire che l'elemento soddisfa (non soddisfa) l'espressione \texttt{expre
 
 \subsection{Il caso dei domini non relazionali}
 
-Prima di vedere come è stato implementato il dominio dei sottoinsiemi finiti e non ridondanti nel caso in qui dominio sottostante sia non-relazionale dobbiamo parlare più approfonditamente di come questi sono implementati in LiSA. Partiamo dal vedere la classe \texttt{Environement}. 
+Prima di vedere come è stato implementato il dominio dei sottoinsiemi finiti e non ridondanti nel caso in cui il dominio sottostante sia non-relazionale dobbiamo parlare più approfonditamente di come questi sono implementati in LiSA. Partiamo dal vedere la classe \texttt{Environement}. 
 
 \begin{lstlisting}[belowskip=-1.1 \baselineskip]
 public abstract class Environment<
@@ -595,12 +635,12 @@ public interface NonRelationalElement<
 }
 \end{lstlisting}
 
-\'E generica alla istanza concreta che implementa l'interfaccia, alle espressioni simboliche su cui sa ragionare e al \texttt{FunctionalLattice} che fa da environment per quel dominio non-relazionale. Estende \texttt{Lattice}, così da assicurarci di avere la struttura reticolare necessaria ad un dominio astratto, e \texttt{SemanticEvaluator} di cui tra poco vedremo la defnizione. Sono definiti solo due metodi: 
+\'E generica alla istanza concreta che implementa l'interfaccia, alle espressioni simboliche su cui sa ragionare e al \texttt{FunctionalLattice} che fa da environment per quel dominio non-relazionale. Estende \texttt{Lattice}, così da assicurarci di avere la struttura reticolare necessaria ad un dominio astratto, e \texttt{SemanticEvaluator} di cui tra poco vedremo la definizione. Sono definiti solo due metodi: 
 \begin{itemize}
-    \item \texttt{Satisfiability satisfies(E expression, F environment, ProgramPoint pp)}: ci dice se l'espressione \texttt{expression} è soddisfatta all'intrerno dell'\texttt{environment} passato; 
-    \item \texttt{F assume(F environment, E expression, ProgramPoint pp);}: ritorna un \texttt{environment} modificato rispetto a quello passato in cui l'espressione \texttt{expression} viene assunte essere vera;
+    \item \texttt{Satisfiability satisfies(E expression, F environment, ProgramPoint pp)}: ci dice se l'espressione \texttt{expression} è soddisfatta all'interno dell'\texttt{environment} passato; 
+    \item \texttt{F assume(F environment, E expression, ProgramPoint pp)}: ritorna un \texttt{environment} modificato rispetto a quello passato in cui l'espressione \texttt{expression} viene assunta essere vera;
 \end{itemize}
-L'interfaccia \texttt{SemanticEvaluator} rappresenta un oggetto che sa ragionare semanticamente sulle espressione sembioliche e sugli identificatori ma che non è un \texttt{SemanticDomain}. \'E così definita:
+L'interfaccia \texttt{SemanticEvaluator} rappresenta un oggetto che sa ragionare semanticamente sulle espressione simboliche e sugli identificatori ma che non è un \texttt{SemanticDomain}. \'E così definita:
 \begin{lstlisting}[belowskip=-1.1 \baselineskip]
 public interface SemanticEvaluator {
     boolean tracksIdentifiers(Identifier id);
@@ -609,7 +649,7 @@ public interface SemanticEvaluator {
 \end{lstlisting}
 I due metodi ritornano \texttt{true} se, rispettivamente, l'elemento del dominio sta tracciando una proprietà dell'identificatore \texttt{id} e se il dominio è in grado di ragionare sull'espessione \texttt{expression}.
 
-\noindent Ciò che manca fino ad ora a \texttt{NonRelationalElement} e che è necessaria ad un dominio astratto è la capacità di valutare una espressione. Per questo motivo abbiamo l'interfaccia \texttt{NonRelationalElement}. Questa estende \texttt{NonRelationalDomain} e aggiunge il metodo \texttt{eval} il quale valuta l'espressione \texttt{expression} sapendo il valore di tutte le variabili del programma grazie all'\texttt{environment} passato.
+\noindent Ciò che manca fino ad ora a \texttt{NonRelationalElement} e che è necessario ad un dominio astratto è la capacità di valutare una espressione. Per questo motivo abbiamo l'interfaccia \texttt{NonRelationalDomain}. Questa estende \texttt{NonRelationalElement} e aggiunge il metodo \texttt{eval} il quale valuta l'espressione \texttt{expression} sapendo il valore di tutte le variabili del programma grazie all'\texttt{environment} passato.
 \begin{lstlisting}[belowskip=-1.1 \baselineskip]
 public interface NonRelationalDomain<
     T extends NonRelationalDomain<T, E, F>,
@@ -628,7 +668,7 @@ public interface NonRelationalValueDomain<T extends NonRelationalValueDomain<T>>
 \end{lstlisting}
 \'E semplicemente un \texttt{NonRelationalDomain} che sa ragionare solo su \texttt{ValueExpression} e che come \texttt{FunctionalLattice} che traccia le proprietà delle variabili ha un \texttt{ValueEnvironment} (infatti se vediamo la definizione di \texttt{ValueEnvironemnt} data prima possiamo vedere come esso mappi agli identificatori valori di un \texttt{NonRelationalValueDomain}).
 
-Per concludere abbiamo la classe base \texttt{BaseNonRelationalValueDomain} (questa è la classe che ogni dominio non-relazionale che traccia il valore delle variabili deve estendere) che si prende carico delle operazioni base comuni a tutti i domini (ad esempio quelle riguardanti i valori \texttt{top} e \texttt{bottom} o l'estrazione del valore di una variabile dato il suo \texttt{Identifier}). Inoltre in questa classe i metodi \texttt{eval}, \texttt{satisfies} e \texttt{assume} smistano la loro esecuzione su sotto-metodi che si occupano di specifiche istanze di espressioni simboliche, ognuna con la propria implementazione di default (quindi per esempio \texttt{eval} reinderizzerà la valutazione a \texttt{evalBinaryExpression} se l'espressione simbolica passata è binaria). Questo cosicchè nella definizione del dominio astratto vero e proprio si deve dare la definizione semantica solo ai tipi di espressioni che il dominio può valutare (per esempio non esiste nessuna espressione simbolica ternaria che riguardi il dominio non-relazionale \texttt{Interval} e quindi in questa non verrà data una definizione per \texttt{evalTernaryExpression}, \texttt{satisfiesTernaryExpression} o \texttt{assumeTernatExpression} e si userà quella di defualt). 
+Per concludere abbiamo la classe base \texttt{BaseNonRelationalValueDomain} (questa è la classe che ogni dominio non-relazionale che traccia il valore delle variabili deve estendere) che si prende carico delle operazioni base comuni a tutti i domini (ad esempio quelle riguardanti i valori \texttt{top} e \texttt{bottom} o l'estrazione del valore di una variabile dato il suo \texttt{Identifier}). Inoltre in questa classe i metodi \texttt{eval}, \texttt{satisfies} e \texttt{assume} smistano la loro esecuzione su sotto-metodi che si occupano di specifiche istanze di espressioni simboliche, ognuna con la propria implementazione di default (quindi per esempio \texttt{eval} reinderizzerà la valutazione a \texttt{evalBinaryExpression} se l'espressione simbolica passata è binaria). Questo cosicchè nella definizione del dominio astratto vero e proprio si deve dare la definizione semantica solo ai tipi di espressioni che il dominio può valutare (per esempio non esiste nessuna espressione simbolica ternaria che riguardi il dominio non-relazionale \texttt{Interval} e quindi in questa non verrà data una definizione per \texttt{evalTernaryExpression}, \texttt{satisfiesTernaryExpression} o \texttt{assumeTernaryExpression} e si userà quella di default). 
 
 \definecolor{deepyellow}{RGB}{220, 130, 0}
 \definecolor{deepgreen}{RGB}{38, 115, 38}
@@ -853,7 +893,7 @@ public class NonRedundantPowersetOfInterval
 \caption{La classe \\ \texttt{NonRedundantPowersetOfInterval}.}
 \label{code:nonRedundantPowersetOfInterval}
 \end{algorithm}
-Innanzitutto notiamo che essendo \texttt{Interval} un dominio non-relazionale dobbbiamo utilizzare \texttt{NonRedundantPowersetOfBaseNonRelationalValueDomain} come classe base da estendere, e non \texttt{NonRedundantPowerset}. Poi vediamo come tutti i metodi legati ad \texttt{eval} e a \texttt{satisfies} non sono ridefiniti, percheè di questi se ne prende carico la classe base sottostante. L'unico metodo delle operazioni reticolari qua ridefinito è il connettore di Egli-Milner. Abbiamo detto in precedenza che la sua definizione di default era poco precisa (semplicemente faceva il lub tra tutti gli elementi dei due insiemi restituendolo in un insieme singoletto), e che ogni caso concreto avrebbe potuto trovarne una versione migliore. Nel caso degli \texttt{Interval} ho seguito questa definizione: dati \(I_1, I_2\in\wp_{\textrm{fn}}(\textrm{Int})\): 
+Innanzitutto notiamo che essendo \texttt{Interval} un dominio non-relazionale dobbiamo utilizzare \texttt{NonRedundantPowersetOfBaseNonRelationalValueDomain} come classe base da estendere, e non \texttt{NonRedundantPowerset}. Poi vediamo come tutti i metodi legati ad \texttt{eval} e a \texttt{satisfies} non sono ridefiniti, perchè di questi se ne prende carico la classe base sottostante. L'unico metodo delle operazioni reticolari qua ridefinito è il connettore di Egli-Milner. Abbiamo detto in precedenza che la sua definizione di default era poco precisa (semplicemente faceva il lub tra tutti gli elementi dei due insiemi restituendolo in un insieme singoletto), e che ogni caso concreto avrebbe potuto trovarne una versione migliore. Nel caso degli \texttt{Interval} ho seguito questa definizione: dati \(I_1, I_2\in\wp_{\textrm{fn}}(\textrm{Int})\): 
 \begin{align*}
  I_1 \boxplus_{\textrm{EM}} I_2 = &\{ y \in I_2\ |\ \exists x \in I_1 : x \preceq_{\textrm{Int}} y \}\ \cup \\
  &\{ x' \sqcup_{\textrm{Int}} y\ |\ x' \in I_1, y \in I_2, \nexists x \in I_1 : x \preceq_{\textrm{Int}} y \}
@@ -889,7 +929,7 @@ Nella Figura \ref{fig:risultatoAscPowerset} è mostrato il risultato dell'analis
 \end{figure}
 
 \section{La fase discendente in LiSA}\label{sec:descendingLiSA}
-In questa sezione vedremo come è stata aggiunta in LiSA la possibilità di calcolare anche la fase discendente. Prima però di parlare delle modifiche apportate bisogna mostrare come effettivamente (quali classi e metodi sono utilizziati) è implementato il calcolo del fix-point di un programma in LiSA. Il flow che segue il calcolo è mostrato in figura \ref{fig:flowFixpoint}. 
+In questa sezione vedremo come è stata aggiunta in LiSA la possibilità di calcolare anche la fase discendente. Prima però di parlare delle modifiche apportate bisogna mostrare come effettivamente (quali classi e metodi sono utilizzati) è implementato il calcolo del fix-point di un programma in LiSA. Il flow che segue il calcolo è mostrato in figura \ref{fig:flowFixpoint}. 
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=\textwidth]{Immagini/flowFixpoint.png}
@@ -979,7 +1019,7 @@ public Map<N, T> fixpoint(
     ...
 }
 \end{lstlisting}
-A questo punto in \texttt{CFG.fixpoint} il metodo verrà chiamato due volte, la prima (fase ascendente) con una mappa di risultati vuota, la seconda (fase ascendente) coi risultati della prima come mostrato nel piccolo schema della Figura \ref{fig:flowFaseDisc}.
+A questo punto in \texttt{CFG.fixpoint} il metodo verrà chiamato due volte, la prima (fase ascendente) con una mappa di risultati vuota, la seconda (fase discendente) con i risultati della prima come mostrato nel piccolo schema della Figura \ref{fig:flowFaseDisc}.
 
 Per gli altri due problemi (join/meet e metodo \texttt{equality}) è stato necessario avere un modo per tenere traccia di quale fase stessimo calcolando all'interno del \texttt{CFGFixpointImplmentation}. Ovvero un modo che ci dicesse che se siamo nella fase ascendente utilizziamo \texttt{join} con lub/widening ed \texttt{equality} con minore-uguale, se invece siamo nella fase discendente utilizziano \texttt{meet} con glb/narrowing ed \texttt{equality} con maggiore-uguale. Per correttezza sintattica inoltre ho dovuto cambiare la dichiarazione dell'interfaccia \texttt{FixpointImplementation} modificando il metodo \texttt{join} nel metodo \texttt{operation}. Sarà poi dentro la implementazione concreta di \texttt{operation} che il calcolo verrà smistato a \texttt{join} o \texttt{meet} a seconda della fase in cui ci si trova. Per tenere traccia della fase che sta calcolando ho aggiunto a \texttt{CFGFixpointImplementation} un parametro di configurazione di tipo \texttt{DescendingPhaseType}, che è così definito tramite un enum:  
 \begin{lstlisting}[belowskip=-1.1 \baselineskip, escapechar=|]
@@ -1002,7 +1042,7 @@ Se a \texttt{CFGFixpointImplementation} viene passato \texttt{DescendingPhaseTyp
 \end{figure}
 
 \subsection{Il metodo \texttt{meet} in \texttt{CFGFixpointImplementation}}
-In questa sezione guardaremo più nel dettaglio come è statpo implementata l'operazione di meet utilizzata durante la discendente. Qui di seguito è mostrato il codice che lo definisce, dove per semplificare ho chiamto \texttt{T} il tipo dello stato astratto usato per l'analisi.  
+In questa sezione guarderemo più nel dettaglio come è stata implementata l'operazione di meet utilizzata durante la fase discendente. Qui di seguito è mostrato il codice che lo definisce, dove per semplificare ho chiamto \texttt{T} il tipo dello stato astratto usato per l'analisi.  
 \begin{lstlisting}[belowskip=-1.1 \baselineskip, escapechar=|]
 public T meet(Statement node, T approx, T oldApprox){
 
@@ -1074,7 +1114,7 @@ La sequenza di operazioni è la seguente:
 \begin{enumerate}
 \itemsep0pt
     \item viene chiamato il metodo \texttt{fixpoint} sull'oggetto di tipo \texttt{DecouplingInterproceduralAnalysis<A, D>};
-    \item \texttt{DecouplingInterproceduralAnalysis<A, D>} chiama \texttt{fixpoint} sulla \texttt{InterproceduralAnalysis<A>}, dicendogli di calcolare solamente la fase ascendente. I risutalti ottenuti sono nel tipo del dominio astratto ascendente \texttt{A};
+    \item \texttt{DecouplingInterproceduralAnalysis<A, D>} chiama \texttt{fixpoint} sulla \texttt{InterproceduralAnalysis<A>}, dicendogli di calcolare solamente la fase ascendente. I risultati ottenuti sono nel tipo del dominio astratto ascendente \texttt{A};
     \item i risultati della fase ascendente vengono tradotti dal \texttt{Decoupler} nel dominio astratto discendente, così da poter essere usati come punto di partenza per la fase discendente;
     \item \texttt{DecouplingInterproceduralAnalysis<A, D>} chiama \texttt{descendingPhase} sulla \texttt{InterproceduralAnalysis<D>} passando il tipo di fase discendente e il risultato della fase ascendente tradotto;
 \end{enumerate}
